@@ -1,0 +1,48 @@
+export BUILD_SYSTEM="$(dirname "$(readlink -f "$BASH_SOURCE")")"
+
+export QTDIR=/usr/local/qt
+export SELECT_QT=Qt5
+export CC=gcc
+export CXX=g++
+export MKLROOT=/usr/local/intel/mkl
+# export TGT_ARCH=x86
+export LD_LIBRARY_PATH=$($CC -print-search-dirs | \
+                         sed '/^lib/b 1;d;:1;s,/[^/.][^/]*/\.\./,/,;t 1;s,:[^=]*=,:;,;s,;,;  ,g' | \
+                         awk -- '{print $2}')
+
+export PATH=/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:${QTDIR}/bin:${BUILD_SYSTEM}/bin
+export BUILD_TYPE=${BUILD_TYPE:-Release}
+
+if [ ${BUILD_TYPE} == Release ]; then
+  export INSTALL_DIR=${BUILD_SYSTEM}/local
+  [ -e "${INSTALL_DIR}" ] || mkdir --parent "${INSTALL_DIR}"
+
+  export BUILD_DIR=${BUILD_SYSTEM}/build
+  [ -e "${BUILD_DIR}" ] || mkdir --parent "${BUILD_DIR}"
+
+  export LOG_DIR=${BUILD_SYSTEM}/log
+  [ -e "${LOG_DIR}" ] || mkdir --parent "${LOG_DIR}"
+else
+  export INSTALL_DIR=${BUILD_SYSTEM}/local.debug
+  [ -e "${INSTALL_DIR}" ] || mkdir --parent "${INSTALL_DIR}"
+
+  export BUILD_DIR=${BUILD_SYSTEM}/build.debug
+  [ -e "${BUILD_DIR}" ] || mkdir --parent "${BUILD_DIR}"
+
+  export LOG_DIR=${BUILD_SYSTEM}/log.debug
+  [ -e "${LOG_DIR}" ] || mkdir --parent "${LOG_DIR}"
+fi
+
+export COMBINE_DIR="${INSTALL_DIR}"
+export CROSSGUID_DIR="${INSTALL_DIR}"
+export EXPAT_DIR="${INSTALL_DIR}"
+export LIBSBML_DIR="${INSTALL_DIR}"
+export LIBSEDML_DIR="${INSTALL_DIR}"
+export MML_DIR="${INSTALL_DIR}"
+export QWT_DIR="${INSTALL_DIR}"
+export QWTPLOT3D_DIR="${INSTALL_DIR}"
+export RAPTOR_DIR="${INSTALL_DIR}"
+export SBW_DIR="${INSTALL_DIR}"
+export NATIVEJIT_DIR="${INSTALL_DIR}"
+export CPUFEATURES_DIR="${INSTALL_DIR}"
+

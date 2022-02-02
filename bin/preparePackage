@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+if [ _${BUILD_SYSTEM} != _"$(dirname "$(dirname "$(readlink -f "$0")")")" ] ; then
+  . "$(dirname "$(dirname "$(readlink -f "$0")")")"/.variables
+fi
+
+PACKAGE="${1:-${BUILD_SYSTEM}/packages/setup.release}"
+
+[ -d "${PACKAGE}/src" ] || mkdir --parent "${PACKAGE}/src"
+
+cd "${PACKAGE}/src"
+
+if [ -e share ]; then
+  rm -rf share/*
+else
+  mkdir share
+fi
+
+[ -e share/copasi ] || mkdir share/copasi
+[ -e share/copasi/lib ] || mkdir share/copasi/lib
+[ -e share/copasi/lib/plugins ] || mkdir share/copasi/lib/plugins
+[ -e share/copasi/lib/plugins/platforms ] || mkdir share/copasi/lib/plugins/platforms
+[ -e share/copasi/lib/plugins/xcbglintegrations ] || mkdir share/copasi/lib/plugins/xcbglintegrations
+
+ln -s "/usr/lib64/libssl.so.10" share/copasi/lib
+ln -s "/usr/lib64/libpng15.so.15" share/copasi/lib
+ln -s "/usr/lib64/libcrypto.so.10" share/copasi/lib
+ln -s "/usr/lib64/libfreetype.so.6" share/copasi/lib
+
+ln -s "${QTDIR}/lib/libQt5DBus.so.5" share/copasi/lib
+ln -s "${QTDIR}/lib/libQt5XcbQpa.so.5" share/copasi/lib
+ln -s "${QTDIR}/plugins/platforms/libqxcb.so" share/copasi/lib/plugins/platforms
+ln -s "${QTDIR}/plugins/xcbglintegrations/libqxcb-egl-integration.so"  share/copasi/lib/plugins/xcbglintegrations
+ln -s "${QTDIR}/plugins/xcbglintegrations/libqxcb-glx-integration.so"  share/copasi/lib/plugins/xcbglintegrations

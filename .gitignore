@@ -1,0 +1,9 @@
+build/*
+local/*
+git/*
+log/*
+build.debug/*
+local.debug/*
+log.debug/*
+packages/*
+.vscode/*
