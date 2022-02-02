@@ -5,7 +5,7 @@ export SELECT_QT=Qt5
 export CC=gcc
 export CXX=g++
 export MKLROOT=/usr/local/intel/mkl
-# export TGT_ARCH=x86
+export TGT_ARCH=x86
 export LD_LIBRARY_PATH=$($CC -print-search-dirs | \
                          sed '/^lib/b 1;d;:1;s,/[^/.][^/]*/\.\./,/,;t 1;s,:[^=]*=,:;,;s,;,;  ,g' | \
                          awk -- '{print $2}')
