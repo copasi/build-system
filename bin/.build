@@ -21,6 +21,7 @@ export COPASI_UPLOAD="deploy:environment/upload/stage"
 # Programs
 AWK=${COPASI_AWK:-gawk}
 
+# Defaults:
 clean=false
 local=false
 comment=
@@ -43,6 +44,7 @@ while [ _"$1" != _ ]; do
     export COPASI_SCP=""
     shift
     ;;
+
   --comment)
     comment="$2"
     shift
