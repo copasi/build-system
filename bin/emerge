@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # script for setting up environment from scratch
 
-brew install qt5 
+brew install qt6 
 brew install mono-mdk
 brew install openjdk
 brew install swig@3
@@ -9,6 +9,7 @@ brew install astyle
 brew install wget
 brew install gawk
 brew install ninja
+brew install cmake
 brew install bash
 brew install coreutils
 
@@ -31,8 +32,7 @@ pushd "${BUILD_SYSTEM}"
 [ -e "log" ] || mkdir -p "log"
 [ -e "log.debug" ] || mkdir -p "log.debug"
 
-[ -e MacOSX10.13.sdk ] || tar -xvf src/MacOSX10.13.sdk.tar.xz
-
 (cd "git/COPASI.release"; git config --local user.name copasi; git config --local user.email git@copasi.org)
+git config --local user.name "Build System"; git config --local user.email build-system@copasi.org
 
 popd
