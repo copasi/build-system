@@ -151,6 +151,11 @@ ln -s /Applications Applications
 echo cd COPASI
 cd COPASI
 
+# macdeployqt is missing this
+[ -e CopasiUI.app/Contents/Frameworks ] || mkdir -p CopasiUI.app/Contents/Frameworks
+echo cp /opt/homebrew/lib/libbrotli*dylib  CopasiUI.app/Contents/Frameworks
+cp /opt/homebrew/lib/libbrotli*dylib  CopasiUI.app/Contents/Frameworks
+
 echo macdeployqt CopasiUI.app -always-overwrite -libpath=${QTDIR}/lib
 # Surpress error of the first run which fails
 macdeployqt CopasiUI.app -always-overwrite -libpath=${QTDIR}/lib >/dev/null 2>&1
@@ -171,7 +176,7 @@ if [ "_${COPASI_SCP}" != "_" ]; then
     ${COPASI_SCP} "${BUILD_ROOT}"/COPASI-${sourceVersion}-Source.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Source.tar.gz"
   fi
 
-  ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-${COPASI_PACKAGE}.dmg "${COPASI_UPLOAD}/COPASI-${targetVersion}-${COPASI_PACKAGE}-intel.dmg"
+  ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-${COPASI_PACKAGE}.dmg "${COPASI_UPLOAD}/COPASI-${targetVersion}-${COPASI_PACKAGE}-arm.dmg"
   # ${COPASI_SCP} "${BUILD_ROOT}"/copasi/CopasiSE/CopasiSE "${COPASI_UPLOAD}/AllSE/Darwin/CopasiSE-${targetVersion}"
   # ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-Java-Bindings-${COPASI_PACKAGE}.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Java-Bindings-${COPASI_PACKAGE}.tar.gz"
   # ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-C#-Bindings-${COPASI_PACKAGE}.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-C#-Bindings-${COPASI_PACKAGE}.tar.gz"
