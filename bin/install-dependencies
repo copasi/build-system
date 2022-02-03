@@ -32,10 +32,12 @@ cd ${BUILD_DIR}
 if [ ${configure} = true -o ! -e CMakeCache.txt ]; then
     rm -rf * .cmake
 
-    echo cmake -DBUILD_clapack=OFF \
-          -DBUILD_zlib=OFF \
+    echo cmake -G Ninja \
+          -DBUILD_clapack=OFF \
+          -DBUILD_qwtplot3d=off \
           -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
           -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+          -DSELECT_QT=${SELECT_QT} \
           ${BUILD_SYSTEM}/git/copasi-dependencies
 
     cmake -G Ninja \
