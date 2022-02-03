@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if [ _${BUILD_SYSTEM} != _"$(dirname "$(dirname "$(readlink -f "$0")")")" ] ; then
+if [ _${BUILD_SYSTEM} != _"$(dirname "$(dirname "$(greadlink -f "$0")")")" ]; then
   . "$(dirname "$(dirname "$(readlink -f "$0")")")"/.variables
 fi
 
@@ -25,7 +25,7 @@ AWK=${COPASI_AWK:-gawk}
 clean=false
 local=false
 comment=
-branch=master
+branch=
 tag=
 
 [ -e .status.${PROGNAME} ] && . .status.${PROGNAME}
@@ -51,7 +51,11 @@ while [ _"$1" != _ ]; do
     ;;
 
   --branch)
-    (cd "${COPASI_SOURCES}"; git fetch --all; git checkout --force "$2")
+    (
+      cd "${COPASI_SOURCES}"
+      git fetch --all
+      git checkout --force "$2"
+    )
     branch="$2"
     shift
     ;;
@@ -61,12 +65,18 @@ while [ _"$1" != _ ]; do
     shift
     ;;
   esac
- 
+
   shift
 done
 
-echo comment=\"${comment}\" > .status.${PROGNAME}
-echo branch=\"${branch}\" >> .status.${PROGNAME}
+echo comment=\"${comment}\" >.status.${PROGNAME}
+echo branch=\"${branch}\" >>.status.${PROGNAME}
+
+# We must be on a branch
+if [ -z "${branch}" ]; then
+  echo Error: Branch missing, use: --branch branch
+  exit 1
+fi
 
 # Update the sources
 pushd "${COPASI_SOURCES}"
@@ -88,22 +98,25 @@ gitTools/UpdateCopasiVersion --force
 
 # Set the version comment
 sed -e 's/COPASI_VERSION_COMMENT.*/COPASI_VERSION_COMMENT "'${comment}'"/' \
-  copasi/CopasiVersion.h > $$ && mv $$ copasi/CopasiVersion.h
+  copasi/CopasiVersion.h >$$ && mv $$ copasi/CopasiVersion.h
 popd
 
 build .
 
 popd
 
-export COPASI_PACKAGE="Linux-64bit"
-export COPASI_CREATE="${COPASI_SOURCES}/LinuxTGZ/create.sh"
+export COPASI_PACKAGE="Darwin"
+export COPASI_CREATE="${COPASI_SOURCES}/PackageMaker/create.sh"
 
 rm -rf "${COPASI_SETUP_DIR}"/COPASI*
 export BUILD_ROOT="${COPASI_COMMON_BUILD_SYSTEM}/build/COPASI.${DIR_SUFFIX}"
 
 # Only executed for 64 bit Linux
 if [ "${COPASI_PACKAGE}" == "Linux-64bit" ]; then
-  (cd ${BUILD_ROOT}; make package_source)
+  (
+    cd ${BUILD_ROOT}
+    make package_source
+  )
 fi
 
 "${COPASI_CREATE}" 'COPASI'
@@ -111,29 +124,56 @@ fi
 "${COPASI_CREATE}" 'C#-Bindings'
 # "${COPASI_CREATE}" 'Python-Bindings'
 
+major=$(${AWK} -- '$2 ~ "COPASI_VERSION_MAJOR" {print $3}' "${COPASI_SOURCES}/copasi/CopasiVersion.h")
+minor=$(${AWK} -- '$2 ~ "COPASI_VERSION_MINOR" {print $3}' "${COPASI_SOURCES}/copasi/CopasiVersion.h")
+build=$(${AWK} -- '$2 ~ "COPASI_VERSION_BUILD" {print $3}' "${COPASI_SOURCES}/copasi/CopasiVersion.h")
+modified=$(${AWK} -- '$2 ~ "COPASI_VERSION_MODIFIED" {print $3}' "${COPASI_SOURCES}/copasi/CopasiVersion.h")
+comment=$(${AWK} -- '$2 ~ "COPASI_VERSION_COMMENT" {print $3}' "${COPASI_SOURCES}/copasi/CopasiVersion.h")
+
+sourceVersion=${major}.${minor}.${build}
+targetVersion=$sourceVersion
+
+if [ $modified == true ]; then
+  targetVersion=${targetVersion}+
+fi
+
+pushd ${COPASI_SETUP_DIR}
+
+# create symlink
+echo cd COPASI-${sourceVersion}-Darwin
+cd COPASI-${sourceVersion}-Darwin
+echo mv Applications/COPASI .
+mv Applications/COPASI .
+echo rm -rf Applications
+rm -rf Applications
+echo ln -s /Applications Applications
+ln -s /Applications Applications
+echo cd COPASI
+cd COPASI
+
+echo macdeployqt CopasiUI.app -always-overwrite -libpath=${QTDIR}/lib
+# Surpress error of the first run which fails
+macdeployqt CopasiUI.app -always-overwrite -libpath=${QTDIR}/lib >/dev/null 2>&1
+macdeployqt CopasiUI.app -always-overwrite -libpath=${QTDIR}/lib
+
+echo sudo -S codesign --force --deep -s - CopasiUI.app
+sudo -S codesign --force --deep -s - CopasiUI.app <~/.password
+cd ..
+
+cd ..
+echo hdiutil create -volname COPASI-${sourceVersion}-Darwin -srcfolder COPASI-${sourceVersion}-Darwin -ov -format UDZO COPASI-${sourceVersion}-Darwin
+sudo -S hdiutil create -volname COPASI-${sourceVersion}-Darwin -srcfolder COPASI-${sourceVersion}-Darwin -ov -format UDZO COPASI-${sourceVersion}-Darwin <~/.password
+popd
+
 if [ "_${COPASI_SCP}" != "_" ]; then
-  major=`${AWK} -- '$2 ~ "COPASI_VERSION_MAJOR" {print $3}' "${COPASI_SOURCES}/copasi/CopasiVersion.h"`
-  minor=`${AWK} -- '$2 ~ "COPASI_VERSION_MINOR" {print $3}' "${COPASI_SOURCES}/copasi/CopasiVersion.h"`
-  build=`${AWK} -- '$2 ~ "COPASI_VERSION_BUILD" {print $3}' "${COPASI_SOURCES}/copasi/CopasiVersion.h"`
-  modified=`${AWK} -- '$2 ~ "COPASI_VERSION_MODIFIED" {print $3}' "${COPASI_SOURCES}/copasi/CopasiVersion.h"`
-  comment=`${AWK} -- '$2 ~ "COPASI_VERSION_COMMENT" {print $3}' "${COPASI_SOURCES}/copasi/CopasiVersion.h"`
-  
-  sourceVersion=${major}.${minor}.${build}
-  targetVersion=$sourceVersion
-
-  if [ $modified == true ]; then
-    targetVersion=${targetVersion}+
-  fi
-
   # Only executed for 64 bit Linux
   if [ "${COPASI_PACKAGE}" == "Linux-64bit" ]; then
     ${COPASI_SCP} "${BUILD_ROOT}"/COPASI-${sourceVersion}-Source.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Source.tar.gz"
   fi
 
-  ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-${COPASI_PACKAGE}.sh "${COPASI_UPLOAD}/COPASI-${targetVersion}-${COPASI_PACKAGE}.sh"
-  ${COPASI_SCP} "${BUILD_ROOT}"/copasi/CopasiSE/CopasiSE "${COPASI_UPLOAD}/AllSE/Linux64/CopasiSE-${targetVersion}"
+  ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-${COPASI_PACKAGE}.dmg "${COPASI_UPLOAD}/COPASI-${targetVersion}-${COPASI_PACKAGE}.dmg"
+  ${COPASI_SCP} "${BUILD_ROOT}"/copasi/CopasiSE/CopasiSE "${COPASI_UPLOAD}/AllSE/Darwin/CopasiSE-${targetVersion}"
   ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-Java-Bindings-${COPASI_PACKAGE}.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Java-Bindings-${COPASI_PACKAGE}.tar.gz"
   ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-C#-Bindings-${COPASI_PACKAGE}.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-C#-Bindings-${COPASI_PACKAGE}.tar.gz"
   # ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-Python-2.7-Bindings-${COPASI_PACKAGE}.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Python-2.7-${COPASI_PACKAGE}.tar.gz"
 fi
-

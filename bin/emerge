@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# script for setting up environment from scratch
+
+brew install qt5 
+brew install mono-mdk
+brew install openjdk
+brew install swig@3
+brew install astyle
+brew install wget
+brew install gawk
+brew install ninja
+brew install bash
+brew install coreutils
+
+if [ _${BUILD_SYSTEM} != _"$(dirname "$(dirname "$(greadlink -f "$0")")")" ] ; then
+  . "$(dirname "$(dirname "$(greadlink -f "$0")")")"/.variables
+fi
+
+pushd "${BUILD_SYSTEM}"
+
+[ -e "git" ] || mkdir -p "git"
+[ -e "git/COPASI.release" ] || git clone git@copasi.github.com:copasi/COPASI "git/COPASI.release"
+[ -e "git/copasi-dependencies" ] || git clone git@copasi-dependencies.github.com:copasi/copasi-dependencies "git/copasi-dependencies"
+
+[ -e "${BUILD_DIR}" ] || mkdir -p "${BUILD_DIR}"
+[ -e "${BUILD_DIR}.debug" ] || mkdir -p "${BUILD_DIR}.debug"
+
+[ -e "local" ] || mkdir -p "local"
+[ -e "local.debug" ] || mkdir -p "local.debug"
+
+[ -e "log" ] || mkdir -p "log"
+[ -e "log.debug" ] || mkdir -p "log.debug"
+
+[ -e MacOSX10.13.sdk ] || tar -xvf src/MacOSX10.13.sdk.tar.xz
+
+(cd "git/COPASI.release"; git config --local user.name copasi; git config --local user.email git@copasi.org)
+
+popd

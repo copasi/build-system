@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-if [ _${BUILD_SYSTEM} != _"$(dirname "$(dirname "$(readlink -f "$0")")")" ] ; then
-  . "$(dirname "$(dirname "$(readlink -f "$0")")")"/.variables
+if [ _${BUILD_SYSTEM} != _"$(dirname "$(dirname "$(greadlink -f "$0")")")" ] ; then
+  . "$(dirname "$(dirname "$(greadlink -f "$0")")")"/.variables
 fi
 
 clean=false
@@ -25,27 +25,30 @@ echo ${LOG_DIR}/install-dependencies
 [ -f ${LOG_DIR}/install-dependencies ] && rm ${LOG_DIR}/install-dependencies
 
 export BUILD_DIR="${BUILD_DIR}/copasi-dependencies"
-[ -e "${BUILD_DIR}" ] || mkdir --parent "${BUILD_DIR}"
+[ -e "${BUILD_DIR}" ] || mkdir -p "${BUILD_DIR}"
 
 cd ${BUILD_DIR}
 
 if [ ${configure} = true -o ! -e CMakeCache.txt ]; then
     rm -rf * .cmake
+
     echo cmake -DBUILD_clapack=OFF \
           -DBUILD_zlib=OFF \
           -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
           -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
           ${BUILD_SYSTEM}/git/copasi-dependencies
 
-    cmake -DBUILD_clapack=OFF \
-          -DBUILD_zlib=OFF \
+    cmake -G Ninja \
+          -DBUILD_clapack=OFF \
+          -DBUILD_qwtplot3d=off \
           -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
           -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+          -DSELECT_QT=${SELECT_QT} \
           ${BUILD_SYSTEM}/git/copasi-dependencies 2>&1 | tee "${LOG_DIR}/install-dependencies"
 fi
 
 if [ ${clean} = true ]; then
-    gmake clean
+    ninja clean
 fi
 
-gmake -j4 2>&1 | tee "${LOG_DIR}/install-dependencies"
+ninja 2>&1 | tee "${LOG_DIR}/install-dependencies"

@@ -8,3 +8,4 @@ log.debug/*
 packages/*
 .vscode/*
 .status.*
+MacOSX10.13.sdk/*
