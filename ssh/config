@@ -1,0 +1,50 @@
+Host copasi.github.com
+  Hostname github.com
+  IdentityFile ~/.ssh/copasi.github.com
+
+Host copasi-dependencies.github.com
+  Hostname github.com
+  IdentityFile ~/.ssh/copasi-dependencies.github.com
+
+Host build-system.github.com
+  Hostname github.com
+  IdentityFile ~/.ssh/build-system.github.com
+
+Host tracker.copasi.org
+  User copasi
+
+Host tracker
+  Hostname tracker.copasi.org
+
+Host darwin
+  Hostname localhost
+  User copasi
+  Port 30100
+  ProxyCommand ssh -W '%h:%p' tracker
+
+Host darwin-m1
+  HostName 129.206.253.88
+  User copasi
+
+Host deploy
+  HostName jsh012.accslopeside.com
+  Port 22012
+  User copasi
+
+Host windows
+  Hostname jsh012.accslopeside.com
+  User copasi
+  Port 33101
+  IdentityFile ~/.ssh/deploy
+
+Host linux-32
+  HostName localhost
+  User copasi
+  Port 33102
+  ProxyCommand ssh -W '%h:%p' deploy
+
+Host linux-64
+  HostName localhost
+  User copasi
+  Port 33103
+  ProxyCommand ssh -W '%h:%p' deploy
