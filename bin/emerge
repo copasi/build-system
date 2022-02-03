@@ -17,10 +17,10 @@ if [ _${BUILD_SYSTEM} != _"$(dirname "$(dirname "$(greadlink -f "$0")")")" ] ; t
 fi
 
 pushd "${BUILD_SYSTEM}"
+[ -e "git/COPASI.release" ] || git clone git@github.com:copasi/COPASI.git "git/COPASI.release"
+[ -e "git/copasi-dependencies" ] || git clone git@github.com:copasi/copasi-dependencies.git "git/copasi-dependencies"
 
 [ -e "git" ] || mkdir -p "git"
-[ -e "git/COPASI.release" ] || git clone git@copasi.github.com:copasi/COPASI "git/COPASI.release"
-[ -e "git/copasi-dependencies" ] || git clone git@copasi-dependencies.github.com:copasi/copasi-dependencies "git/copasi-dependencies"
 
 [ -e "${BUILD_DIR}" ] || mkdir -p "${BUILD_DIR}"
 [ -e "${BUILD_DIR}.debug" ] || mkdir -p "${BUILD_DIR}.debug"
@@ -32,7 +32,5 @@ pushd "${BUILD_SYSTEM}"
 [ -e "log.debug" ] || mkdir -p "log.debug"
 
 [ -e MacOSX10.13.sdk ] || tar -xvf src/MacOSX10.13.sdk.tar.xz
-
-(cd "git/COPASI.release"; git config --local user.name copasi; git config --local user.email git@copasi.org)
 
 popd
