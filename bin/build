@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 
-BUILDROOT=$(dirname "$(readlink -f "$0")")
+. "$(dirname "$(readlink -f "$0")")"/functions
+pushd "${BUILD_ROOT}"
 
-pushd "${BUILDROOT}"
-
-rebuild=${clean:=false}
+rebuild=${clean:-false}
 
 while [ _"$1" != _ ]; do
   case $1 in
@@ -20,28 +19,28 @@ while [ _"$1" != _ ]; do
   shift
 done
 
-toBeBuild=${toBeBuild:="."}
+toBeBuild=${toBeBuild:-"."}
 
 function buildOne () {
-  export BUILD_DIR="${BUILD_DIR}/COPASI.${DIR_SUFFIX}"
+  . .variables
 
-  if [ ${rebuild} = true ] || [ ! -e "${BUILD_DIR}" ] || [ ! -e "${BUILD_DIR}/CMakeCache.txt" ]; then
-    [ -e "${BUILD_DIR}" ] && rm -rf "${BUILD_DIR}"
-      
-    options="-DENABLE_JAVA=ON -DENABLE_CSHARP=ON -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DSELECT_QT=${SELECT_QT}"
+  pushd ${BUILD_DIR}
+  [ -e COPASI.${DIR_SUFFIX} ] || mkdir COPASI.${DIR_SUFFIX}
+  cd COPASI.${DIR_SUFFIX}
+
+  if [ ${rebuild} = true ] || [ ! -e "CMakeCache.txt" ]; then
+    rm -rf * .cmake
     
-    [ -e "${BUILD_DIR}" ] || mkdir -p "${BUILD_DIR}"
-    
-    pushd "${BUILD_DIR}"
-    echo cmake ${COPASI_CMAKE_OPTIONS} ${options} "${COPASI_SOURCES}"
-    cmake ${COPASI_CMAKE_OPTIONS} ${options} "${COPASI_SOURCES}"
-    popd
+    [ -z "${COMMON_CMAKE_OPTIONS}" ] || common_cmake_options="$(echo ${COMMON_CMAKE_OPTIONS} | sed -e 's/;/ /g')"
+    [ -z "${COPASI_CMAKE_OPTIONS}" ] || copasi_cmake_options="$(echo ${COPASI_CMAKE_OPTIONS} | sed -e 's/;/ /g')"
+
+    echo cmake ${common_cmake_options} ${copasi_cmake_options} "$(convertPath "${COPASI_SOURCES}")"
+    cmake ${common_cmake_options} ${copasi_cmake_options} "$(convertPath "${COPASI_SOURCES}")"
   else
     touch "${COPASI_SOURCES}/CMakeLists.txt"
   fi
   
-  pushd "${BUILD_DIR}"
-  make -j 3
+  ninja
   popd
 }
 

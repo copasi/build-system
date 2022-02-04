@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
-if [ _${BUILD_SYSTEM} != _"$(dirname "$(dirname "$(readlink -f "$0")")")" ] ; then
-  . "$(dirname "$(dirname "$(readlink -f "$0")")")"/.variables
-fi
+. "$(dirname "$(readlink -f "$0")")"/functions
+pushd "${BUILD_ROOT}"
 
 clean=false
 configure=false
@@ -12,43 +11,52 @@ while [ _"$1" != _ ]; do
   --clean)
     clean=true
     ;;
-  
+
   --configure)
     configure=true
     ;;
   esac
- 
+
   shift
 done
 
-echo ${LOG_DIR}/install-dependencies
-[ -f ${LOG_DIR}/install-dependencies ] && rm ${LOG_DIR}/install-dependencies
+function buildOne() {
+  . variables
 
-export BUILD_DIR="${BUILD_DIR}/copasi-dependencies"
-[ -e "${BUILD_DIR}" ] || mkdir --parent "${BUILD_DIR}"
+  pushd ${BUILD_DIR}
+  [ -e copasi-dependencies ] || mkdir copasi-dependencies
+  cd copasi-dependencies
 
-cd ${BUILD_DIR}
-
-if [ ${configure} = true -o ! -e CMakeCache.txt ]; then
+  if [ ${configure} = true -o ! -e CMakeCache.txt ]; then
     rm -rf * .cmake
-    
-    echo cmake -G Ninja \
-          -DBUILD_clapack=OFF \
-          -DCMAKE_INSTALL_PREFIX="$(cygpath -w ${INSTALL_DIR})" \
-          -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
-          -DCOMMON_CMAKE_OPTIONS=${COPASI_CMAKE_OPTIONS} \
-          "$(cygpath -w ${BUILD_SYSTEM}/git/copasi-dependencies)"
 
-    cmake -G Ninja \
-          -DBUILD_clapack=OFF \
-          -DCMAKE_INSTALL_PREFIX="$(cygpath -w ${INSTALL_DIR})" \
-          -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
-          -DCOMMON_CMAKE_OPTIONS=${COPASI_CMAKE_OPTIONS} \
-          "$(cygpath -w ${BUILD_SYSTEM}/git/copasi-dependencies)" 2>&1 | tee "${LOG_DIR}/install-dependencies"
-fi
+    [ -z "${COMMON_CMAKE_OPTIONS}" ] || common_cmake_options="$(echo ${COMMON_CMAKE_OPTIONS} | sed -e 's/;/ /g')"
+    [ -z "${DEPENDENCIES_CMAKE_OPTIONS}" ] || dependencies_cmake_options="$(echo ${DEPENDENCIES_CMAKE_OPTIONS} | sed -e 's/;/ /g')"
 
-if [ ${clean} = true ]; then
+    echo cmake ${common_cmake_options} ${dependencies_cmake_options} "$(convertPath ${BUILD_ROOT}/git/copasi-dependencies)"
+    cmake ${common_cmake_options} ${dependencies_cmake_options} "$(convertPath ${BUILD_ROOT}/git/copasi-dependencies)"
+  else
+    touch "${BUILD_ROOT}/git/copasi-dependencies/CMakeLists.txt"
+  fi
+
+  if [ ${clean} = true ]; then
     ninja clean
-fi
+  fi
 
-ninja  2>&1 | tee "${LOG_DIR}/install-dependencies"
+  ninja
+
+  popd
+}
+
+for b in ${toBeBuild:-.}; do
+  if [ _$1 != _. -a _$1 != _ ]; then
+    pushd $1
+    LOG_SUFFIX=".$1"
+  else
+    LOG_SUFFIX=""
+  fi
+
+  buildOne $b 2>&1 | tee "${LOG_DIR}/dependencies${LOG_SUFFIX}.${DIR_SUFFIX}"
+
+  [ _$1 != _. -a _$1 != _ ] && popd $1
+done
