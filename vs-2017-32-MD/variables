@@ -1,0 +1,75 @@
+export ENVIRONMENT="$(cygpath -w "$(dirname "$(readlink -f "$(pwd)/$BASH_SOURCE")")")"
+
+export CommandPromptType='Native'
+export DevEnvDir='C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\'
+export ExtensionSdkDir='C:\Program Files (x86)\Microsoft SDKs\Windows Kits\10\ExtensionSDKs'
+export Framework40Version='v4.0'
+export FrameworkDir='C:\Windows\Microsoft.NET\Framework\'
+export FrameworkDIR32='C:\Windows\Microsoft.NET\Framework\'
+export FrameworkVersion='v4.0.30319'
+export FrameworkVersion32='v4.0.30319'
+export NETFXSDKDir='C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\'
+export Platform='x86'
+export UCRTVersion='10.0.16299.0'
+export UniversalCRTSdkDir='C:\Program Files (x86)\Windows Kits\10\'
+export VCIDEInstallDir='C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\'
+export VCINSTALLDIR='C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\'
+export VCToolsInstallDir='C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.12.25827\'
+export VCToolsRedistDir='C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Redist\MSVC\14.12.25810\'
+export VCToolsVersion='14.12.25827'
+export VisualStudioVersion='15.0'
+export VS150COMNTOOLS='C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools\'
+export VSCMD_ARG_app_plat='Desktop'
+export VSCMD_ARG_HOST_ARCH='x86'
+export VSCMD_ARG_TGT_ARCH='x86'
+export VSCMD_VER='15.5.4'
+export VSINSTALLDIR='C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\'
+export WindowsLibPath='C:\Program Files (x86)\Windows Kits\10\UnionMetadata\10.0.16299.0;C:\Program Files (x86)\Windows Kits\10\References\10.0.16299.0'
+export WindowsSdkBinPath='C:\Program Files (x86)\Windows Kits\10\bin\'
+export WindowsSdkDir='C:\Program Files (x86)\Windows Kits\10\'
+export WindowsSDKLibVersion='10.0.16299.0\'
+export WindowsSdkVerBinPath='C:\Program Files (x86)\Windows Kits\10\bin\10.0.16299.0\'
+export WindowsSDKVersion='10.0.16299.0\'
+export WindowsSDK_ExecutablePath_x64='C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.6.1 Tools\x64\'
+export WindowsSDK_ExecutablePath_x86='C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.6.1 Tools\'
+export __DOTNET_ADD_32BIT='1'
+export __DOTNET_PREFERRED_BITNESS='32'
+export __VSCMD_PREINIT_INCLUDE='C:\Program Files (x86)\Intel\Trace Analyzer and Collector\8.1.4.045\include'
+export __VSCMD_PREINIT_PATH='C:\cygwin\bin;C:\Program Files (x86)\Intel\MPI\4.1.3.045\em64t\bin;C:\Program Files (x86)\Intel\MPI\4.1.3.045\ia32\bin;C:\Program Files (x86)\Common Files\Intel\Shared Libraries\redist\intel64\mpirt;C:\Program Files (x86)\Common Files\Intel\Shared Libraries\redist\ia32\mpirt;C:\Program Files (x86)\Common Files\Intel\Shared Libraries\redist\intel64\compiler;C:\Program Files (x86)\Common Files\Intel\Shared Libraries\redist\ia32\compiler;C:\Program Files (x86)\Intel\Trace Analyzer and Collector\8.1.4.045\bin;C:\Program Files (x86)\Intel\ics\2013.1.046\bin;C:\Perl64\site\bin;C:\Perl64\bin;C:\Program Files\copasi.org\COPASI 4.16.103\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0;C:\Program Files (x86)\Microsoft SQL Server\100\Tools\Binn;C:\Program Files\Microsoft SQL Server\100\Tools\Binn;C:\Program Files\Microsoft SQL Server\100\DTS\Binn;%USERPROFILE%\.dnx\bin;C:\Program Files\Microsoft DNX\Dnvm;C:\Program Files\Microsoft SQL Server\130\Tools\Binn;C:\Program Files\CMake\bin'
+
+export include='C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.12.25827\ATLMFC\include;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.12.25827\include;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um;C:\Program Files (x86)\Windows Kits\10\include\10.0.16299.0\ucrt;C:\Program Files (x86)\Windows Kits\10\include\10.0.16299.0\shared;C:\Program Files (x86)\Windows Kits\10\include\10.0.16299.0\um;C:\Program Files (x86)\Windows Kits\10\include\10.0.16299.0\winrt;C:\Program Files (x86)\Intel\Trace Analyzer and Collector\8.1.4.045\include'
+
+export LIB='C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.12.25827\ATLMFC\lib\x86;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.12.25827\lib\x86;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\lib\um\x86;C:\Program Files (x86)\Windows Kits\10\lib\10.0.16299.0\ucrt\x86;C:\Program Files (x86)\Windows Kits\10\lib\10.0.16299.0\um\x86;'
+
+export LIBPATH='C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.12.25827\ATLMFC\lib\x86;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.12.25827\lib\x86;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.12.25827\lib\x86\store\references;C:\Program Files (x86)\Windows Kits\10\UnionMetadata\10.0.16299.0;C:\Program Files (x86)\Windows Kits\10\References\10.0.16299.0;C:\Windows\Microsoft.NET\Framework\v4.0.30319;'
+
+export PATH="/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.12.25827/bin/HostX86/x86:/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2017/Community/Common7/IDE/VC/VCPackages:/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2017/Community/Common7/IDE/CommonExtensions/Microsoft/TestWindow:/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2017/Community/Common7/IDE/CommonExtensions/Microsoft/TeamFoundation/Team Explorer:/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2017/Community/MSBuild/15.0/bin/Roslyn:/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2017/Community/Team Tools/Performance Tools:/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/Shared/Common/VSPerfCollectionTools/:/cygdrive/c/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.6.1 Tools/:/cygdrive/c/Program Files (x86)/Windows Kits/10/bin/x86:/cygdrive/c/Program Files (x86)/Windows Kits/10/bin/10.0.16299.0/x86:/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2017/Community//MSBuild/15.0/bin:/cygdrive/c/Windows/Microsoft.NET/Framework/v4.0.30319:/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2017/Community/Common7/IDE/:/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2017/Community/Common7/Tools/:/cygdrive/c/cygwin/bin:/cygdrive/c/Program Files (x86)/Intel/MPI/4.1.3.045/em64t/bin:/cygdrive/c/Program Files (x86)/Intel/MPI/4.1.3.045/ia32/bin:/cygdrive/c/Program Files (x86)/Common Files/Intel/Shared Libraries/redist/intel64/mpirt:/cygdrive/c/Program Files (x86)/Common Files/Intel/Shared Libraries/redist/ia32/mpirt:/cygdrive/c/Program Files (x86)/Common Files/Intel/Shared Libraries/redist/intel64/compiler:/cygdrive/c/Program Files (x86)/Common Files/Intel/Shared Libraries/redist/ia32/compiler:/cygdrive/c/Program Files (x86)/Intel/Trace Analyzer and Collector/8.1.4.045/bin:/cygdrive/c/Program Files (x86)/Intel/ics/2013.1.046/bin:/cygdrive/c/Perl64/site/bin:/cygdrive/c/Perl64/bin:/cygdrive/c/Program Files/copasi.org/COPASI 4.16.103/bin:/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/Wbem:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0:/cygdrive/c/Program Files (x86)/Microsoft SQL Server/100/Tools/Binn:/cygdrive/c/Program Files/Microsoft SQL Server/100/Tools/Binn:/cygdrive/c/Program Files/Microsoft SQL Server/100/DTS/Binn:$(cygpath $USERPROFILE)/.dnx/bin:/cygdrive/c/Program Files/Microsoft DNX/Dnvm:/cygdrive/c/Program Files/Microsoft SQL Server/130/Tools/Binn:/cygdrive/c/Program Files/CMake/bin:/usr/local/bin:/usr/bin:"
+
+export BUILD_TOOL="jom -j 4"
+
+export INSTALL_DIR=${ENVIRONMENT}
+
+export BUILD_DIR=${ENVIRONMENT}'\build'
+[ -e "$(cygpath ${BUILD_DIR})" ] || mkdir -p "$(cygpath ${BUILD_DIR})"
+
+export SELECT_QT='Qt5'
+export QTDIR='C:\Qt\5.9.5\msvc2015'
+export PATH="$(cygpath ${QTDIR}/bin):${PATH}"
+
+export MKLROOT='C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\mkl'
+export COMBINE_DIR="${INSTALL_DIR}"
+export CROSSGUID_DIR="${INSTALL_DIR}"
+export EXPAT_DIR="${INSTALL_DIR}"
+export LIBSBML_DIR="${INSTALL_DIR}"
+export LIBSEDML_DIR="${INSTALL_DIR}"
+export MML_DIR="${INSTALL_DIR}"
+export QWT_DIR="${INSTALL_DIR}"
+export QWTPLOT3D_DIR="${INSTALL_DIR}"
+export RAPTOR_DIR="${INSTALL_DIR}"
+export SBW_DIR="${INSTALL_DIR}"
+
+export SWIG_EXECUTABLE="C:/cygwin/home/copasi/environment/swigwin-3.0.12/swig.exe"
+export JAVA_HOME="C:/Program Files (x86)/Java/jdk1.7.0_75"
+export PYTHON_EXECUTABLE="C:/Program Files (x86)/Python-2.7/python.exe"
+
+export CMAKE_OVERRIDES="-DCMAKE_BUILD_TYPE=Release -DWITH_STATIC_RUNTIME=OFF"

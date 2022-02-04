@@ -31,21 +31,24 @@ cd ${BUILD_DIR}
 
 if [ ${configure} = true -o ! -e CMakeCache.txt ]; then
     rm -rf * .cmake
-    echo cmake -DBUILD_clapack=OFF \
-          -DBUILD_zlib=OFF \
-          -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
+    
+    echo cmake -G Ninja \
+          -DBUILD_clapack=OFF \
+          -DCMAKE_INSTALL_PREFIX="$(cygpath -w ${INSTALL_DIR})" \
           -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
-          ${BUILD_SYSTEM}/git/copasi-dependencies
+          -DCOMMON_CMAKE_OPTIONS=${COPASI_CMAKE_OPTIONS} \
+          "$(cygpath -w ${BUILD_SYSTEM}/git/copasi-dependencies)"
 
-    cmake -DBUILD_clapack=OFF \
-          -DBUILD_zlib=OFF \
-          -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
+    cmake -G Ninja \
+          -DBUILD_clapack=OFF \
+          -DCMAKE_INSTALL_PREFIX="$(cygpath -w ${INSTALL_DIR})" \
           -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
-          ${BUILD_SYSTEM}/git/copasi-dependencies 2>&1 | tee "${LOG_DIR}/install-dependencies"
+          -DCOMMON_CMAKE_OPTIONS=${COPASI_CMAKE_OPTIONS} \
+          "$(cygpath -w ${BUILD_SYSTEM}/git/copasi-dependencies)" 2>&1 | tee "${LOG_DIR}/install-dependencies"
 fi
 
 if [ ${clean} = true ]; then
-    gmake clean
+    ninja clean
 fi
 
-gmake -j4 2>&1 | tee "${LOG_DIR}/install-dependencies"
+ninja  2>&1 | tee "${LOG_DIR}/install-dependencies"
