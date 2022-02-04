@@ -15,14 +15,16 @@ while [ _"$1" != _ ]; do
   --configure)
     configure=true
     ;;
+
+  *)
+    ToBeBuild="${ToBeBuild} $1"
+    ;;
   esac
 
   shift
 done
 
 function buildOne() {
-  . variables
-
   pushd ${BUILD_DIR}
   [ -e copasi-dependencies ] || mkdir copasi-dependencies
   cd copasi-dependencies
@@ -33,10 +35,14 @@ function buildOne() {
     [ -z "${COMMON_CMAKE_OPTIONS}" ] || common_cmake_options="$(echo ${COMMON_CMAKE_OPTIONS} | sed -e 's/;/ /g')"
     [ -z "${DEPENDENCIES_CMAKE_OPTIONS}" ] || dependencies_cmake_options="$(echo ${DEPENDENCIES_CMAKE_OPTIONS} | sed -e 's/;/ /g')"
 
-    echo cmake ${common_cmake_options} ${dependencies_cmake_options} "$(convertPath ${BUILD_ROOT}/git/copasi-dependencies)"
-    cmake ${common_cmake_options} ${dependencies_cmake_options} "$(convertPath ${BUILD_ROOT}/git/copasi-dependencies)"
-  else
-    touch "${BUILD_ROOT}/git/copasi-dependencies/CMakeLists.txt"
+    echo cmake ${common_cmake_options} \
+         ${dependencies_cmake_options} \
+         -DCOMMON_CMAKE_OPTIONS="${COMMON_CMAKE_OPTIONS}" \
+         "$(convertPath ${BUILD_ROOT}/git/copasi-dependencies)"
+    cmake ${common_cmake_options} \
+         ${dependencies_cmake_options} \
+         -DCOMMON_CMAKE_OPTIONS="${COMMON_CMAKE_OPTIONS}" \
+         "$(convertPath ${BUILD_ROOT}/git/copasi-dependencies)"
   fi
 
   if [ ${clean} = true ]; then
@@ -48,15 +54,18 @@ function buildOne() {
   popd
 }
 
-for b in ${toBeBuild:-.}; do
-  if [ _$1 != _. -a _$1 != _ ]; then
-    pushd $1
-    LOG_SUFFIX=".$1"
+for b in ${ToBeBuild:-${toBeBuild:-.}}; do
+  if [ _$b != _. ]; then
+    pushd $b
+    . .variables
+    LOG_SUFFIX=".$b"
   else
+    . .variables
     LOG_SUFFIX=""
   fi
 
-  buildOne $b 2>&1 | tee "${LOG_DIR}/dependencies${LOG_SUFFIX}.${DIR_SUFFIX}"
+  echo buildOne $b
+  buildOne $b 2>&1 | tee "${LOG_DIR}/dependencies${LOG_SUFFIX}"
 
-  [ _$1 != _. -a _$1 != _ ] && popd $1
+  [ _$b != _. ] && popd
 done

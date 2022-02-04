@@ -12,17 +12,21 @@ function isDarwin() {
 }
 
 function convertPath() {
-  isCygwin \
-    && cygpath -w "$1" \
-    || echo "$1" 
+  if isCygwin; then
+    cygpath -w "$1"
+  else    
+    echo "$1"
+  fi
 }
 
 function create() {
-  isCygwin \
-    && cmd="${COPASI_SOURCES}/InnoSetup/create.sh" \
-    || isDarwin \
-      && cmd="${COPASI_SOURCES}/PackageMaker/create.sh" \
-      || cmd="${COPASI_SOURCES}/LinuxTGZ/create.sh"
+  if isCygwin; then
+    cmd="${COPASI_SOURCES}/InnoSetup/create.sh"
+  elif isDarwin; then
+    cmd="${COPASI_SOURCES}/PackageMaker/create.sh"
+  else    
+    cmd="${COPASI_SOURCES}/LinuxTGZ/create.sh"
+  fi
 
   echo ${cmd} $1 
   ${cmd} $1 
@@ -45,8 +49,10 @@ function version() {
   export targetVersion
 }
 
-isCygwin \
-  && . ${BUILD_ROOT}/bin/functions.windows \
-  || isDarwin \
-    && . ${BUILD_ROOT}/bin/functions.darwin \
-    || . ${BUILD_ROOT}/bin/functions.linux
+if isCygwin; then
+  . ${BUILD_ROOT}/bin/functions.windows
+elif isDarwin; then
+  . ${BUILD_ROOT}/bin/functions.darwin
+else    
+  . ${BUILD_ROOT}/bin/functions.linux
+fi

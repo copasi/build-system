@@ -19,11 +19,7 @@ while [ _"$1" != _ ]; do
   shift
 done
 
-toBeBuild=${toBeBuild:-"."}
-
 function buildOne () {
-  . .variables
-
   pushd ${BUILD_DIR}
   [ -e COPASI.${DIR_SUFFIX} ] || mkdir COPASI.${DIR_SUFFIX}
   cd COPASI.${DIR_SUFFIX}
@@ -44,17 +40,20 @@ function buildOne () {
   popd
 }
 
-for b in ${toBeBuild}; do
-  if [ _$1 != _. -a _$1 != _ ]; then
-    pushd $1
-    LOG_SUFFIX=".$1"
+for b in ${toBeBuild:-.}; do
+  if [ _$b != _. ]; then
+    pushd $b
+    . .variables
+    LOG_SUFFIX=".$b"
   else
+    . .variables
     LOG_SUFFIX=""
   fi
-  
+
+  echo buildOne $b
   buildOne $b 2>&1 | tee "${LOG_DIR}/COPASI${LOG_SUFFIX}.${DIR_SUFFIX}"
 
-  [ _$1 != _. -a _$1 != _ ] && popd $1
+  [ _$b != _. ] && popd
 done
 
 popd
