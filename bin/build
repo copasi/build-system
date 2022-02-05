@@ -12,7 +12,7 @@ while [ _"$1" != _ ]; do
     ;;
 
   *)
-    toBeBuild="${toBeBuild} $1"
+    ToBeBuild="${ToBeBuild} $1"
     ;;
   esac
  
@@ -40,7 +40,7 @@ function buildOne () {
   popd
 }
 
-for b in ${toBeBuild:-.}; do
+for b in ${ToBeBuild:-${toBeBuild:-.}}; do
   if [ _$b != _. ]; then
     pushd $b
     . .variables
