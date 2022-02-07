@@ -1,0 +1,79 @@
+#!/usr/bin/env/bash
+
+function create() {
+  cmd="${COPASI_SOURCES}/LinuxTGZ/create.sh"
+
+  echo ${cmd} $1
+  ${cmd} $1
+}
+
+function convertPath() {
+  echo "$1"
+}
+
+function packageCOPASI() {
+  export COPASI_PACKAGE=${COPASI_PACKAGE:-"Linux-64bit"}
+
+  rm -rf "${COPASI_SETUP_DIR}"/COPASI*
+  export BINARY_DIR="${BUILD_ROOT}/build/COPASI.${DIR_SUFFIX}"
+
+  [ -d "${COPASI_SETUP_DIR}/src" ] || mkdir --parent "${COPASI_SETUP_DIR}/src"
+
+  pushd "${COPASI_SETUP_DIR}/src"
+
+  if [ -e share ]; then
+    rm -rf share/*
+  else
+    mkdir share
+  fi
+
+  [ -e share/copasi ] || mkdir share/copasi
+  [ -e share/copasi/lib ] || mkdir share/copasi/lib
+  [ -e share/copasi/lib/plugins ] || mkdir share/copasi/lib/plugins
+  [ -e share/copasi/lib/plugins/platforms ] || mkdir share/copasi/lib/plugins/platforms
+  [ -e share/copasi/lib/plugins/xcbglintegrations ] || mkdir share/copasi/lib/plugins/xcbglintegrations
+
+  . ${BUILD_ROOT}/${VARIABLES}
+  
+  ln -s "${QTDIR}/lib/libQt5DBus.so.5" share/copasi/lib
+  ln -s "${QTDIR}/lib/libQt5XcbQpa.so.5" share/copasi/lib
+  ln -s "${QTDIR}/plugins/platforms/libqxcb.so" share/copasi/lib/plugins/platforms
+  ln -s "${QTDIR}/plugins/xcbglintegrations/libqxcb-egl-integration.so" share/copasi/lib/plugins/xcbglintegrations
+  ln -s "${QTDIR}/plugins/xcbglintegrations/libqxcb-glx-integration.so" share/copasi/lib/plugins/xcbglintegrations
+
+  # Only executed for 64 bit Linux
+  if [ "${COPASI_PACKAGE}" == "Linux-64bit" ]; then
+    (
+      cd ${BINARY_DIR}
+      make package_source
+    )
+    ln -s "/usr/lib64/libssl.so.10" share/copasi/lib
+    ln -s "/usr/lib64/libpng15.so.15" share/copasi/lib
+    ln -s "/usr/lib64/libcrypto.so.10" share/copasi/lib
+    ln -s "/usr/lib64/libfreetype.so.6" share/copasi/lib
+  else
+    ln -s "/usr/lib/libssl.so.10" share/copasi/lib
+    ln -s "/usr/lib/libpng15.so.15" share/copasi/lib
+    ln -s "/usr/lib/libcrypto.so.10" share/copasi/lib
+    ln -s "/usr/lib/libfreetype.so.6" share/copasi/lib
+  fi
+  popd
+
+  create 'COPASI'
+  create 'Java-Bindings'
+  create 'C#-Bindings'
+  # create 'Python-Bindings'
+}
+
+function copyCOPASI() {
+  # Only executed for 64 bit Linux
+  if [ "${COPASI_PACKAGE}" == "Linux-64bit" ]; then
+    ${COPASI_SCP} "${BINARY_DIR}"/COPASI-${sourceVersion}-Source.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Source.tar.gz"
+  fi
+
+  ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-${COPASI_PACKAGE}.sh "${COPASI_UPLOAD}/COPASI-${targetVersion}-${COPASI_PACKAGE}.sh"
+  ${COPASI_SCP} "${BINARY_DIR}"/copasi/CopasiSE/CopasiSE "${COPASI_UPLOAD}/AllSE/Linux/CopasiSE-${targetVersion}"
+  ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-Java-Bindings-${COPASI_PACKAGE}.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Java-Bindings-${COPASI_PACKAGE}.tar.gz"
+  ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-C#-Bindings-${COPASI_PACKAGE}.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-C#-Bindings-${COPASI_PACKAGE}.tar.gz"
+  # ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-Python-2.7-Bindings-${COPASI_PACKAGE}.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Python-2.7-${COPASI_PACKAGE}.tar.gz"
+}
