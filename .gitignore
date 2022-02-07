@@ -1,5 +1,7 @@
 build/*
+*/build/*
 local/*
+*/local/*
 git/*
 log/*
 build.debug/*

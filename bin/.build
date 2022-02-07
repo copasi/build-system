@@ -1,25 +1,18 @@
 #!/usr/bin/env bash
 
-if [ _${BUILD_SYSTEM} != _"$(dirname "$(dirname "$(readlink -f "$0")")")" ] ; then
-  . "$(dirname "$(dirname "$(readlink -f "$0")")")"/.variables
-fi
+. "$(dirname "$(readlink -f "$0")")"/functions
+pushd "${BUILD_ROOT}"
 
 PROGNAME="$(basename "$0")"
 export DIR_SUFFIX="$(basename "$0")"
-pushd ${BUILD_SYSTEM}
 
 # Location of the COPASI sources
-export COPASI_COMMON_BUILD_SYSTEM="$(pwd)"
-export COPASI_SOURCES="${COPASI_COMMON_BUILD_SYSTEM}/git/COPASI.${DIR_SUFFIX}"
-export COPASI_SETUP_DIR="${COPASI_COMMON_BUILD_SYSTEM}/packages/setup.${DIR_SUFFIX}"
+export COPASI_SOURCES="${BUILD_ROOT}/git/COPASI.${DIR_SUFFIX}"
+export COPASI_SETUP_DIR="${BUILD_ROOT}/packages/setup.${DIR_SUFFIX}"
 
-echo ${COPASI_SOURCES}
 # Upload information
 export COPASI_SCP="scp"
 export COPASI_UPLOAD="deploy:environment/upload/stage"
-
-# Programs
-AWK=${COPASI_AWK:-gawk}
 
 # Defaults:
 clean=false
@@ -91,49 +84,14 @@ sed -e 's/COPASI_VERSION_COMMENT.*/COPASI_VERSION_COMMENT "'${comment}'"/' \
   copasi/CopasiVersion.h > $$ && mv $$ copasi/CopasiVersion.h
 popd
 
-build .
+build ${toBeBuild:-.}
 
 popd
 
-export COPASI_PACKAGE="Linux-32bit"
-export COPASI_CREATE="${COPASI_SOURCES}/LinuxTGZ/create.sh"
+packageCOPASI
 
-rm -rf "${COPASI_SETUP_DIR}"/COPASI*
-export BUILD_ROOT="${COPASI_COMMON_BUILD_SYSTEM}/build/COPASI.${DIR_SUFFIX}"
-
-# Only executed for 64 bit Linux
-if [ "${COPASI_PACKAGE}" == "Linux-64bit" ]; then
-  (cd ${BUILD_ROOT}; make package_source)
-fi
-
-"${COPASI_CREATE}" 'COPASI'
-"${COPASI_CREATE}" 'Java-Bindings'
-"${COPASI_CREATE}" 'C#-Bindings'
-# "${COPASI_CREATE}" 'Python-Bindings'
-
+# Upload the package if requested
 if [ "_${COPASI_SCP}" != "_" ]; then
-  major=`${AWK} -- '$2 ~ "COPASI_VERSION_MAJOR" {print $3}' "${COPASI_SOURCES}/copasi/CopasiVersion.h"`
-  minor=`${AWK} -- '$2 ~ "COPASI_VERSION_MINOR" {print $3}' "${COPASI_SOURCES}/copasi/CopasiVersion.h"`
-  build=`${AWK} -- '$2 ~ "COPASI_VERSION_BUILD" {print $3}' "${COPASI_SOURCES}/copasi/CopasiVersion.h"`
-  modified=`${AWK} -- '$2 ~ "COPASI_VERSION_MODIFIED" {print $3}' "${COPASI_SOURCES}/copasi/CopasiVersion.h"`
-  comment=`${AWK} -- '$2 ~ "COPASI_VERSION_COMMENT" {print $3}' "${COPASI_SOURCES}/copasi/CopasiVersion.h"`
-  
-  sourceVersion=${major}.${minor}.${build}
-  targetVersion=$sourceVersion
-
-  if [ $modified == true ]; then
-    targetVersion=${targetVersion}+
-  fi
-
-  # Only executed for 64 bit Linux
-  if [ "${COPASI_PACKAGE}" == "Linux-64bit" ]; then
-    ${COPASI_SCP} "${BUILD_ROOT}"/COPASI-${sourceVersion}-Source.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Source.tar.gz"
-  fi
-
-  ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-${COPASI_PACKAGE}.sh "${COPASI_UPLOAD}/COPASI-${targetVersion}-${COPASI_PACKAGE}.sh"
-  ${COPASI_SCP} "${BUILD_ROOT}"/copasi/CopasiSE/CopasiSE "${COPASI_UPLOAD}/AllSE/Linux/CopasiSE-${targetVersion}"
-  ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-Java-Bindings-${COPASI_PACKAGE}.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Java-Bindings-${COPASI_PACKAGE}.tar.gz"
-  ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-C#-Bindings-${COPASI_PACKAGE}.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-C#-Bindings-${COPASI_PACKAGE}.tar.gz"
-  # ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-Python-2.7-Bindings-${COPASI_PACKAGE}.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Python-2.7-${COPASI_PACKAGE}.tar.gz"
+  version
+  copyCOPASI
 fi
-

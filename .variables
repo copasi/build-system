@@ -1,5 +1,8 @@
-export BUILD_SYSTEM="$(dirname "$(readlink -f "$BASH_SOURCE")")"
+OLD_BUILD_SYSTEM="${BUILD_SYSTEM}"
+BUILD_SYSTEM="$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
+if [ _${OLD_BUILD_SYSTEM} != _${BUILD_SYSTEM} ]; then
+  export BUILD_SYSTEM
 export QTDIR=/usr/local/qt
 export SELECT_QT=Qt5
 export CC=gcc
@@ -11,38 +14,38 @@ export LD_LIBRARY_PATH=$($CC -print-search-dirs | \
                          awk -- '{print $2}')
 
 export PATH=/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:${QTDIR}/bin:${BUILD_SYSTEM}/bin
-export BUILD_TYPE=${BUILD_TYPE:-Release}
 
-if [ ${BUILD_TYPE} == Release ]; then
-  export INSTALL_DIR=${BUILD_SYSTEM}/local
-  [ -e "${INSTALL_DIR}" ] || mkdir --parent "${INSTALL_DIR}"
+  export BUILD_TYPE=${BUILD_TYPE:-Release}
 
-  export BUILD_DIR=${BUILD_SYSTEM}/build
-  [ -e "${BUILD_DIR}" ] || mkdir --parent "${BUILD_DIR}"
+  if [ ${BUILD_TYPE} == Release ]; then
+    export INSTALL_DIR=${BUILD_SYSTEM}/local
+    export BUILD_DIR=${BUILD_SYSTEM}/build
+    export LOG_DIR=${BUILD_SYSTEM}/log
+  else
+    export INSTALL_DIR=${BUILD_SYSTEM}/local.debug
+    export BUILD_DIR=${BUILD_SYSTEM}/build.debug
+    export LOG_DIR=${BUILD_SYSTEM}/log.debug
+  fi
 
-  export LOG_DIR=${BUILD_SYSTEM}/log
-  [ -e "${LOG_DIR}" ] || mkdir --parent "${LOG_DIR}"
-else
-  export INSTALL_DIR=${BUILD_SYSTEM}/local.debug
-  [ -e "${INSTALL_DIR}" ] || mkdir --parent "${INSTALL_DIR}"
+  export SWIG_EXECUTABLE="C:/cygwin/home/copasi/environment/swigwin-3.0.12/swig.exe"
+  export JAVA_HOME="C:/Program Files/Java/jdk1.7.0_75"
+  export PYTHON_EXECUTABLE="C:/Program Files/Python-2.7/python.exe"
 
-  export BUILD_DIR=${BUILD_SYSTEM}/build.debug
-  [ -e "${BUILD_DIR}" ] || mkdir --parent "${BUILD_DIR}"
+  export COMBINE_DIR="${INSTALL_DIR}"
+  export CROSSGUID_DIR="${INSTALL_DIR}"
+  export EXPAT_DIR="${INSTALL_DIR}"
+  export LIBSBML_DIR="${INSTALL_DIR}"
+  export LIBSEDML_DIR="${INSTALL_DIR}"
+  export MML_DIR="${INSTALL_DIR}"
+  export QWT_DIR="${INSTALL_DIR}"
+  export QWTPLOT3D_DIR="${INSTALL_DIR}"
+  export RAPTOR_DIR="${INSTALL_DIR}"
+  export SBW_DIR="${INSTALL_DIR}"
+  export NATIVEJIT_DIR="${INSTALL_DIR}"
+  export CPUFEATURES_DIR="${INSTALL_DIR}"
 
-  export LOG_DIR=${BUILD_SYSTEM}/log.debug
-  [ -e "${LOG_DIR}" ] || mkdir --parent "${LOG_DIR}"
+  COPASI_CMAKE_OPTIONS="-DCMAKE_BUILD_TYPE=${BUILD_TYPE}"
+  COPASI_CMAKE_OPTIONS="${COPASI_CMAKE_OPTIONS};-DWITH_STATIC_RUNTIME=OFF"
+  COPASI_CMAKE_OPTIONS="${COPASI_CMAKE_OPTIONS};-DENABLE_JIT=ON"
+  export COPASI_CMAKE_OPTIONS
 fi
-
-export COMBINE_DIR="${INSTALL_DIR}"
-export CROSSGUID_DIR="${INSTALL_DIR}"
-export EXPAT_DIR="${INSTALL_DIR}"
-export LIBSBML_DIR="${INSTALL_DIR}"
-export LIBSEDML_DIR="${INSTALL_DIR}"
-export MML_DIR="${INSTALL_DIR}"
-export QWT_DIR="${INSTALL_DIR}"
-export QWTPLOT3D_DIR="${INSTALL_DIR}"
-export RAPTOR_DIR="${INSTALL_DIR}"
-export SBW_DIR="${INSTALL_DIR}"
-export NATIVEJIT_DIR="${INSTALL_DIR}"
-export CPUFEATURES_DIR="${INSTALL_DIR}"
-
