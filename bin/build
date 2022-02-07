@@ -35,8 +35,10 @@ function buildOne () {
   else
     touch "${COPASI_SOURCES}/CMakeLists.txt"
   fi
-  
-  "${BUILD_TOOL}"
+
+  echo ${BUILD_TOOL}
+  ${BUILD_TOOL}
+
   popd
 }
 

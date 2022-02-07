@@ -45,8 +45,8 @@ function buildOne() {
          "$(convertPath ${BUILD_ROOT}/git/copasi-dependencies)"
   fi
 
-  echo "${BUILD_TOOL}"
-  "${BUILD_TOOL}"
+  echo ${BUILD_TOOL}
+  ${BUILD_TOOL}
 
   popd
 }
