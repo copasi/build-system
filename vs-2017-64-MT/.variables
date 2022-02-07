@@ -5,7 +5,9 @@ BUILD_SYSTEM="$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
 if [ _${OLD_BUILD_SYSTEM} != _${BUILD_SYSTEM} ]; then
   export BUILD_SYSTEM
-  . ${BUILD_ROOT}/variables.64
+  . ${BUILD_ROOT}/variables.windows.64
+
+  export BUILD_TOOL=ninja
 
   COMMON_CMAKE_OPTIONS="-G;Ninja"
   COMMON_CMAKE_OPTIONS="$COMMON_CMAKE_OPTIONS;-DCMAKE_BUILD_TYPE=${BUILD_TYPE:-Release}"

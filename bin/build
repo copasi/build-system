@@ -27,8 +27,6 @@ function buildOne () {
   if [ ${rebuild} = true ] || [ ! -e "CMakeCache.txt" ]; then
     rm -rf * .cmake
       
-    options="-DENABLE_JAVA=ON -DENABLE_CSHARP=ON -DENABLE_JIT=OFF -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DSELECT_QT=${SELECT_QT}"
-    
     [ -z "${COMMON_CMAKE_OPTIONS}" ] || common_cmake_options="$(echo ${COMMON_CMAKE_OPTIONS} | sed -e 's/;/ /g')"
     [ -z "${COPASI_CMAKE_OPTIONS}" ] || copasi_cmake_options="$(echo ${COPASI_CMAKE_OPTIONS} | sed -e 's/;/ /g')"
 
@@ -38,17 +36,17 @@ function buildOne () {
     touch "${COPASI_SOURCES}/CMakeLists.txt"
   fi
   
-  ninja
+  "${BUILD_TOOL}"
   popd
 }
 
 for b in ${ToBeBuild:-${toBeBuild:-.}}; do
   if [ _$b != _. ]; then
     pushd $b
-    . .variables
+    . "${VARIABLES}"
     LOG_SUFFIX=".$b"
   else
-    . .variables
+    . "${VARIABLES}"
     LOG_SUFFIX=""
   fi
 

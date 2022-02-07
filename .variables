@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 OLD_BUILD_SYSTEM="${BUILD_SYSTEM}"
 BUILD_SYSTEM="$(dirname "$(readlink -f "$BASH_SOURCE")")"
 

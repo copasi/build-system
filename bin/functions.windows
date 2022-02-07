@@ -2,6 +2,17 @@
 
 export toBeBuild="${toBeBuild:-"vs-2017-32-MD vs-2017-32-MT vs-2017-64-MD vs-2017-64-MT"}"
 
+function create() {
+  cmd="${COPASI_SOURCES}/InnoSetup/create.sh"
+
+  echo ${cmd} $1 
+  ${cmd} $1 
+}
+
+function convertPath() {
+  cygpath -w "$1"
+}
+
 function packageCOPASI() {
   export COPASI_PACKAGE="Windows"
 

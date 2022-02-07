@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 export BUILD_ROOT="$(dirname "$(dirname "$(readlink -f "$BASH_SOURCE")")")"
-export AWK=${expo:-gawk}
+export AWK="${COPASI_AWK:-gawk}"
+export VARIABLES="${VARIABLES:-.variables}"
 
 function isCygwin() {
   uname -a | grep -qi cygwin
@@ -49,7 +50,9 @@ function version() {
   export targetVersion
 }
 
-if isCygwin; then
+if [ ! -z "${COPASI_BUILD_FUNCTIONS}" ]; then
+  . "${COPASI_BUILD_FUNCTIONS}"
+elif isCygwin; then
   . ${BUILD_ROOT}/bin/functions.windows
 elif isDarwin; then
   . ${BUILD_ROOT}/bin/functions.darwin
