@@ -54,10 +54,11 @@ function buildOne() {
 for b in ${ToBeBuild:-${toBeBuild:-.}}; do
   if [ _$b != _. ]; then
     pushd $b
-    echo source "${VARIABLES}"
+    echo source $(pwd)/"${VARIABLES}"
+    . "${VARIABLES}"
     LOG_SUFFIX=".$b"
   else
-    echo source "${VARIABLES}"
+    echo source "$(pwd)/${VARIABLES}"
     . "${VARIABLES}"
     LOG_SUFFIX=""
   fi

@@ -1,23 +1,12 @@
 #!/usr/bin/env bash
 # script for setting up environment from scratch
 
-if [ _${BUILD_SYSTEM} != _"$(dirname "$(dirname "$(readlink -f "$0")")")" ] ; then
-  . "$(dirname "$(dirname "$(readlink -f "$0")")")"/.variables
-fi
+. "$(dirname "$(readlink -f "$0")")"/functions
 
-pushd "${BUILD_SYSTEM}"
+pushd "${BUILD_ROOT}"
 
 [ -e "git" ] || mkdir -p "git"
 [ -e "git/COPASI.release" ] || git clone git@copasi.github.com:copasi/COPASI.git "git/COPASI.release"
 [ -e "git/copasi-dependencies" ] || git clone git@copasi-dependencies.github.com:copasi/copasi-dependencies.git "git/copasi-dependencies"
-
-[ -e "${BUILD_DIR}" ] || mkdir -p "${BUILD_DIR}"
-[ -e "${BUILD_DIR}.debug" ] || mkdir -p "${BUILD_DIR}.debug"
-
-[ -e "local" ] || mkdir -p "local"
-[ -e "local.debug" ] || mkdir -p "local.debug"
-
-[ -e "log" ] || mkdir -p "log"
-[ -e "log.debug" ] || mkdir -p "log.debug"
 
 popd

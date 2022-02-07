@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 export BUILD_ROOT="$(dirname "$(dirname "$(readlink -f "$BASH_SOURCE")")")"
+export BUILD_SYSTEM="${BUILD_ROOT}"
 export AWK="${COPASI_AWK:-gawk}"
 export VARIABLES="${VARIABLES:-.variables}"
 
