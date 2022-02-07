@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
-export BUILD_ROOT="$(dirname "$(dirname "$(readlink -f "$BASH_SOURCE")")")"
+export BUILD_ROOT="$(dirname "$(dirname "$(${COPASI_READLINK:-readlink} -f "$BASH_SOURCE")")")"
 export BUILD_SYSTEM="${BUILD_ROOT}"
-export AWK="${COPASI_AWK:-gawk}"
 export VARIABLES="${VARIABLES:-.variables}"
 
 function isCygwin() {
@@ -35,11 +34,11 @@ function create() {
 }
 
 function version() {
-  export major=`${AWK} -- '$2 ~ "COPASI_VERSION_MAJOR" {print $3}' "${COPASI_SOURCES}/copasi/CopasiVersion.h"`
-  export minor=`${AWK} -- '$2 ~ "COPASI_VERSION_MINOR" {print $3}' "${COPASI_SOURCES}/copasi/CopasiVersion.h"`
-  export build=`${AWK} -- '$2 ~ "COPASI_VERSION_BUILD" {print $3}' "${COPASI_SOURCES}/copasi/CopasiVersion.h"`
-  export modified=`${AWK} -- '$2 ~ "COPASI_VERSION_MODIFIED" {print $3}' "${COPASI_SOURCES}/copasi/CopasiVersion.h"`
-  export comment=`${AWK} -- '$2 ~ "COPASI_VERSION_COMMENT" {print $3}' "${COPASI_SOURCES}/copasi/CopasiVersion.h"`
+  export major=`${COPASI_AWK:-gawk} -- '$2 ~ "COPASI_VERSION_MAJOR" {print $3}' "${COPASI_SOURCES}/copasi/CopasiVersion.h"`
+  export minor=`${COPASI_AWK:-gawk} -- '$2 ~ "COPASI_VERSION_MINOR" {print $3}' "${COPASI_SOURCES}/copasi/CopasiVersion.h"`
+  export build=`${COPASI_AWK:-gawk} -- '$2 ~ "COPASI_VERSION_BUILD" {print $3}' "${COPASI_SOURCES}/copasi/CopasiVersion.h"`
+  export modified=`${COPASI_AWK:-gawk} -- '$2 ~ "COPASI_VERSION_MODIFIED" {print $3}' "${COPASI_SOURCES}/copasi/CopasiVersion.h"`
+  export comment=`${COPASI_AWK:-gawk} -- '$2 ~ "COPASI_VERSION_COMMENT" {print $3}' "${COPASI_SOURCES}/copasi/CopasiVersion.h"`
 
   export sourceVersion=${major}.${minor}.${build}
   targetVersion=$sourceVersion

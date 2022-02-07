@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 OLD_BUILD_SYSTEM="${BUILD_SYSTEM}"
-BUILD_SYSTEM="$(dirname "$(readlink -f "$BASH_SOURCE")")"
+BUILD_SYSTEM="$(dirname "$(${COPASI_READLINK:-readlink} -f "$BASH_SOURCE")")"
 
 if [ _${OLD_BUILD_SYSTEM} != _${BUILD_SYSTEM} ]; then
   export BUILD_SYSTEM

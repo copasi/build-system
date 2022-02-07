@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # script for setting up environment from scratch
 
-. "$(dirname "$(readlink -f "$0")")"/functions
+. "$(dirname "$(${COPASI_READLINK:-readlink} -f "$0")")"/functions
 
 pushd "${BUILD_ROOT}"
 
