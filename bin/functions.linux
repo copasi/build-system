@@ -33,6 +33,8 @@ function packageCOPASI() {
   [ -e share/copasi/lib/plugins/platforms ] || mkdir share/copasi/lib/plugins/platforms
   [ -e share/copasi/lib/plugins/xcbglintegrations ] || mkdir share/copasi/lib/plugins/xcbglintegrations
 
+  . ${BUILD_ROOT}/${VARIABLES}
+  
   ln -s "${QTDIR}/lib/libQt5DBus.so.5" share/copasi/lib
   ln -s "${QTDIR}/lib/libQt5XcbQpa.so.5" share/copasi/lib
   ln -s "${QTDIR}/plugins/platforms/libqxcb.so" share/copasi/lib/plugins/platforms
