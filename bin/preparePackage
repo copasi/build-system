@@ -22,10 +22,10 @@ fi
 [ -e share/copasi/lib/plugins/platforms ] || mkdir share/copasi/lib/plugins/platforms
 [ -e share/copasi/lib/plugins/xcbglintegrations ] || mkdir share/copasi/lib/plugins/xcbglintegrations
 
-ln -s "/usr/lib64/libssl.so.10" share/copasi/lib
-ln -s "/usr/lib64/libpng15.so.15" share/copasi/lib
-ln -s "/usr/lib64/libcrypto.so.10" share/copasi/lib
-ln -s "/usr/lib64/libfreetype.so.6" share/copasi/lib
+ln -s "/usr/lib/libssl.so.10" share/copasi/lib
+ln -s "/usr/lib/libpng15.so.15" share/copasi/lib
+ln -s "/usr/lib/libcrypto.so.10" share/copasi/lib
+ln -s "/usr/lib/libfreetype.so.6" share/copasi/lib
 
 ln -s "${QTDIR}/lib/libQt5DBus.so.5" share/copasi/lib
 ln -s "${QTDIR}/lib/libQt5XcbQpa.so.5" share/copasi/lib

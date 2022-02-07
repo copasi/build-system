@@ -8,8 +8,8 @@ fi
 pushd "${BUILD_SYSTEM}"
 
 [ -e "git" ] || mkdir -p "git"
-[ -e "git/COPASI.release" ] || git clone git@github.com:copasi/COPASI.git "git/COPASI.release"
-[ -e "git/copasi-dependencies" ] || git clone git@github.com:copasi/copasi-dependencies.git "git/copasi-dependencies"
+[ -e "git/COPASI.release" ] || git clone git@copasi.github.com:copasi/COPASI.git "git/COPASI.release"
+[ -e "git/copasi-dependencies" ] || git clone git@copasi-dependencies.github.com:copasi/copasi-dependencies.git "git/copasi-dependencies"
 
 [ -e "${BUILD_DIR}" ] || mkdir -p "${BUILD_DIR}"
 [ -e "${BUILD_DIR}.debug" ] || mkdir -p "${BUILD_DIR}.debug"

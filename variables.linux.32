@@ -1,0 +1,36 @@
+#!/usr/bin/end bash
+
+if [ _${TGT_ARCH} != _${x86} ]; then
+  export TGT_ARCH=x86
+
+  export QTDIR=/usr/local/qt
+  export SELECT_QT=Qt5
+  export CC=gcc
+  export CXX=g++
+  export MKLROOT=/usr/local/intel/mkl
+  export LD_LIBRARY_PATH=$($CC -print-search-dirs |
+    sed '/^lib/b 1;d;:1;s,/[^/.][^/]*/\.\./,/,;t 1;s,:[^=]*=,:;,;s,;,;  ,g' |
+    awk -- '{print $2}')
+
+  export PATH=/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:${QTDIR}/bin:${BUILD_SYSTEM}/bin
+
+  export BUILD_TOOL=gmake
+
+  COMMON_CMAKE_OPTIONS="-DCMAKE_BUILD_TYPE=${BUILD_TYPE:-Release}"
+  COMMON_CMAKE_OPTIONS="$COMMON_CMAKE_OPTIONS;-DSELECT_QT=${SELECT_QT}"
+  export COMMON_CMAKE_OPTIONS
+
+  COPASI_CMAKE_OPTIONS="-DENABLE_JIT=OFF"
+  COPASI_CMAKE_OPTIONS="${COPASI_CMAKE_OPTIONS};-DENABLE_JAVA=ON"
+  COPASI_CMAKE_OPTIONS="${COPASI_CMAKE_OPTIONS};-DENABLE_CSHARP=ON"
+  export COPASI_CMAKE_OPTIONS
+
+  DEPENDENCIES_CMAKE_OPTIONS="-DCMAKE_INSTALL_PREFIX=$(convertPath ${INSTALL_DIR})"
+  DEPENDENCIES_CMAKE_OPTIONS="$DEPENDENCIES_CMAKE_OPTIONS;-DBUILD_zlib=OFF" \
+  DEPENDENCIES_CMAKE_OPTIONS="$DEPENDENCIES_CMAKE_OPTIONS;-DBUILD_clapack=OFF"
+  DEPENDENCIES_CMAKE_OPTIONS="$DEPENDENCIES_CMAKE_OPTIONS;-DBUILD_NativeJIT=OFF"
+  DEPENDENCIES_CMAKE_OPTIONS="$DEPENDENCIES_CMAKE_OPTIONS;-DBUILD_qwtplot3d=OFF"
+  export DEPENDENCIES_CMAKE_OPTIONS
+fi
+
+. ${BUILD_ROOT}/variables.linux.common

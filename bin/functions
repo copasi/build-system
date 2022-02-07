@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+
+export BUILD_ROOT="$(dirname "$(dirname "$(readlink -f "$BASH_SOURCE")")")"
+export AWK="${COPASI_AWK:-gawk}"
+export VARIABLES="${VARIABLES:-.variables}"
+
+function isCygwin() {
+  uname -a | grep -qi cygwin
+}
+
+function isDarwin() {
+  uname -a | grep -qi darwin
+}
+
+function convertPath() {
+  if isCygwin; then
+    cygpath -w "$1"
+  else    
+    echo "$1"
+  fi
+}
+
+function create() {
+  if isCygwin; then
+    cmd="${COPASI_SOURCES}/InnoSetup/create.sh"
+  elif isDarwin; then
+    cmd="${COPASI_SOURCES}/PackageMaker/create.sh"
+  else    
+    cmd="${COPASI_SOURCES}/LinuxTGZ/create.sh"
+  fi
+
+  echo ${cmd} $1 
+  ${cmd} $1 
+}
+
+function version() {
+  export major=`${AWK} -- '$2 ~ "COPASI_VERSION_MAJOR" {print $3}' "${COPASI_SOURCES}/copasi/CopasiVersion.h"`
+  export minor=`${AWK} -- '$2 ~ "COPASI_VERSION_MINOR" {print $3}' "${COPASI_SOURCES}/copasi/CopasiVersion.h"`
+  export build=`${AWK} -- '$2 ~ "COPASI_VERSION_BUILD" {print $3}' "${COPASI_SOURCES}/copasi/CopasiVersion.h"`
+  export modified=`${AWK} -- '$2 ~ "COPASI_VERSION_MODIFIED" {print $3}' "${COPASI_SOURCES}/copasi/CopasiVersion.h"`
+  export comment=`${AWK} -- '$2 ~ "COPASI_VERSION_COMMENT" {print $3}' "${COPASI_SOURCES}/copasi/CopasiVersion.h"`
+
+  export sourceVersion=${major}.${minor}.${build}
+  targetVersion=$sourceVersion
+
+  if [ $modified == true ]; then
+    targetVersion=${targetVersion}+
+  fi
+
+  export targetVersion
+}
+
+if [ ! -z "${COPASI_BUILD_FUNCTIONS}" ]; then
+  . "${COPASI_BUILD_FUNCTIONS}"
+elif isCygwin; then
+  . ${BUILD_ROOT}/bin/functions.windows
+elif isDarwin; then
+  . ${BUILD_ROOT}/bin/functions.darwin
+else    
+  . ${BUILD_ROOT}/bin/functions.linux
+fi
