@@ -5,6 +5,8 @@
 
 pushd "${BUILD_ROOT}"
 
+isDarwin && . ${BUILD_ROOT}/bin/emerge.darwin
+
 [ -e "git" ] || mkdir -p "git"
 [ -e "git/COPASI.release" ] || git clone git@copasi.github.com:copasi/COPASI.git "git/COPASI.release"
 [ -e "git/copasi-dependencies" ] || git clone git@copasi-dependencies.github.com:copasi/copasi-dependencies.git "git/copasi-dependencies"

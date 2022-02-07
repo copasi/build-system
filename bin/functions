@@ -12,27 +12,6 @@ function isDarwin() {
   uname -a | grep -qi darwin
 }
 
-function convertPath() {
-  if isCygwin; then
-    cygpath -w "$1"
-  else    
-    echo "$1"
-  fi
-}
-
-function create() {
-  if isCygwin; then
-    cmd="${COPASI_SOURCES}/InnoSetup/create.sh"
-  elif isDarwin; then
-    cmd="${COPASI_SOURCES}/PackageMaker/create.sh"
-  else    
-    cmd="${COPASI_SOURCES}/LinuxTGZ/create.sh"
-  fi
-
-  echo ${cmd} $1 
-  ${cmd} $1 
-}
-
 function version() {
   export major=`${COPASI_AWK:-gawk} -- '$2 ~ "COPASI_VERSION_MAJOR" {print $3}' "${COPASI_SOURCES}/copasi/CopasiVersion.h"`
   export minor=`${COPASI_AWK:-gawk} -- '$2 ~ "COPASI_VERSION_MINOR" {print $3}' "${COPASI_SOURCES}/copasi/CopasiVersion.h"`
