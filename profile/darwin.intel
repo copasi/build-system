@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+export COPASI_PACKAGE=Darwin-intel
+export VARIABLES="$HOME/build-system-intel/variables.darwin-intel"
+export COPASI_READLINK=greadlink
+export PATH="$HOME/build-system-intel/bin:$PATH"

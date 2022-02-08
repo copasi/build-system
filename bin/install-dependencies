@@ -45,13 +45,6 @@ function buildOne() {
          "$(convertPath ${BUILD_ROOT}/git/copasi-dependencies)"
   fi
 
-    echo cmake -G Ninja \
-          -DBUILD_clapack=OFF \
-          -DBUILD_qwtplot3d=off \
-          -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
-          -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
-          -DCOMMON_CMAKE_OPTIONS=${COPASI_CMAKE_OPTIONS} \
-          ${BUILD_SYSTEM}/git/copasi-dependencies
   echo ${BUILD_TOOL}
   ${BUILD_TOOL}
 

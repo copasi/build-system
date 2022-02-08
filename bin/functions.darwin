@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 function create() {
-  cmd="${COPASI_SOURCES}/LinuxTGZ/create.sh"
+  cmd="${COPASI_SOURCES}/PackageMaker/create.sh"
 
   echo ${cmd} $1
   ${cmd} $1
@@ -12,32 +12,26 @@ function convertPath() {
 }
 
 function packageCOPASI() {
-  export COPASI_PACKAGE="Darwin"
-  export COPASI_CREATE="${COPASI_SOURCES}/PackageMaker/create.sh"
+  export COPASI_PACKAGE=${COPASI_PACKAGE:-"Darwin"}
 
   rm -rf "${COPASI_SETUP_DIR}"/COPASI*
-  export BUILD_ROOT="${COPASI_COMMON_BUILD_SYSTEM}/build/COPASI.${DIR_SUFFIX}"
+  export BINARY_DIR="${BUILD_ROOT}/build/COPASI.${DIR_SUFFIX}"
 
-  # Only executed for 64 bit Linux
-  if [ "${COPASI_PACKAGE}" == "Linux-64bit" ]; then
-    (
-      cd ${BUILD_ROOT}
-      make package_source
-    )
+  create 'COPASI'
+
+  if [ $COPASI_PACKAGE == "Darwin" ]; then
+    create 'Java-Bindings'
+    create 'C#-Bindings'
+    # create 'Python-Bindings'
   fi
-
-  "${COPASI_CREATE}" 'COPASI'
-  "${COPASI_CREATE}" 'Java-Bindings'
-  "${COPASI_CREATE}" 'C#-Bindings'
-  # "${COPASI_CREATE}" 'Python-Bindings'
-
+  
   version
 
   pushd ${COPASI_SETUP_DIR}
 
   # create symlink
-  echo cd COPASI-${sourceVersion}-Darwin
-  cd COPASI-${sourceVersion}-Darwin
+  echo cd COPASI-${sourceVersion}-${COPASI_PACKAGE}
+  cd COPASI-${sourceVersion}-${COPASI_PACKAGE}
   echo mv Applications/COPASI .
   mv Applications/COPASI .
   echo rm -rf Applications
@@ -46,6 +40,9 @@ function packageCOPASI() {
   ln -s /Applications Applications
   echo cd COPASI
   cd COPASI
+
+  # We need the variables to know the QTDIR
+  . ${VARIABLES}
 
   echo macdeployqt CopasiUI.app -always-overwrite -libpath=${QTDIR}/lib
   # Surpress error of the first run which fails
@@ -57,15 +54,18 @@ function packageCOPASI() {
   cd ..
 
   cd ..
-  echo hdiutil create -volname COPASI-${sourceVersion}-Darwin -srcfolder COPASI-${sourceVersion}-Darwin -ov -format UDZO COPASI-${sourceVersion}-Darwin
-  sudo -S hdiutil create -volname COPASI-${sourceVersion}-Darwin -srcfolder COPASI-${sourceVersion}-Darwin -ov -format UDZO COPASI-${sourceVersion}-Darwin <~/.password
+  echo hdiutil create -volname COPASI-${sourceVersion}-${COPASI_PACKAGE} -srcfolder COPASI-${sourceVersion}-${COPASI_PACKAGE} -ov -format UDZO COPASI-${sourceVersion}-${COPASI_PACKAGE}
+  sudo -S hdiutil create -volname COPASI-${sourceVersion}-${COPASI_PACKAGE} -srcfolder COPASI-${sourceVersion}-${COPASI_PACKAGE} -ov -format UDZO COPASI-${sourceVersion}-${COPASI_PACKAGE} <~/.password
   popd
 }
 
 function copyCOPASI() {
   ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-${COPASI_PACKAGE}.dmg "${COPASI_UPLOAD}/COPASI-${targetVersion}-${COPASI_PACKAGE}.dmg"
-  ${COPASI_SCP} "${BUILD_ROOT}"/copasi/CopasiSE/CopasiSE "${COPASI_UPLOAD}/AllSE/Darwin/CopasiSE-${targetVersion}"
-  ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-Java-Bindings-${COPASI_PACKAGE}.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Java-Bindings-${COPASI_PACKAGE}.tar.gz"
-  ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-C#-Bindings-${COPASI_PACKAGE}.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-C#-Bindings-${COPASI_PACKAGE}.tar.gz"
-  # ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-Python-2.7-Bindings-${COPASI_PACKAGE}.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Python-2.7-${COPASI_PACKAGE}.tar.gz"
+
+  if [ $COPASI_PACKAGE == "Darwin" ]; then
+    ${COPASI_SCP} "${BUILD_ROOT}"/copasi/CopasiSE/CopasiSE "${COPASI_UPLOAD}/AllSE/${COPASI_PACKAGE}/CopasiSE-${targetVersion}"
+    ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-Java-Bindings-${COPASI_PACKAGE}.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Java-Bindings-${COPASI_PACKAGE}.tar.gz"
+    ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-C#-Bindings-${COPASI_PACKAGE}.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-C#-Bindings-${COPASI_PACKAGE}.tar.gz"
+    # ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-Python-2.7-Bindings-${COPASI_PACKAGE}.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Python-2.7-${COPASI_PACKAGE}.tar.gz"
+  fi
 }

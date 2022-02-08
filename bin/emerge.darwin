@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 # script for setting up environment from scratch
 
-brew install qt5 
 brew install mono-mdk
 brew install openjdk
 brew install swig@3
@@ -9,8 +8,13 @@ brew install astyle
 brew install wget
 brew install gawk
 brew install ninja
+brew install cmake
 brew install bash
 brew install coreutils
 
-[ -e MacOSX10.13.sdk ] || tar -xvf src/MacOSX10.13.sdk.tar.xz
-
+if [ $COPASI_PACKAGE == Darwin ]; then
+  brew install qt5 
+  [ -e MacOSX10.13.sdk ] || tar -xvf src/MacOSX10.13.sdk.tar.xz
+else
+  brew install qt6 
+fi
