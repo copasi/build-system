@@ -44,6 +44,14 @@ function packageCOPASI() {
   # We need the variables to know the QTDIR
   . ${VARIABLES}
 
+  if [ $COPASI_PACKAGE == "Darwin-arm" ]; then
+    # packageCOPASI
+    # macdeployqt is missing this
+    [ -e CopasiUI.app/Contents/Frameworks ] || mkdir -p CopasiUI.app/Contents/Frameworks
+    echo cp /opt/homebrew/lib/libbrotli*dylib  CopasiUI.app/Contents/Frameworks
+    cp /opt/homebrew/lib/libbrotli*dylib  CopasiUI.app/Contents/Frameworks
+  fi
+  
   echo macdeployqt CopasiUI.app -always-overwrite -libpath=${QTDIR}/lib
   # Surpress error of the first run which fails
   macdeployqt CopasiUI.app -always-overwrite -libpath=${QTDIR}/lib >/dev/null 2>&1
