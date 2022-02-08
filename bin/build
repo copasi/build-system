@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 
-BUILDROOT="$(dirname "$(dirname "$(greadlink -f "$0")")")"
+. "$(dirname "$(${COPASI_READLINK:-readlink} -f "$0")")"/functions
+pushd "${BUILD_ROOT}"
 
-pushd "${BUILDROOT}"
-
-rebuild=${clean:=false}
+rebuild=${clean:-false}
 
 while [ _"$1" != _ ]; do
   case $1 in
@@ -13,23 +12,26 @@ while [ _"$1" != _ ]; do
     ;;
 
   *)
-    toBeBuild="${toBeBuild} $1"
+    ToBeBuild="${ToBeBuild} $1"
     ;;
   esac
  
   shift
 done
 
-toBeBuild=${toBeBuild:="."}
-
 function buildOne () {
-  . .variables
+  pushd ${BUILD_DIR}
+  [ -e COPASI.${DIR_SUFFIX} ] || mkdir COPASI.${DIR_SUFFIX}
+  cd COPASI.${DIR_SUFFIX}
 
-  export BUILD_DIR="${BUILD_DIR}/COPASI.${DIR_SUFFIX}"
-
-  if [ ${rebuild} = true ] || [ ! -e "${BUILD_DIR}" ] || [ ! -e "${BUILD_DIR}/CMakeCache.txt" ]; then
-    [ -e "${BUILD_DIR}" ] && rm -rf "${BUILD_DIR}"
+  if [ ${rebuild} = true ] || [ ! -e "CMakeCache.txt" ]; then
+    rm -rf * .cmake
       
+    [ -z "${COMMON_CMAKE_OPTIONS}" ] || common_cmake_options="$(echo ${COMMON_CMAKE_OPTIONS} | sed -e 's/;/ /g')"
+    [ -z "${COPASI_CMAKE_OPTIONS}" ] || copasi_cmake_options="$(echo ${COPASI_CMAKE_OPTIONS} | sed -e 's/;/ /g')"
+
+    echo cmake ${common_cmake_options} ${copasi_cmake_options} "$(convertPath "${COPASI_SOURCES}")"
+    cmake ${common_cmake_options} ${copasi_cmake_options} "$(convertPath "${COPASI_SOURCES}")"
     java_include="${JAVA_HOME}/include"
     java_lib="${JAVA_HOME}/libexec/openjdk.jdk/Contents/Home/lib/"
     JAVA_OPTS="-DJAVA_INCLUDE_PATH=${java_include} -DJAVA_INCLUDE_PATH2=${java_include} -DJAVA_AWT_INCLUDE_PATH=${java_include} -DJAVA_JVM_LIBRARY=${java_lib}/server/libjvm.dylib -DJAVA_AWT_LIBRARY=${java_lib}/libawt.dylib"
@@ -45,23 +47,27 @@ function buildOne () {
   else
     touch "${COPASI_SOURCES}/CMakeLists.txt"
   fi
-  
-  pushd "${BUILD_DIR}"
-  ninja
+
+  echo ${BUILD_TOOL}
+  ${BUILD_TOOL}
+
   popd
 }
 
-for b in ${toBeBuild}; do
-  if [ _$1 != _. -a _$1 != _ ]; then
-    pushd $1
-    LOG_SUFFIX=".$1"
+for b in ${ToBeBuild:-${toBeBuild:-.}}; do
+  if [ _$b != _. ]; then
+    pushd $b
+    . "${VARIABLES}"
+    LOG_SUFFIX=".$b"
   else
+    . "${VARIABLES}"
     LOG_SUFFIX=""
   fi
-  
+
+  echo buildOne $b
   buildOne $b 2>&1 | tee "${LOG_DIR}/COPASI${LOG_SUFFIX}.${DIR_SUFFIX}"
 
-  [ _$1 != _. -a _$1 != _ ] && popd $1
+  [ _$b != _. ] && popd
 done
 
 popd

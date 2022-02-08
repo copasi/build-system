@@ -1,0 +1,28 @@
+#!/usr/bin/end bash
+
+if [ ${BUILD_TYPE:-Release} == Release ]; then
+  export INSTALL_DIR=${BUILD_SYSTEM}/local
+  export BUILD_DIR=${BUILD_SYSTEM}/build
+  export LOG_DIR=${BUILD_ROOT}/log
+else
+  export INSTALL_DIR=${BUILD_SYSTEM}/local.debug
+  export BUILD_DIR=${BUILD_SYSTEM}/build.debug
+  export LOG_DIR=${BUILD_ROOT}/log.debug
+fi
+
+[ -e "${INSTALL_DIR}" ] || mkdir -p "${INSTALL_DIR}"
+[ -e "${BUILD_DIR}" ] || mkdir -p "${BUILD_DIR}"
+[ -e "${LOG_DIR}" ] || mkdir -p "${LOG_DIR}"
+
+export COMBINE_DIR="$(convertPath "${INSTALL_DIR}")"
+export CROSSGUID_DIR="$(convertPath "${INSTALL_DIR}")"
+export EXPAT_DIR="$(convertPath "${INSTALL_DIR}")"
+export LIBSBML_DIR="$(convertPath "${INSTALL_DIR}")"
+export LIBSEDML_DIR="$(convertPath "${INSTALL_DIR}")"
+export MML_DIR="$(convertPath "${INSTALL_DIR}")"
+export QWT_DIR="$(convertPath "${INSTALL_DIR}")"
+export QWTPLOT3D_DIR="$(convertPath "${INSTALL_DIR}")"
+export RAPTOR_DIR="$(convertPath "${INSTALL_DIR}")"
+export SBW_DIR="$(convertPath "${INSTALL_DIR}")"
+export NATIVEJIT_DIR="$(convertPath "${INSTALL_DIR}")"
+export CPUFEATURES_DIR="$(convertPath "${INSTALL_DIR}")"

@@ -1,10 +1,23 @@
+#!/usr/bin/env bash
+
 OLD_BUILD_SYSTEM="${BUILD_SYSTEM}"
-BUILD_SYSTEM="$(dirname "$(greadlink -f "$BASH_SOURCE")")"
+BUILD_SYSTEM="$(dirname "$(${COPASI_READLINK:-readlink} -f "$BASH_SOURCE")")"
 
 if [ _${OLD_BUILD_SYSTEM} != _${BUILD_SYSTEM} ]; then
   PS1="[\\u@darwin-intel \\W]\\\$ "
   export BUILD_SYSTEM
-  export SAVED_PATH="${SAVED_PATH:=$PATH}"
+export QTDIR=/usr/local/qt
+export SELECT_QT=Qt5
+export CC=gcc
+export CXX=g++
+export MKLROOT=/usr/local/intel/mkl
+export TGT_ARCH=x86
+export LD_LIBRARY_PATH=$($CC -print-search-dirs | \
+                         sed '/^lib/b 1;d;:1;s,/[^/.][^/]*/\.\./,/,;t 1;s,:[^=]*=,:;,;s,;,;  ,g' | \
+                         awk -- '{print $2}')
+
+export PATH=/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:${QTDIR}/bin:${BUILD_SYSTEM}/bin
+
   export BUILD_TYPE=${BUILD_TYPE:-Release}
 
   if [ ${BUILD_TYPE} == Release ]; then
@@ -17,16 +30,9 @@ if [ _${OLD_BUILD_SYSTEM} != _${BUILD_SYSTEM} ]; then
     export LOG_DIR=${BUILD_SYSTEM}/log.debug
   fi
 
-  export CC=clang
-  export CXX=clang++
-  export MACOSX_DEPLOYMENT_TARGET=12.0
-  export SDK=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
-  export ARCHITECTURES=x86_64
-
-  export SELECT_QT=Qt6
-  export QTDIR=/usr/local/Cellar/qt/6.2.2
-
-  export PATH="${QTDIR}/bin:${BUILD_SYSTEM}/bin:/Library/Frameworks/Mono.framework/Versions/Current/bin:${SAVED_PATH}"
+  export SWIG_EXECUTABLE="C:/cygwin/home/copasi/environment/swigwin-3.0.12/swig.exe"
+  export JAVA_HOME="C:/Program Files/Java/jdk1.7.0_75"
+  export PYTHON_EXECUTABLE="C:/Program Files/Python-2.7/python.exe"
 
   export COMBINE_DIR="${INSTALL_DIR}"
   export CROSSGUID_DIR="${INSTALL_DIR}"
@@ -41,17 +47,8 @@ if [ _${OLD_BUILD_SYSTEM} != _${BUILD_SYSTEM} ]; then
   export NATIVEJIT_DIR="${INSTALL_DIR}"
   export CPUFEATURES_DIR="${INSTALL_DIR}"
 
-  export JAVA_HOME=/opt/homebrew/opt/openjdk
-  export SWIG_EXECUTABLE=/usr/local/opt/swig@3/bin/swig
-  export PKG_CONFIG_PATH="${INSTALL_DIR}/lib/pkgconfig:${PKG_CONFIG_PATH}"
-
-  export COPASI_CFLAGS="-isysroot ${SDK} -arch ${ARCHITECTURES}"
-  export COPASI_CXXFLAGS="-isysroot ${SDK} -arch ${ARCHITECTURES}"
-  export COPASI_LDFLAGS="-isysroot ${SDK} -Wl,-syslibroot,${SDK}"
-
-  COPASI_CMAKE_OPTIONS="-DCMAKE_OSX_DEPLOYMENT_TARGET=${MACOSX_DEPLOYMENT_TARGET}"
-  COPASI_CMAKE_OPTIONS="${COPASI_CMAKE_OPTIONS};-DCMAKE_OSX_ARCHITECTURES=${ARCHITECTURES}"
-  COPASI_CMAKE_OPTIONS="${COPASI_CMAKE_OPTIONS};-DCMAKE_OSX_SYSROOT=${SDK}"
-  COPASI_CMAKE_OPTIONS="${COPASI_CMAKE_OPTIONS};-DCMAKE_CXX_FLAGS=-Wno-inconsistent-missing-override"
+  COPASI_CMAKE_OPTIONS="-DCMAKE_BUILD_TYPE=${BUILD_TYPE}"
+  COPASI_CMAKE_OPTIONS="${COPASI_CMAKE_OPTIONS};-DWITH_STATIC_RUNTIME=OFF"
+  COPASI_CMAKE_OPTIONS="${COPASI_CMAKE_OPTIONS};-DENABLE_JIT=ON"
   export COPASI_CMAKE_OPTIONS
 fi

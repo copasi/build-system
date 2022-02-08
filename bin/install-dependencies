@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
-if [ _${BUILD_SYSTEM} != _"$(dirname "$(dirname "$(greadlink -f "$0")")")" ] ; then
-  . "$(dirname "$(dirname "$(greadlink -f "$0")")")"/.variables
-fi
+. "$(dirname "$(${COPASI_READLINK:-readlink} -f "$0")")"/functions
+pushd "${BUILD_ROOT}"
 
 clean=false
 configure=false
@@ -12,25 +11,39 @@ while [ _"$1" != _ ]; do
   --clean)
     clean=true
     ;;
-  
+
   --configure)
     configure=true
     ;;
+
+  *)
+    ToBeBuild="${ToBeBuild} $1"
+    ;;
   esac
- 
+
   shift
 done
 
-echo ${LOG_DIR}/install-dependencies
-[ -f ${LOG_DIR}/install-dependencies ] && rm ${LOG_DIR}/install-dependencies
+function buildOne() {
+  pushd ${BUILD_DIR}
+  [ -e copasi-dependencies ] || mkdir copasi-dependencies
+  cd copasi-dependencies
 
-export BUILD_DIR="${BUILD_DIR}/copasi-dependencies"
-[ -e "${BUILD_DIR}" ] || mkdir -p "${BUILD_DIR}"
-
-cd ${BUILD_DIR}
-
-if [ ${configure} = true -o ! -e CMakeCache.txt ]; then
+  if [ ${configure} = true -o ! -e CMakeCache.txt ]; then
     rm -rf * .cmake
+
+    [ -z "${COMMON_CMAKE_OPTIONS}" ] || common_cmake_options="$(echo ${COMMON_CMAKE_OPTIONS} | sed -e 's/;/ /g')"
+    [ -z "${DEPENDENCIES_CMAKE_OPTIONS}" ] || dependencies_cmake_options="$(echo ${DEPENDENCIES_CMAKE_OPTIONS} | sed -e 's/;/ /g')"
+
+    echo cmake ${common_cmake_options} \
+         ${dependencies_cmake_options} \
+         -DCOMMON_CMAKE_OPTIONS="${COMMON_CMAKE_OPTIONS}" \
+         "$(convertPath ${BUILD_ROOT}/git/copasi-dependencies)"
+    cmake ${common_cmake_options} \
+         ${dependencies_cmake_options} \
+         -DCOMMON_CMAKE_OPTIONS="${COMMON_CMAKE_OPTIONS}" \
+         "$(convertPath ${BUILD_ROOT}/git/copasi-dependencies)"
+  fi
 
     echo cmake -G Ninja \
           -DBUILD_clapack=OFF \
@@ -39,19 +52,26 @@ if [ ${configure} = true -o ! -e CMakeCache.txt ]; then
           -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
           -DCOMMON_CMAKE_OPTIONS=${COPASI_CMAKE_OPTIONS} \
           ${BUILD_SYSTEM}/git/copasi-dependencies
+  echo ${BUILD_TOOL}
+  ${BUILD_TOOL}
 
-    cmake -G Ninja \
-          -DBUILD_clapack=OFF \
-          -DBUILD_qwtplot3d=off \
-          -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
-          -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
-          -DSELECT_QT=${SELECT_QT} \
-          -DCOMMON_CMAKE_OPTIONS=${COPASI_CMAKE_OPTIONS} \
-          ${BUILD_SYSTEM}/git/copasi-dependencies 2>&1 | tee "${LOG_DIR}/install-dependencies"
-fi
+  popd
+}
 
-if [ ${clean} = true ]; then
-    ninja clean
-fi
+for b in ${ToBeBuild:-${toBeBuild:-.}}; do
+  if [ _$b != _. ]; then
+    pushd $b
+    echo source $(pwd)/"${VARIABLES}"
+    . "${VARIABLES}"
+    LOG_SUFFIX=".$b"
+  else
+    echo source "$(pwd)/${VARIABLES}"
+    . "${VARIABLES}"
+    LOG_SUFFIX=""
+  fi
 
-ninja 2>&1 | tee "${LOG_DIR}/install-dependencies"
+  echo buildOne $b
+  buildOne $b 2>&1 | tee "${LOG_DIR}/dependencies${LOG_SUFFIX}"
+
+  [ _$b != _. ] && popd
+done
