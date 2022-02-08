@@ -68,12 +68,21 @@ function packageCOPASI() {
 function copyCOPASI() {
   # Only executed for 64 bit Linux
   if [ "${COPASI_PACKAGE}" == "Linux-64bit" ]; then
+    echo ${COPASI_SCP} "${BINARY_DIR}"/COPASI-${sourceVersion}-Source.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Source.tar.gz"
     ${COPASI_SCP} "${BINARY_DIR}"/COPASI-${sourceVersion}-Source.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Source.tar.gz"
+    echo ${COPASI_SCP} "${BINARY_DIR}"/copasi/CopasiSE/CopasiSE "${COPASI_UPLOAD}/AllSE/Linux64/CopasiSE-${targetVersion}"
+    ${COPASI_SCP} "${BINARY_DIR}"/copasi/CopasiSE/CopasiSE "${COPASI_UPLOAD}/AllSE/Linux64/CopasiSE-${targetVersion}"
+  else
+    echo ${COPASI_SCP} "${BINARY_DIR}"/copasi/CopasiSE/CopasiSE "${COPASI_UPLOAD}/AllSE/Linux/CopasiSE-${targetVersion}"
+    ${COPASI_SCP} "${BINARY_DIR}"/copasi/CopasiSE/CopasiSE "${COPASI_UPLOAD}/AllSE/Linux/CopasiSE-${targetVersion}"
   fi
 
+  echo ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-${COPASI_PACKAGE}.sh "${COPASI_UPLOAD}/COPASI-${targetVersion}-${COPASI_PACKAGE}.sh"
   ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-${COPASI_PACKAGE}.sh "${COPASI_UPLOAD}/COPASI-${targetVersion}-${COPASI_PACKAGE}.sh"
-  ${COPASI_SCP} "${BINARY_DIR}"/copasi/CopasiSE/CopasiSE "${COPASI_UPLOAD}/AllSE/Linux/CopasiSE-${targetVersion}"
+  echo ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-Java-Bindings-${COPASI_PACKAGE}.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Java-Bindings-${COPASI_PACKAGE}.tar.gz"
   ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-Java-Bindings-${COPASI_PACKAGE}.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Java-Bindings-${COPASI_PACKAGE}.tar.gz"
+  echo ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-C#-Bindings-${COPASI_PACKAGE}.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-C#-Bindings-${COPASI_PACKAGE}.tar.gz"
   ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-C#-Bindings-${COPASI_PACKAGE}.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-C#-Bindings-${COPASI_PACKAGE}.tar.gz"
+  # echo ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-Python-2.7-Bindings-${COPASI_PACKAGE}.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Python-2.7-${COPASI_PACKAGE}.tar.gz"
   # ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-Python-2.7-Bindings-${COPASI_PACKAGE}.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Python-2.7-${COPASI_PACKAGE}.tar.gz"
 }

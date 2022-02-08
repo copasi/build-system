@@ -39,12 +39,19 @@ function packageCOPASI() {
 function copyCOPASI () {
   pushd ${COPASI_SETUP_DIR}
 
+  echo ${COPASI_SCP} package/COPASI-${sourceVersion}-${COPASI_PACKAGE}.exe "${COPASI_UPLOAD}/COPASI-${targetVersion}-${COPASI_PACKAGE}.exe"
   ${COPASI_SCP} package/COPASI-${sourceVersion}-${COPASI_PACKAGE}.exe "${COPASI_UPLOAD}/COPASI-${targetVersion}-${COPASI_PACKAGE}.exe"
+  echo ${COPASI_SCP} package/bin/32/CopasiSE.exe "${COPASI_UPLOAD}/AllSE/WIN32/CopasiSE-${targetVersion}.exe"
   ${COPASI_SCP} package/bin/32/CopasiSE.exe "${COPASI_UPLOAD}/AllSE/WIN32/CopasiSE-${targetVersion}.exe"
+  echo ${COPASI_SCP} package/bin/64/CopasiSE.exe "${COPASI_UPLOAD}/AllSE/WIN64/CopasiSE-${targetVersion}.exe"
   ${COPASI_SCP} package/bin/64/CopasiSE.exe "${COPASI_UPLOAD}/AllSE/WIN64/CopasiSE-${targetVersion}.exe"
+  echo ${COPASI_SCP} COPASI-${sourceVersion}-C#-Bindings-${COPASI_PACKAGE}-32-bit.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-C#-Bindings-${COPASI_PACKAGE}-32-bit.tar.gz"
   ${COPASI_SCP} COPASI-${sourceVersion}-C#-Bindings-${COPASI_PACKAGE}-32-bit.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-C#-Bindings-${COPASI_PACKAGE}-32-bit.tar.gz"
+  echo ${COPASI_SCP} COPASI-${sourceVersion}-C#-Bindings-${COPASI_PACKAGE}-64-bit.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-C#-Bindings-${COPASI_PACKAGE}-64-bit.tar.gz"
   ${COPASI_SCP} COPASI-${sourceVersion}-C#-Bindings-${COPASI_PACKAGE}-64-bit.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-C#-Bindings-${COPASI_PACKAGE}-64-bit.tar.gz"
+  echo ${COPASI_SCP} COPASI-${sourceVersion}-Java-Bindings-${COPASI_PACKAGE}-32-bit.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Java-Bindings-${COPASI_PACKAGE}-32-bit.tar.gz"
   ${COPASI_SCP} COPASI-${sourceVersion}-Java-Bindings-${COPASI_PACKAGE}-32-bit.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Java-Bindings-${COPASI_PACKAGE}-32-bit.tar.gz"
+  echo ${COPASI_SCP} COPASI-${sourceVersion}-Java-Bindings-${COPASI_PACKAGE}-64-bit.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Java-Bindings-${COPASI_PACKAGE}-64-bit.tar.gz"
   ${COPASI_SCP} COPASI-${sourceVersion}-Java-Bindings-${COPASI_PACKAGE}-64-bit.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Java-Bindings-${COPASI_PACKAGE}-64-bit.tar.gz"
 
   popd
