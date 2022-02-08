@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+alias arm="env /usr/bin/arch -arm64 /opt/homebrew/bin/bash --init-file $HOME/build-system-arm/profile/darwin.arm"
+alias intel="env /usr/bin/arch -x86_64 /usr/local/bin/bash --init-file $HOME/build-system-intel/profile/darwin.intel"

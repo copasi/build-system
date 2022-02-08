@@ -1,35 +1,14 @@
 #!/usr/bin/env bash
 # script for setting up environment from scratch
 
-brew install qt6 
-brew install mono-mdk
-brew install openjdk
-brew install swig@3
-brew install astyle
-brew install wget
-brew install gawk
-brew install ninja
-brew install cmake
-brew install bash
-brew install coreutils
+. "$(dirname "$(${COPASI_READLINK:-readlink} -f "$0")")"/functions
 
-if [ _${BUILD_SYSTEM} != _"$(dirname "$(dirname "$(greadlink -f "$0")")")" ] ; then
-  . "$(dirname "$(dirname "$(greadlink -f "$0")")")"/.variables
-fi
+pushd "${BUILD_ROOT}"
 
-pushd "${BUILD_SYSTEM}"
+isDarwin && . ${BUILD_ROOT}/bin/emerge.darwin
 
 [ -e "git" ] || mkdir -p "git"
-[ -e "git/COPASI.release" ] || git clone git@github.com:copasi/COPASI.git "git/COPASI.release"
-[ -e "git/copasi-dependencies" ] || git clone git@github.com:copasi/copasi-dependencies.git "git/copasi-dependencies"
-
-[ -e "${BUILD_DIR}" ] || mkdir -p "${BUILD_DIR}"
-[ -e "${BUILD_DIR}.debug" ] || mkdir -p "${BUILD_DIR}.debug"
-
-[ -e "local" ] || mkdir -p "local"
-[ -e "local.debug" ] || mkdir -p "local.debug"
-
-[ -e "log" ] || mkdir -p "log"
-[ -e "log.debug" ] || mkdir -p "log.debug"
+[ -e "git/COPASI.release" ] || git clone git@copasi.github.com:copasi/COPASI.git "git/COPASI.release"
+[ -e "git/copasi-dependencies" ] || git clone git@copasi-dependencies.github.com:copasi/copasi-dependencies.git "git/copasi-dependencies"
 
 popd

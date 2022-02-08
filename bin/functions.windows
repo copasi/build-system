@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+export toBeBuild="${toBeBuild:-"vs-2017-32-MD vs-2017-32-MT vs-2017-64-MD vs-2017-64-MT"}"
+
+function create() {
+  cmd="${COPASI_SOURCES}/InnoSetup/create.sh"
+
+  echo ${cmd} $1 
+  ${cmd} $1 
+}
+
+function convertPath() {
+  cygpath -w "$1"
+}
+
+function packageCOPASI() {
+  export COPASI_PACKAGE="Windows"
+
+  rm -rf "${COPASI_SETUP_DIR}"/COPASI*
+
+  dos2unix "${COPASI_SOURCES}/InnoSetup/"*.sh
+
+  export BUILD_32_MT="${BUILD_ROOT}/vs-2017-32-MT"
+  export BUILD_32_MD="${BUILD_ROOT}/vs-2017-32-MD"
+  export BUILD_64_MT="${BUILD_ROOT}/vs-2017-64-MT"
+  export BUILD_64_MD="${BUILD_ROOT}/vs-2017-64-MD"
+
+  create 'COPASI'
+
+  . "${BUILD_32_MD}/.variables"
+  BINARY_DIR="${BUILD_32_MD}/build/COPASI.${DIR_SUFFIX}" create 'Java-Bindings'
+  BINARY_DIR="${BUILD_32_MD}/build/COPASI.${DIR_SUFFIX}" create 'C#-Bindings'
+
+  . "${BUILD_64_MD}/.variables"
+  BINARY_DIR="${BUILD_64_MD}/build/COPASI.${DIR_SUFFIX}" create 'Java-Bindings'
+  BINARY_DIR="${BUILD_64_MD}/build/COPASI.${DIR_SUFFIX}" create 'C#-Bindings'
+}
+
+function copyCOPASI () {
+  pushd ${COPASI_SETUP_DIR}
+
+  ${COPASI_SCP} package/COPASI-${sourceVersion}-${COPASI_PACKAGE}.exe "${COPASI_UPLOAD}/COPASI-${targetVersion}-${COPASI_PACKAGE}.exe"
+  ${COPASI_SCP} package/bin/32/CopasiSE.exe "${COPASI_UPLOAD}/AllSE/WIN32/CopasiSE-${targetVersion}.exe"
+  ${COPASI_SCP} package/bin/64/CopasiSE.exe "${COPASI_UPLOAD}/AllSE/WIN64/CopasiSE-${targetVersion}.exe"
+  ${COPASI_SCP} COPASI-${sourceVersion}-C#-Bindings-${COPASI_PACKAGE}-32-bit.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-C#-Bindings-${COPASI_PACKAGE}-32-bit.tar.gz"
+  ${COPASI_SCP} COPASI-${sourceVersion}-C#-Bindings-${COPASI_PACKAGE}-64-bit.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-C#-Bindings-${COPASI_PACKAGE}-64-bit.tar.gz"
+  ${COPASI_SCP} COPASI-${sourceVersion}-Java-Bindings-${COPASI_PACKAGE}-32-bit.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Java-Bindings-${COPASI_PACKAGE}-32-bit.tar.gz"
+  ${COPASI_SCP} COPASI-${sourceVersion}-Java-Bindings-${COPASI_PACKAGE}-64-bit.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Java-Bindings-${COPASI_PACKAGE}-64-bit.tar.gz"
+
+  popd
+}
