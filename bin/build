@@ -32,18 +32,6 @@ function buildOne () {
 
     echo cmake ${common_cmake_options} ${copasi_cmake_options} "$(convertPath "${COPASI_SOURCES}")"
     cmake ${common_cmake_options} ${copasi_cmake_options} "$(convertPath "${COPASI_SOURCES}")"
-    java_include="${JAVA_HOME}/include"
-    java_lib="${JAVA_HOME}/libexec/openjdk.jdk/Contents/Home/lib/"
-    JAVA_OPTS="-DJAVA_INCLUDE_PATH=${java_include} -DJAVA_INCLUDE_PATH2=${java_include} -DJAVA_AWT_INCLUDE_PATH=${java_include} -DJAVA_JVM_LIBRARY=${java_lib}/server/libjvm.dylib -DJAVA_AWT_LIBRARY=${java_lib}/libawt.dylib"
-    options="-DSWIG_EXECUTABLE=${SWIG_EXECUTABLE} -DENABLE_JAVA=ON -DENABLE_CSHARP=ON -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DSELECT_QT=${SELECT_QT} ${JAVA_OPTS} -DF2C_INTEGER=int -DF2C_LOGICAL=int -DQt6Widgets_UIC_EXECUTABLE=${QTDIR}/share/qt/libexec/uic -DWITH_DATAVISUALIZATION_NAMESPACES=OFF -DJAVA_COMPATIBILITY=1.7 "
-    
-    [ -z "${COPASI_CMAKE_OPTIONS}" ] || COMMON_CMAKE_OPTIONS="$(echo ${COPASI_CMAKE_OPTIONS} | sed -e 's/;/ /g')"
-    [ -e "${BUILD_DIR}" ] || mkdir -p "${BUILD_DIR}"
-    
-    pushd "${BUILD_DIR}"
-    echo cmake -G Ninja ${COMMON_CMAKE_OPTIONS} ${options} "${COPASI_SOURCES}"
-    cmake -G Ninja ${COMMON_CMAKE_OPTIONS} ${options} "${COPASI_SOURCES}"
-    popd
   else
     touch "${COPASI_SOURCES}/CMakeLists.txt"
   fi
