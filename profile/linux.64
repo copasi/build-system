@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+export VARIABLES="$HOME/build-system/variables.linux.64"
+export COPASI_PACKAGE="Linux-64bit"
+export PATH="$HOME/build-system/bin:$PATH"

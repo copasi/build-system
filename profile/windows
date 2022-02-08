@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+export PATH="$HOME/build-system/bin:/usr/bin:/usr/local/bin:$PATH"
+PS1="[\\u@windows \\W]\\\$ "
