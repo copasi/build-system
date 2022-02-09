@@ -7,7 +7,7 @@ git clone git@github.com:copasi/build-system.git
 cd build-system
 git checkout [linux-32|linux-64|darwin|darwin-intel|darwin-arm]
 bin/emerge
-source build-system/.variables
+source build-system/variables
 install-dependencies
 release --noscp --branch ...
 ```

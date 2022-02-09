@@ -5,7 +5,15 @@
 
 pushd "${BUILD_ROOT}"
 
-isDarwin && . ${BUILD_ROOT}/bin/emerge.darwin
+if [ ! -z "${COPASI_BUILD_SYSTEM_EMERGE}" ]; then
+  . "${COPASI_BUILD_SYSTEM_EMERGE}"
+elif isCygwin; then
+  . ${BUILD_ROOT}/bin/emerge-windows
+elif isDarwin; then
+  . ${BUILD_ROOT}/bin/emerge-darwin
+else    
+  . ${BUILD_ROOT}/bin/emerge-linux
+fi
 
 [ -e "git" ] || mkdir -p "git"
 [ -e "git/COPASI.release" ] || git clone git@copasi.github.com:copasi/COPASI.git "git/COPASI.release"

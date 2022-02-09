@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-. ${BUILD_ROOT}/variables.linux.common
+. ${BUILD_ROOT}/variables/linux
 
 if [ _"${TGT_ARCH}" != _x64} ]; then
   export TGT_ARCH=x64

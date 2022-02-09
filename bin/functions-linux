@@ -33,7 +33,7 @@ function packageCOPASI() {
   [ -e share/copasi/lib/plugins/platforms ] || mkdir share/copasi/lib/plugins/platforms
   [ -e share/copasi/lib/plugins/xcbglintegrations ] || mkdir share/copasi/lib/plugins/xcbglintegrations
 
-  . ${BUILD_ROOT}/${VARIABLES}
+  . ${VARIABLES}
   
   ln -s "${QTDIR}/lib/libQt5DBus.so.5" share/copasi/lib
   ln -s "${QTDIR}/lib/libQt5XcbQpa.so.5" share/copasi/lib
@@ -66,8 +66,8 @@ function packageCOPASI() {
 }
 
 function copyCOPASI() {
-  # Only executed for 64 bit Linux
   if [ "${COPASI_PACKAGE}" == "Linux-64bit" ]; then
+    # Only executed for 64 bit Linux
     echo ${COPASI_SCP} "${BINARY_DIR}"/COPASI-${sourceVersion}-Source.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Source.tar.gz"
     ${COPASI_SCP} "${BINARY_DIR}"/COPASI-${sourceVersion}-Source.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Source.tar.gz"
     echo ${COPASI_SCP} "${BINARY_DIR}"/copasi/CopasiSE/CopasiSE "${COPASI_UPLOAD}/AllSE/Linux64/CopasiSE-${targetVersion}"

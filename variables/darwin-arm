@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-. ${BUILD_ROOT}/variables.common
+initializeDirs
 
 if [ _${MACOSX_DEPLOYMENT_TARGET} != _12.0 ]; then
   export CC=clang

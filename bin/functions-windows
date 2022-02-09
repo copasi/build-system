@@ -27,11 +27,11 @@ function packageCOPASI() {
 
   create 'COPASI'
 
-  . "${BUILD_32_MD}/.variables"
+  . "${BUILD_32_MD}/variables"
   BINARY_DIR="${BUILD_32_MD}/build/COPASI.${DIR_SUFFIX}" create 'Java-Bindings'
   BINARY_DIR="${BUILD_32_MD}/build/COPASI.${DIR_SUFFIX}" create 'C#-Bindings'
 
-  . "${BUILD_64_MD}/.variables"
+  . "${BUILD_64_MD}/variables"
   BINARY_DIR="${BUILD_64_MD}/build/COPASI.${DIR_SUFFIX}" create 'Java-Bindings'
   BINARY_DIR="${BUILD_64_MD}/build/COPASI.${DIR_SUFFIX}" create 'C#-Bindings'
 }

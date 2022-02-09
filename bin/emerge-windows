@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+for build in ${ToBeBuild:-${toBeBuild:-.}}; do
+  [ -e "${BUILD_ROOT}/${build}" ] || mkdir "${BUILD_ROOT}/${build}"
+  [ -e "${BUILD_ROOT}/${build}/variables" ] || ln -s "${BUILD_ROOT}/variables/${build}" "${BUILD_ROOT}/${build}/variables" 
+done

@@ -1,3 +1,0 @@
-#!/usr/bin/end bash
-
-. ${BUILD_ROOT}/variables.common

@@ -16,4 +16,4 @@ if [ _${Platform} != _x86 ]; then
   export PYTHON_EXECUTABLE="C:/Program Files (x86)/Python-2.7/python.exe"
 fi
 
-. ${BUILD_ROOT}/variables.windows.common
+. ${BUILD_ROOT}/variables/vs-2017

@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
 OLD_BUILD_SYSTEM="${BUILD_SYSTEM}"
-BUILD_SYSTEM="$(dirname "$(${COPASI_READLINK:-readlink} -f "$BASH_SOURCE")")"
+BUILD_SYSTEM="${BUILD_ROOT}/$(basename "$(${COPASI_READLINK:-readlink} -f "$BASH_SOURCE")")"
 
 if [ _${OLD_BUILD_SYSTEM} != _${BUILD_SYSTEM} ]; then
   export BUILD_SYSTEM
-  . ${BUILD_ROOT}/variables.windows.32
+  . ${BUILD_ROOT}/variables/vs-2017-32
 
   export BUILD_TOOL=ninja
 
