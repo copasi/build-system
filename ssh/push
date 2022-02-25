@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+Target=""
+
+while [ _"$1" != _ ]; do
+  case $1 in
+  -s | --source)
+    shift
+    Source="$1"
+    ;;
+
+  *)
+    Target="${Target} $1"
+    ;;
+  esac
+ 
+  shift
+done
+
+if [ -z ${Source} ]; then
+  echo "Usage: push -s|--source file [target ...]"
+  exit
+fi
+for t in ${Target:-tracker.copasi.org darwin darwin-m1 deploy linux-32 linux-64 windows}; do
+  echo scp "${Source}" $t:./ssh
+  scp "${Source}" $t:./ssh
+done
