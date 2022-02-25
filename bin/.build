@@ -21,7 +21,6 @@ comment=
 branch=
 tag=
 
-{
 [ -e .status.${PROGNAME} ] && . .status.${PROGNAME}
 
 while [ _"$1" != _ ]; do
@@ -45,11 +44,13 @@ while [ _"$1" != _ ]; do
     ;;
 
   --branch)
-    (
-      cd "${COPASI_SOURCES}"
-      git fetch --all
-      git checkout --force "$2"
-    )
+    {
+      (
+        cd "${COPASI_SOURCES}"
+        git fetch --all
+        git checkout --force "$2"
+      )
+    } 2>&1 | tee ${BUILD_ROOT}/log/${PROGNAME}
     branch="$2"
     shift
     ;;
@@ -63,6 +64,7 @@ while [ _"$1" != _ ]; do
   shift
 done
 
+{
 echo comment=\"${comment}\" >.status.${PROGNAME}
 echo branch=\"${branch}\" >>.status.${PROGNAME}
 
@@ -96,7 +98,7 @@ sed -e 's/COPASI_VERSION_COMMENT.*/COPASI_VERSION_COMMENT "'${comment}'"/' \
 popd
 
 echo build ${toBeBuild:-.}
-} 2>&1 | tee ${BUILD_ROOT}/log/${PROGNAME}
+} 2>&1 | tee -a ${BUILD_ROOT}/log/${PROGNAME}
 
 build ${toBeBuild:-.}
 
