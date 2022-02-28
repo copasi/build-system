@@ -98,7 +98,7 @@ sed -e 's/COPASI_VERSION_COMMENT.*/COPASI_VERSION_COMMENT "'${comment}'"/' \
 popd
 
 echo build ${toBeBuild:-.}
-} 2>&1 | tee -a ${BUILD_ROOT}/log/${PROGNAME}
+} 2>&1 | tee ${BUILD_ROOT}/log/${PROGNAME}
 
 build ${toBeBuild:-.}
 
