@@ -27,7 +27,7 @@ function initializeDirs() {
   [ -e "${BUILD_DIR}" ] || mkdir -p "${BUILD_DIR}"
   [ -e "${LOG_DIR}" ] || mkdir -p "${LOG_DIR}"
 
-  export COMBINE_DIR="$(convertPath "${INSTALL_DIR}")"
+  export LIBCOMBINE_DIR="$(convertPath "${INSTALL_DIR}")"
   export CROSSGUID_DIR="$(convertPath "${INSTALL_DIR}")"
   export EXPAT_DIR="$(convertPath "${INSTALL_DIR}")"
   export LIBSBML_DIR="$(convertPath "${INSTALL_DIR}")"
