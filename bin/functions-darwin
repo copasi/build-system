@@ -50,6 +50,12 @@ function packageCOPASI() {
     [ -e CopasiUI.app/Contents/Frameworks ] || mkdir -p CopasiUI.app/Contents/Frameworks
     echo cp /opt/homebrew/lib/libbrotli*dylib  CopasiUI.app/Contents/Frameworks
     cp /opt/homebrew/lib/libbrotli*dylib  CopasiUI.app/Contents/Frameworks
+  elif [ $COPASI_PACKAGE == "Darwin-intel" ]; then
+    # packageCOPASI
+    # macdeployqt is missing this
+    [ -e CopasiUI.app/Contents/Frameworks ] || mkdir -p CopasiUI.app/Contents/Frameworks
+    echo cp /usr/local/lib/libbrotli*dylib  CopasiUI.app/Contents/Frameworks
+    cp /usr/local/lib/libbrotli*dylib  CopasiUI.app/Contents/Frameworks
   fi
   
   echo macdeployqt CopasiUI.app -always-overwrite -libpath=${QTDIR}/lib
