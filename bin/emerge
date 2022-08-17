@@ -16,7 +16,7 @@ else
 fi
 
 [ -e "git" ] || mkdir -p "git"
-[ -e "git/COPASI.release" ] || git clone git@copasi.github.com:copasi/COPASI.git "git/COPASI.release"
-[ -e "git/copasi-dependencies" ] || git clone git@copasi-dependencies.github.com:copasi/copasi-dependencies.git "git/copasi-dependencies"
+[ -e "git/COPASI.release" ] || git clone https://github.com/copasi/COPASI.git "git/COPASI.release"
+[ -e "git/copasi-dependencies" ] || git clone https://github.com/copasi/copasi-dependencies.git "git/copasi-dependencies"
 
 popd
