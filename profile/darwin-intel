@@ -4,4 +4,11 @@ export COPASI_PACKAGE=Darwin-intel
 export VARIABLES="$HOME/build-system-intel/variables/darwin-intel"
 export COPASI_READLINK=greadlink
 export PATH="$HOME/build-system-intel/bin:$PATH"
+
+export QTDIR=$(ls -d /usr/local/Cellar/qt/* | head -n 1)
+
+if [ -n "$ZSH_VERSION" ]; then
+PS1="[%n@${COPASI_PACKAGE} %~] $ "
+else
 PS1="[\\u@${COPASI_PACKAGE} \\W]\\\$ "
+fi
