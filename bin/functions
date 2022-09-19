@@ -37,6 +37,7 @@ function initializeDirs() {
   export NATIVEJIT_DIR="$(convertPath "${INSTALL_DIR}")"
   export QWTPLOT3D_DIR="$(convertPath "${INSTALL_DIR}")"
   export QWT_DIR="$(convertPath "${INSTALL_DIR}")"
+  export QCP_DIR="$(convertPath "${INSTALL_DIR}")"
   export RAPTOR_DIR="$(convertPath "${INSTALL_DIR}")"
   export SBW_DIR="$(convertPath "${INSTALL_DIR}")"
   export ZLIB_DIR="$(convertPath "${INSTALL_DIR}")"
