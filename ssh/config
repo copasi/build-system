@@ -26,6 +26,12 @@ Host darwin-m1
   HostName 129.206.253.88
   User copasi
 
+Host darwin-big-sur
+  HostName 129.206.253.122
+  User frank
+  ForwardX11 yes
+  Port 3022
+
 Host deploy
   HostName jsh012.accslopeside.com
   Port 22012
