@@ -36,6 +36,7 @@ Host deploy
   HostName jsh012.accslopeside.com
   Port 22012
   User copasi
+  IdentityFile ~/.ssh/deploy
 
 Host windows
   Hostname jsh012.accslopeside.com

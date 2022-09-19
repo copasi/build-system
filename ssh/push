@@ -22,6 +22,6 @@ if [ -z ${Source} ]; then
   exit
 fi
 for t in ${Target:-tracker.copasi.org darwin darwin-m1 darwin-big-sur deploy linux-32 linux-64 windows}; do
-  echo scp "${Source}" $t:./ssh
-  scp "${Source}" $t:./ssh
+  echo scp "${Source}" $t:.ssh/
+  scp "${Source}" $t:.ssh/
 done
