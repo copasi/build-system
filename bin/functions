@@ -41,6 +41,7 @@ function initializeDirs() {
   export RAPTOR_DIR="$(convertPath "${INSTALL_DIR}")"
   export SBW_DIR="$(convertPath "${INSTALL_DIR}")"
   export ZLIB_DIR="$(convertPath "${INSTALL_DIR}")"
+  export ZIPPER_DIR="$(convertPath "${INSTALL_DIR}")"
 }
 
 function version() {
