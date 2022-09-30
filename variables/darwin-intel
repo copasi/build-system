@@ -2,15 +2,15 @@
 
 initializeDirs
 
-if [ _${MACOSX_DEPLOYMENT_TARGET} != _12.0 ]; then
+if [ _${MACOSX_DEPLOYMENT_TARGET} != _11.0 ]; then
   export CC=clang
   export CXX=clang++
-  export MACOSX_DEPLOYMENT_TARGET=12.0
-  export SDK=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
+  export MACOSX_DEPLOYMENT_TARGET=11.0
+  export SDK=/Users/frank/SDKs/MacOSX11.3.sdk
   export ARCHITECTURES=x86_64
 
   export SELECT_QT=Qt6
-  export QTDIR=/usr/local/Cellar/qt/6.2.2
+  export QTDIR=/usr/local/Cellar/qt/6.3.1_1
 
   export PATH="${QTDIR}/bin:${PATH}"
 
