@@ -16,7 +16,7 @@ if [ x"$1" = x"--snapshot" ]; then
   snapshot=true
   type=${2:-release}
   SNAPSHOT_DIR="snapshots/${type}"
-  [ -e "${SNAPSHOT_DIR}" ] || mdir --parent "${SNAPSHOT_DIR}"
+  [ -e "${SNAPSHOT_DIR}" ] || mkdir --parent "${SNAPSHOT_DIR}"
 else
   snapshot=false
 fi
