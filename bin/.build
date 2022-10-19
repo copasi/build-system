@@ -12,7 +12,7 @@ export COPASI_SETUP_DIR="${BUILD_ROOT}/packages/setup.${DIR_SUFFIX}"
 
 # Upload information
 export COPASI_SCP="scp"
-export COPASI_UPLOAD="deploy:environment/upload/stage"
+export COPASI_UPLOAD="deploy:build-system/upload/stage"
 
 # Defaults:
 clean=false
