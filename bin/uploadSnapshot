@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+. "$(dirname "$(${COPASI_READLINK:-readlink} -f "$0")")"/functions
+pushd "${BUILD_ROOT}"
+
+AGE=12
+FILES=19
+
+if [ x"$1" = x"--age" ]; then
+  shift
+  AGE=${1:-12}
+  shift
+fi
+
+TYPE=${1:-release}
+SRC_DIR="upload/snapshots/${TYPE}"
+
+[ -e "${SRC_DIR}" ] || echo "No snapshots available" && exit 1
+
+echo rclone ls --max-age ${AGE}h "${SRC_DIR}"
+
+if [ _$(rclone ls --max-age ${AGE}h "${SRC_DIR}" | wc -l) = _${FILES} ]; then
+    echo rclone copy --bwlimit 256 --progress --max-age ${AGE}h "${SRC_DIR}" 'copasi:COPASI organization/Public/Snapshots/'${TYPE}
+    rclone copy --bwlimit 256 --progress --max-age ${AGE}h "${SRC_DIR}" 'copasi:COPASI organization/Public/Snapshots/'${TYPE}
+
+    echo rclone delete --progress --min-age ${AGE}h 'copasi:COPASI organization/Public/Snapshots/'${TYPE}
+    rclone delete --progress --min-age ${AGE}h 'copasi:COPASI organization/Public/Snapshots/'${TYPE}
+else
+    echo No recent snapshots available.
+fi
