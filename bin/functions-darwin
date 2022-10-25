@@ -67,8 +67,8 @@ function packageCOPASI() {
   macdeployqt CopasiUI.app -always-overwrite -libpath=${QTDIR}/lib >/dev/null 2>&1
   macdeployqt CopasiUI.app -always-overwrite -libpath=${QTDIR}/lib
 
-  echo sudo -S codesign --force --deep -s - CopasiUI.app
-  sudo -S codesign --force --deep -s - CopasiUI.app <~/.password
+  echo sudo -S codesign --force --deep --sign "Developer ID Application: UNIVERSITY OF CONNECTICUT HEALTH CENTER INC (RZKH46R3ZM)" CopasiUI.app
+  sudo -S codesign --force --deep --sign "Developer ID Application: UNIVERSITY OF CONNECTICUT HEALTH CENTER INC (RZKH46R3ZM)" CopasiUI.app < ~/.password 
   cd ..
 
   cd ..
