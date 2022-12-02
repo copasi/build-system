@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 
+if [ -z ${BUILD_SYSTEM_HOME+x} ];
+then
+    export BUILD_SYSTEM_HOME=$HOME
+fi
 export COPASI_PACKAGE=Darwin-arm
-export VARIABLES="$HOME/build-system-arm/variables/darwin-arm"
+export VARIABLES="$BUILD_SYSTEM_HOME/build-system-arm/variables/darwin-arm"
 export COPASI_READLINK=greadlink
-export PATH="$HOME/build-system-arm/bin:$PATH"
+export PATH="$BUILD_SYSTEM_HOME/build-system-arm/bin:$PATH"
 PS1="[\\u@${COPASI_PACKAGE} \\W]\\\$ "

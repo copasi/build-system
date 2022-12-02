@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
-export VARIABLES="$HOME/build-system/variables/linux-64"
+if [ -z ${BUILD_SYSTEM_HOME+x} ];
+then
+    export BUILD_SYSTEM_HOME=$HOME
+fi
+export VARIABLES="$BUILD_SYSTEM_HOME/build-system/variables/linux-64"
 export COPASI_PACKAGE="Linux-64bit"
-export PATH="$HOME/build-system/bin:$PATH"
+export PATH="$BUILD_SYSTEM_HOME/build-system/bin:$PATH"
