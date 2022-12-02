@@ -32,3 +32,8 @@ release --branch release/Version-4.37 --comment stable --noscp
 ```
 
 To make minor adjustments to the build, such as the target SDK, target qt version or such, you'd modify the `build-system-intel/variables/darwin-intel`.
+
+By default the scripts assume that the build system is in the HOME directory, if that is not the case, define a variable with the full path to the folder containing the build system directory. By default:
+
+    `BUILD_SYSTEM_HOME=$HOME`
+

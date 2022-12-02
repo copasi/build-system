@@ -1,9 +1,14 @@
 #!/usr/bin/env bash
 
+if [ -z ${BUILD_SYSTEM_HOME+x} ];
+then
+    export BUILD_SYSTEM_HOME=$HOME
+fi
+
 export COPASI_PACKAGE=Darwin-intel
-export VARIABLES="$HOME/build-system-intel/variables/darwin-intel"
+export VARIABLES="$BUILD_SYSTEM_HOME/build-system-intel/variables/darwin-intel"
 export COPASI_READLINK=greadlink
-export PATH="$HOME/build-system-intel/bin:$PATH"
+export PATH="$BUILD_SYSTEM_HOME/build-system-intel/bin:$PATH"
 
 export QTDIR=$(ls -d /usr/local/Cellar/qt/* | head -n 1)
 

@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
 
-export PATH="$HOME/build-system/bin:/usr/bin:/usr/local/bin:$PATH"
+if [ -z ${BUILD_SYSTEM_HOME+x} ];
+then
+    export BUILD_SYSTEM_HOME=$HOME
+fi
+export PATH="$BUILD_SYSTEM_HOME/build-system/bin:/usr/bin:/usr/local/bin:$PATH"
 PS1="[\\u@windows \\W]\\\$ "
