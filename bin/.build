@@ -17,6 +17,7 @@ export COPASI_UPLOAD="deploy:build-system/upload/stage"
 # Defaults:
 clean=false
 local=false
+skip_git=false
 comment=
 branch=
 tag=
@@ -31,6 +32,10 @@ while [ _"$1" != _ ]; do
 
   --local)
     local=true
+    ;;
+
+  --nogit)
+    skip_git=true
     ;;
 
   --noscp)
@@ -77,6 +82,8 @@ fi
 # Update the sources
 pushd "${COPASI_SOURCES}"
 
+if [ "${skip_git}" == false ]; then
+
 git fetch --all
 
 if [ "${local}" == false ]; then
@@ -91,6 +98,9 @@ gitTools/initTools
 
 # Determine the COPASI version
 gitTools/UpdateCopasiVersion --force
+
+fi
+
 
 # Set the version comment
 sed -e 's/COPASI_VERSION_COMMENT.*/COPASI_VERSION_COMMENT "'${comment}'"/' \
