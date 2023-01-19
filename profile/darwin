@@ -3,5 +3,5 @@
 export COPASI_PACKAGE=Darwin
 export VARIABLES="$HOME/build-system/variables/darwin"
 export COPASI_READLINK=greadlink
-export PATH="$HOME/build-system/bin:$PATH"
+export PATH="$HOME/build-system/bin:/usr/local/bin::$PATH"
 PS1="[\\u@${COPASI_PACKAGE} \\W]\\\$ "
