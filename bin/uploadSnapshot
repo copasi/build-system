@@ -3,6 +3,8 @@
 . "$(dirname "$(${COPASI_READLINK:-readlink} -f "$0")")"/functions
 pushd "${BUILD_ROOT}"
 
+set -o xtrace
+
 AGE=12
 FILES=19
 
@@ -15,7 +17,7 @@ fi
 TYPE=${1:-release}
 SRC_DIR="upload/snapshots/${TYPE}"
 
-[ -e "${SRC_DIR}" ] || echo "No snapshots available" && exit 1
+[ -e "${SRC_DIR}" ] || echo "No snapshots available" || exit 1
 
 echo rclone ls --max-age ${AGE}h "${SRC_DIR}"
 
