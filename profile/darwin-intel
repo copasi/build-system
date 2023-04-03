@@ -4,7 +4,7 @@ export COPASI_PACKAGE=Darwin-intel
 export VARIABLES="$HOME/build-system-intel/variables/darwin-intel"
 export COPASI_READLINK=greadlink
 export PATH="$HOME/build-system-intel/bin:/usr/local/bin:$PATH"
-export BUILD_ROOT="$(dirname "$(dirname "$(${COPASI_READLINK:-readlink} -f "$BASH_SOURCE")")")"
+export BUILD_ROOT="$(dirname "$(dirname "$(${COPASI_READLINK:-readlink} -f "${(%):-%N}")")")"
 
 export QTDIR=$(ls -d /usr/local/Cellar/qt/* | head -n 1)
 
