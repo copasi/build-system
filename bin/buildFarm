@@ -11,5 +11,9 @@ linux_64="linux-64 source build-system/profile/linux-64;$@"
 windows="windows source build-system/profile/windows;$@"
 
 for t in ${Target}; do
-  ssh ${!t} 2>&1 > "${BUILD_ROOT}/log/${t}.$1" & 
+  ssh ${!t} &> "${BUILD_ROOT}/log/${t}.$1" & 
 done
+
+wait
+
+echo Done: $@

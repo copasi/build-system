@@ -13,3 +13,5 @@ packages/*
 MacOSX10.13.sdk/*
 .DS_Store
 upload
+
+keys/
