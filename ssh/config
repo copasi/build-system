@@ -17,17 +17,16 @@ Host tracker
   Hostname tracker.copasi.org
 
 Host darwin
-  Hostname localhost
+  Hostname darwin-catalina.copasi.org 
   User copasi
-  Port 30100
-  ProxyCommand ssh -W '%h:%p' tracker
 
 Host darwin-m1
-  HostName 129.206.253.88
+  HostName darwin-m1.spdns.eu
+  ForwardX11 yes
   User copasi
 
 Host darwin-big-sur
-  HostName 129.206.253.122
+  HostName agklinux.spdns.eu
   User frank
   ForwardX11 yes
   Port 3022
