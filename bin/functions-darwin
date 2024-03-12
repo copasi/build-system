@@ -18,16 +18,9 @@ function packageCOPASI() {
   export BINARY_DIR="${BUILD_ROOT}/build/COPASI.${DIR_SUFFIX}"
 
   create 'COPASI'
-
-  if [ $COPASI_PACKAGE == "Darwin" ]; then
-    create 'Java-Bindings'
-    create 'C#-Bindings'
-    # create 'Python-Bindings'
-  elif [ $COPASI_PACKAGE == "Darwin-arm" ]; then
-    create 'Java-Bindings'
-    # create 'C#-Bindings'
-    # create 'Python-Bindings'
-  fi
+  create 'Java-Bindings'
+  create 'C#-Bindings'
+  # create 'Python-Bindings'
   
   version
 
@@ -86,17 +79,15 @@ function copyCOPASI() {
   echo ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-Darwin.dmg "${COPASI_UPLOAD}/COPASI-${targetVersion}-${COPASI_PACKAGE}.dmg"
   ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-Darwin.dmg "${COPASI_UPLOAD}/COPASI-${targetVersion}-${COPASI_PACKAGE}.dmg"
 
-  if [ $COPASI_PACKAGE == "Darwin" ]; then
-    echo ${COPASI_SCP} "${BINARY_DIR}"/copasi/CopasiSE/CopasiSE "${COPASI_UPLOAD}/AllSE/${COPASI_PACKAGE}/CopasiSE-${targetVersion}"
-    ${COPASI_SCP} "${BINARY_DIR}"/copasi/CopasiSE/CopasiSE "${COPASI_UPLOAD}/AllSE/${COPASI_PACKAGE}/CopasiSE-${targetVersion}"
-    echo ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-Java-Bindings-Darwin.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Java-Bindings-${COPASI_PACKAGE}.tar.gz"
-    ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-Java-Bindings-Darwin.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Java-Bindings-${COPASI_PACKAGE}.tar.gz"
-    echo ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-C#-Bindings-Darwin.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-C#-Bindings-${COPASI_PACKAGE}.tar.gz"
-    ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-C#-Bindings-Darwin.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-C#-Bindings-${COPASI_PACKAGE}.tar.gz"
-    # echo ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-Python-2.7-Bindings-Darwin.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Python-2.7-${COPASI_PACKAGE}.tar.gz"
-    # ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-Python-2.7-Bindings-Darwin.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Python-2.7-${COPASI_PACKAGE}.tar.gz"
-  elif [ $COPASI_PACKAGE == "Darwin-arm" ]; then
-    echo ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-Java-Bindings-Darwin.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Java-Bindings-${COPASI_PACKAGE}.tar.gz"
-    ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-Java-Bindings-Darwin.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Java-Bindings-${COPASI_PACKAGE}.tar.gz"
-  fi
+  echo ${COPASI_SCP} "${BINARY_DIR}"/copasi/CopasiSE/CopasiSE "${COPASI_UPLOAD}/AllSE/${COPASI_PACKAGE}/CopasiSE-${targetVersion}"
+  ${COPASI_SCP} "${BINARY_DIR}"/copasi/CopasiSE/CopasiSE "${COPASI_UPLOAD}/AllSE/${COPASI_PACKAGE}/CopasiSE-${targetVersion}"
+
+  echo ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-Java-Bindings-Darwin.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Java-Bindings-${COPASI_PACKAGE}.tar.gz"
+  ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-Java-Bindings-Darwin.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Java-Bindings-${COPASI_PACKAGE}.tar.gz"
+
+  echo ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-C#-Bindings-Darwin.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-C#-Bindings-${COPASI_PACKAGE}.tar.gz"
+  ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-C#-Bindings-Darwin.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-C#-Bindings-${COPASI_PACKAGE}.tar.gz"
+
+  # echo ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-Python-2.7-Bindings-Darwin.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Python-2.7-${COPASI_PACKAGE}.tar.gz"
+  # ${COPASI_SCP} "${COPASI_SETUP_DIR}"/COPASI-${sourceVersion}-Python-2.7-Bindings-Darwin.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Python-2.7-${COPASI_PACKAGE}.tar.gz"
 }
