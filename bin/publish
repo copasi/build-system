@@ -45,9 +45,9 @@ for p in $packages; do
   # Check whether the package is complete
   # We need 23 for releases and 17 for snapshots (p = yyyymmdd)
   if [ x"${#p}" = x"8" ]; then
-    needed=23
+    needed=24
   else
-    needed=23
+    needed=24
   fi
 
   count=$(find stage -type f -name "*-$p*" | wc -l | sed -e's/ //g')
