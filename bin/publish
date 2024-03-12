@@ -6,8 +6,22 @@ pushd "${BUILD_ROOT}"
 [ -e upload ] || mkdir upload
 pushd upload
 
+function prepare_stage() {
+  # Prepare for the next staging
+  [ -e stage ] || mkdir stage
+  [ -e stage/AllSE ] || mkdir stage/AllSE
+  [ -e stage/AllSE/Darwin ] || mkdir stage/AllSE/Darwin
+  [ -e stage/AllSE/Darwin-arm ] || mkdir stage/AllSE/Darwin-arm
+  [ -e stage/AllSE/Darwin-intel ] || mkdir stage/AllSE/Darwin-intel
+  [ -e stage/AllSE/Linux ] || mkdir stage/AllSE/Linux
+  [ -e stage/AllSE/Linux64 ] || mkdir stage/AllSE/Linux64
+  [ -e stage/AllSE/WIN32 ] || mkdir stage/AllSE/WIN32
+  [ -e stage/AllSE/WIN64 ] || mkdir stage/AllSE/WIN64
+}
+
 if [ x"$1" = x"--purge" ]; then
   find stage -type f -delete
+  prepare_stage
   exit
 fi
 
@@ -56,12 +70,16 @@ for p in $packages; do
     # Build the package containing all CopasiSE
     mkdir COPASI-$p-AllSE
     mkdir COPASI-$p-AllSE/Darwin
+    mkdir COPASI-$p-AllSE/Darwin-arm
+    mkdir COPASI-$p-AllSE/Darwin-intel
     mkdir COPASI-$p-AllSE/Linux
     mkdir COPASI-$p-AllSE/Linux64
     mkdir COPASI-$p-AllSE/WIN32
     mkdir COPASI-$p-AllSE/WIN64
 
     mv stage/AllSE/Darwin/CopasiSE-$p COPASI-$p-AllSE/Darwin/CopasiSE
+    mv stage/AllSE/Darwin-arm/CopasiSE-$p COPASI-$p-AllSE/Darwin-arm/CopasiSE
+    mv stage/AllSE/Darwin-intel/CopasiSE-$p COPASI-$p-AllSE/Darwin-intel/CopasiSE
     mv stage/AllSE/Linux/CopasiSE-$p COPASI-$p-AllSE/Linux/CopasiSE
     mv stage/AllSE/Linux64/CopasiSE-$p COPASI-$p-AllSE/Linux64/CopasiSE
     mv stage/AllSE/WIN32/CopasiSE-$p.exe COPASI-$p-AllSE/WIN32/CopasiSE.exe
@@ -90,11 +108,4 @@ for p in $packages; do
   fi
 done
 
-# Prepare for the next staging
-[ -e stage ] || mkdir stage
-[ -e stage/AllSE ] || mkdir stage/AllSE
-[ -e stage/AllSE/Darwin ] || mkdir stage/AllSE/Darwin
-[ -e stage/AllSE/Linux ] || mkdir stage/AllSE/Linux
-[ -e stage/AllSE/Linux64 ] || mkdir stage/AllSE/Linux64
-[ -e stage/AllSE/WIN32 ] || mkdir stage/AllSE/WIN32
-[ -e stage/AllSE/WIN64 ] || mkdir stage/AllSE/WIN64
+prepare_stage
