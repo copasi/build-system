@@ -5,6 +5,7 @@ pushd "${BUILD_ROOT}"
 
 clean=false
 configure=false
+pull=false
 
 while [ _"$1" != _ ]; do
   case $1 in
@@ -14,6 +15,10 @@ while [ _"$1" != _ ]; do
 
   --configure)
     configure=true
+    ;;
+
+  --pull)
+    pull=true
     ;;
 
   *)
@@ -50,6 +55,11 @@ function buildOne() {
 
   popd
 }
+
+if [ ${pull} = true ]; then
+  (cd "${BUILD_ROOT}/git/copasi-dependencies" && git pull --rebase)
+  configure=true
+fi
 
 for b in ${ToBeBuild:-${toBeBuild:-.}}; do
   if [ _$b != _. ]; then
