@@ -32,13 +32,20 @@ function buildOne () {
 
     echo cmake ${common_cmake_options} ${copasi_cmake_options} "$(convertPath "${COPASI_SOURCES}")"
     cmake ${common_cmake_options} ${copasi_cmake_options} "$(convertPath "${COPASI_SOURCES}")"
+    if [ $? -ne 0 ]; then
+      echo "CMake configuration failed"
+      exit 1
+    fi
   else
     touch "${COPASI_SOURCES}/CMakeLists.txt"
   fi
 
   echo ${BUILD_TOOL}
   ${BUILD_TOOL}
-
+  if [ $? -ne 0 ]; then
+      echo "Build failed"
+      exit 1
+  fi
   popd
 }
 

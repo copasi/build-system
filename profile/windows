@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-export PATH="$HOME/build-system/bin:/usr/bin:/usr/local/bin:$PATH"
+export HOME_BUILD_SYSTEM=${HOME_BUILD_SYSTEM:=$HOME}
+export PATH="$HOME_BUILD_SYSTEM/build-system/bin:/usr/bin:/usr/local/bin:$PATH"
 export BUILD_ROOT="$(dirname "$(dirname "$(${COPASI_READLINK:-readlink} -f "$BASH_SOURCE")")")"
 
 PS1="[\\u@windows \\W]\\\$ "

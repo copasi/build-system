@@ -13,6 +13,13 @@ release --branch release/Version-4.35 --comment stable
 ```
 where you source the appropriate profile
 
+if the build-system folder is not in `HOME`, define an environment variable `HOME_BUILD_SYSTEM`, 
+to indicate the full path to the root of the build-system folder, for example with: 
+
+```bash
+export HOME_BUILD_SYSTEM=$PWD
+```
+
 ### Building on Darwin-Intel
 Since we have several build environments for macOS, here the specific example of how to install it on an intel machine. To setup the complete build environment on macOS Big Sur. First install `brew`, then install: 
 

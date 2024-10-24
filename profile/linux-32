@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-export VARIABLES="$HOME/build-system/variables/linux-32"
+export HOME_BUILD_SYSTEM=${HOME_BUILD_SYSTEM:=$HOME}
+export VARIABLES="$HOME_BUILD_SYSTEM/build-system/variables/linux-32"
 export COPASI_PACKAGE="Linux-32bit"
-export PATH="$HOME/build-system/bin:$PATH"
+export PATH="$HOME_BUILD_SYSTEM/build-system/bin:$PATH"
 export BUILD_ROOT="$(dirname "$(dirname "$(${COPASI_READLINK:-readlink} -f "$BASH_SOURCE")")")"
