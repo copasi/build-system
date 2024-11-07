@@ -8,6 +8,10 @@ function isCygwin() {
   uname -a | grep -qi cygwin
 }
 
+function isMsys() {
+  uname -o | grep -qi msys
+}
+
 function isDarwin() {
   uname -a | grep -qi darwin
 }
@@ -64,6 +68,8 @@ function version() {
 if [ ! -z "${COPASI_BUILD_SYSTEM_FUNCTIONS}" ]; then
   . "${COPASI_BUILD_SYSTEM_FUNCTIONS}"
 elif isCygwin; then
+  . ${BUILD_ROOT}/bin/functions-windows
+elif isMsys; then
   . ${BUILD_ROOT}/bin/functions-windows
 elif isDarwin; then
   . ${BUILD_ROOT}/bin/functions-darwin
