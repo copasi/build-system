@@ -10,7 +10,11 @@ function create() {
 }
 
 function convertPath() {
-  cygpath -w "$1"
+  if [[ "$(uname -o)" == "Cygwin" ]]; then
+    cygpath -w "$1"
+  else
+    echo "$1"
+  fi
 }
 
 function packageCOPASI() {
