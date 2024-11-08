@@ -70,7 +70,7 @@ if [ ! -z "${COPASI_BUILD_SYSTEM_FUNCTIONS}" ]; then
 elif isCygwin; then
   . ${BUILD_ROOT}/bin/functions-windows
 elif isMsys; then
-  . ${BUILD_ROOT}/bin/functions-windows
+  . ${BUILD_ROOT}/bin/functions-windows-msys
 elif isDarwin; then
   . ${BUILD_ROOT}/bin/functions-darwin
 else

@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+export toBeBuild="${toBeBuild:-}"
+
+function create() {
+  cmd="${COPASI_SOURCES}/InnoSetup/create.sh"
+
+  echo ${cmd} $1 
+  ${cmd} $1 
+}
+
+function convertPath() {
+  echo "$1"
+}
+
+function packageCOPASI() {
+  export COPASI_PACKAGE="Windows"
+
+  rm -rf "${COPASI_SETUP_DIR}"/COPASI*
+
+  dos2unix "${COPASI_SOURCES}/InnoSetup/"*.sh
+
+  pushd ${COPASI_SETUP_DIR}/bin
+  windeployqt CopasiUI.exe  --release
+  popd
+
+
+  # create 'COPASI'
+
+  . "${VARIABLES}"
+  BINARY_DIR="${BUILD_DIR}/COPASI.${DIR_SUFFIX}" create 'Java-Bindings'
+  BINARY_DIR="${BUILD_DIR}/COPASI.${DIR_SUFFIX}" create 'C#-Bindings'
+}
+
+function copyCOPASI () {
+  pushd ${COPASI_SETUP_DIR}
+
+  echo ${COPASI_SCP} package/COPASI-${sourceVersion}-${COPASI_PACKAGE}.exe "${COPASI_UPLOAD}/COPASI-${targetVersion}-${COPASI_PACKAGE}.exe"
+  ${COPASI_SCP} package/COPASI-${sourceVersion}-${COPASI_PACKAGE}.exe "${COPASI_UPLOAD}/COPASI-${targetVersion}-${COPASI_PACKAGE}.exe"
+  echo ${COPASI_SCP} package/bin/CopasiSE.exe "${COPASI_UPLOAD}/AllSE/WIN64/CopasiSE-${targetVersion}.exe"
+  ${COPASI_SCP} package/bin/CopasiSE.exe "${COPASI_UPLOAD}/AllSE/WIN64/CopasiSE-${targetVersion}.exe"
+  echo ${COPASI_SCP} COPASI-${sourceVersion}-C#-Bindings-${COPASI_PACKAGE}-64-bit.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-C#-Bindings-${COPASI_PACKAGE}-64-bit.tar.gz"
+  ${COPASI_SCP} COPASI-${sourceVersion}-C#-Bindings-${COPASI_PACKAGE}-64-bit.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-C#-Bindings-${COPASI_PACKAGE}-64-bit.tar.gz"
+  echo ${COPASI_SCP} COPASI-${sourceVersion}-Java-Bindings-${COPASI_PACKAGE}-64-bit.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Java-Bindings-${COPASI_PACKAGE}-64-bit.tar.gz"
+  ${COPASI_SCP} COPASI-${sourceVersion}-Java-Bindings-${COPASI_PACKAGE}-64-bit.tar.gz "${COPASI_UPLOAD}/COPASI-${targetVersion}-Java-Bindings-${COPASI_PACKAGE}-64-bit.tar.gz"
+
+  popd
+}

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+export HOME_BUILD_SYSTEM=${HOME_BUILD_SYSTEM:=$HOME}
+export VARIABLES="$HOME_BUILD_SYSTEM/build-system/variables/windows-msys"
+export PATH="$HOME_BUILD_SYSTEM/build-system/bin:$HOME_BUILD_SYSTEM/6.8.0/msvc2022_64/bin:$PATH"
+export BUILD_ROOT="$(dirname "$(dirname "$(${COPASI_READLINK:-readlink} -f "$BASH_SOURCE")")")"
+
+source $VARIABLES
