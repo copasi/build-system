@@ -2,10 +2,10 @@
 
 . "$(dirname "$(${COPASI_READLINK:-readlink} -f "$0")")"/functions
 
-Target=${Target:-darwin_m1 darwin_big_sur linux_32 linux_64 windows}
+Target=${Target:-darwin_m1 darwin64_vm linux_32 linux_64 windows}
 darwin="darwin source build-system/profile/darwin;$@"
 darwin_m1="darwin-m1 source build-system-arm/profile/darwin-arm;$@"
-darwin_big_sur="darwin-big-sur source build-system-intel/profile/darwin-intel;$@"
+darwin64_vm="darwin64-vm source build-system-intel/profile/darwin-intel;$@"
 linux_32="linux-32 source build-system/profile/linux-32;$@"
 linux_64="linux-64 source build-system/profile/linux-64;$@"
 windows="windows source build-system/profile/windows;$@"
