@@ -107,6 +107,7 @@ popd
 echo build ${toBeBuild:-.}
 } 2>&1 | tee ${BUILD_ROOT}/log/${PROGNAME}
 
+export clean
 build ${toBeBuild:-.}
 
 {
