@@ -20,6 +20,10 @@ function packageCOPASI() {
 
   dos2unix "${COPASI_SOURCES}/InnoSetup/"*.sh
 
+  pushd ${BUILD_DIR}/COPASI.${DIR_SUFFIX}
+  cmake --install .
+  popd
+
   pushd ${COPASI_SETUP_DIR}/bin
   windeployqt CopasiUI.exe  --release
   popd
