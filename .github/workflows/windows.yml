@@ -30,7 +30,7 @@ jobs:
       - name: install choco dependencies
         shell: cmd
         run: |
-          choco install --no-progress -y wget astyle
+          choco install --no-progress -y wget astyle zip innosetup
           choco install --no-progress -y --force Temurin8 --params="/ADDLOCAL=FeatureMain,FeatureEnvironment,FeatureJarFileRunWith,FeatureJavaHome /INSTALLDIR=%cd%\openjdk\" /quiet
 
       - name: create virtual environment
