@@ -30,16 +30,21 @@ jobs:
       - name: install choco dependencies
         shell: cmd
         run: |
-          choco install -y wget astyle
-          choco install -y --force Temurin8 --params="/ADDLOCAL=FeatureMain,FeatureEnvironment,FeatureJarFileRunWith,FeatureJavaHome /INSTALLDIR=%cd%\openjdk\" /quiet
+          choco install --no-progress -y wget astyle
+          choco install --no-progress -y --force Temurin8 --params="/ADDLOCAL=FeatureMain,FeatureEnvironment,FeatureJarFileRunWith,FeatureJavaHome /INSTALLDIR=%cd%\openjdk\" /quiet
 
       - name: create virtual environment
         shell: cmd
         run: |
+          dir
+          echo %PATH%
           python -m venv env-build
+          dir
           .\env-build\Scripts\activate.bat
+          echo %PATH%
           pip install aqtinstall mkl-static swig cmake ninja 
           aqt install-qt windows desktop 6.8.0 win64_msvc2022_64 -m qt5compat qtcharts qtdatavis3d
+          dir
 
       - name: checkout build system
         run: |
