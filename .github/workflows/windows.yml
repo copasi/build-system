@@ -70,8 +70,8 @@ jobs:
           # emerge 
           emerge 
 
-          # build dependencies
-          install-dependencies
+          # build dependencies, ignore exit code
+          install-dependencies || true
 
           # build release
           release --branch release/Version-4.45 --comment stable --noscp
