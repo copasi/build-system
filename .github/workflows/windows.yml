@@ -28,6 +28,7 @@ jobs:
           python-version: '3.11' 
       
       - name: install choco dependencies
+        shell: cmd
         run: |
           choco install -y wget astyle
           choco install -y --force Temurin8 --params="/ADDLOCAL=FeatureMain,FeatureEnvironment,FeatureJarFileRunWith,FeatureJavaHome /INSTALLDIR=%cd%\openjdk\" /quiet
