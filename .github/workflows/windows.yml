@@ -45,16 +45,21 @@ jobs:
           pip install aqtinstall mkl-static swig cmake ninja 
           aqt install-qt windows desktop 6.8.0 win64_msvc2022_64 -m qt5compat qtcharts qtdatavis3d
           dir
+          echo %PATH% >> $GITHUB_ENV
 
       - name: checkout build system
         run: |
           git clone https://github.com/copasi/build-system
           
       - name: initialize build system
-        shell: cmd
+        shell: bash
         run: |
-          call  .\env-build\Scripts\activate.bat
-          "%ProgramFiles%\git\bin\bash"
+          # print bash version
+          bash --version
+          # print bash location
+          which bash
+          
+          export PATH=$PWD\env-build\Scripts:$PATH
           export HOME_BUILD_SYSTEM=$PWD
           source build-system/profile/windows-msys 
           export Qt6_DIR=$PWD/6.8.0/msvc2022_64
