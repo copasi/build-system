@@ -31,9 +31,20 @@ function packageCOPASI() {
 
   # create 'COPASI'
 
+  # create a zip file for the COPASI package including just 
+  # $COPASI_SETUP_DIR/bin and $COPASI_SETUP_DIR/share
+  # the zip file is named COPASI-${sourceVersion}-${COPASI_PACKAGE}.zip
+
+  pushd ${COPASI_SETUP_DIR}
+  zip -r COPASI-${sourceVersion}-${COPASI_PACKAGE}.zip bin share
+  popd
+
   . "${VARIABLES}"
   BINARY_DIR="${BUILD_DIR}/COPASI.${DIR_SUFFIX}" create 'Java-Bindings'
   BINARY_DIR="${BUILD_DIR}/COPASI.${DIR_SUFFIX}" create 'C#-Bindings'
+  
+  # remove COPASI* subfolders from COPASI_SETUP_DIR
+  rm -rf "${COPASI_SETUP_DIR}"/COPASI*
 }
 
 function copyCOPASI () {
