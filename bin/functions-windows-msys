@@ -20,31 +20,39 @@ function packageCOPASI() {
 
   dos2unix "${COPASI_SOURCES}/InnoSetup/"*.sh
 
+  . "${VARIABLES}"
+
+  echo Build dir: ${BUILD_DIR}
+  echo COPASI Setup dir: ${COPASI_SETUP_DIR}
+  echo COPASI Sources: ${COPASI_SOURCES}
+  echo DIR_SUFFIX: ${DIR_SUFFIX}
+  echo version: ${sourceVersion}
+
+
   pushd ${BUILD_DIR}/COPASI.${DIR_SUFFIX}
   cmake --install .
   popd
 
-  pushd ${COPASI_SETUP_DIR}/bin
+  pushd ${COPASI_SETUP_DIR}/package/bin
   windeployqt CopasiUI.exe  --release
   popd
 
-
-  # create 'COPASI'
-
-  # create a zip file for the COPASI package including just 
-  # $COPASI_SETUP_DIR/bin and $COPASI_SETUP_DIR/share
-  # the zip file is named COPASI-${sourceVersion}-${COPASI_PACKAGE}.zip
-
-  pushd ${COPASI_SETUP_DIR}
-  zip -r COPASI-${sourceVersion}-${COPASI_PACKAGE}.zip bin share
+  pushd ${COPASI_SETUP_DIR}/package
+  zip -r ../COPASI-${COPASI_PACKAGE}.zip bin share
   popd
 
-  . "${VARIABLES}"
+  export COPASI_INNO_SETUP=`which iscc`
+  export COPASI_INNO_FILE="${BUILD_SYSTEM}/src/copasi.iss"
+  export NO_COPY=1
+  create 'COPASI'
+  cp ${COPASI_SETUP_DIR}/package/COPASI*exe ${COPASI_SETUP_DIR}/
+
+
   BINARY_DIR="${BUILD_DIR}/COPASI.${DIR_SUFFIX}" create 'Java-Bindings'
   BINARY_DIR="${BUILD_DIR}/COPASI.${DIR_SUFFIX}" create 'C#-Bindings'
   
   # remove COPASI* subfolders from COPASI_SETUP_DIR
-  rm -rf "${COPASI_SETUP_DIR}"/COPASI*
+  rm -rf "${COPASI_SETUP_DIR}"/COPASI*bit
 }
 
 function copyCOPASI () {
