@@ -76,5 +76,6 @@ jobs:
           name: windows
           path: |
             build-system/packages/setup.release/*.zip
+            build-system/packages/setup.release/*.exe
             build-system/packages/setup.release/*.tar.gz
       
