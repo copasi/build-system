@@ -1,0 +1,80 @@
+# This is a basic workflow to help you get started with Actions
+
+name: macOS Installer build
+
+# Controls when the workflow will run
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+  # run this task every week at 2am
+  # schedule:
+  #   - cron: '0 2 * * 0'
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: macos-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - uses: seanmiddleditch/gha-setup-ninja@master
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11' 
+      
+      - name: install dependencies
+        shell: bash
+        run: |
+          brew install wget astyle openjdk
+          brew install --cask mono-mdk
+
+      - name: create virtual environment
+        shell: bash
+        run: |
+          python3 -m venv env-build
+          source ./env-build/bin/activate
+          pip install aqtinstall swig cmake ninja 
+          aqt install-qt mac desktop 6.8.0 clang_64 -m qt5compat qtcharts qtdatavis3d
+          echo $PATH >> $GITHUB_ENV
+
+      - name: checkout build system
+        run: |
+          git clone https://github.com/copasi/build-system
+          
+      - name: initialize build system
+        shell: bash
+        run: |
+          # print bash version
+          bash --version
+          # print bash location
+          which bash
+          
+          export PATH=$PWD/env-build/bin:$PATH
+          export HOME_BUILD_SYSTEM=$PWD
+          source build-system/profile/darwin-intel
+          export Qt6_DIR=$PWD/6.8.0/clang_64
+          export PATH=$PWD/6.8.0/clang_64/bin/:$PATH
+          export SELECT_QT=Qt6         
+
+          # emerge 
+          emerge 
+
+          # build dependencies, ignore exit code
+          install-dependencies || true
+
+          # build release
+          release --branch release/Version-4.45 --comment stable --noscp
+
+      # - uses: actions/upload-artifact@v4
+      #   with:
+      #     name: windows
+      #     path: |
+      #       build-system/packages/setup.release/*.zip
+      #       build-system/packages/setup.release/*.exe
+      #       build-system/packages/setup.release/*.tar.gz
+      #     retention-days: 7
+      #     if-no-files-found: error
+      
