@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Name=COPASI
+Terminal=false
+X-AppImage-Version=4.45.496
+Encoding=UTF-8
+Version=1.0
+Exec=/usr/bin/CopasiUI %u
+Icon=COPASI
+MimeType=x-scheme-handler/copasi;application/x-copasi;
+GenericName=Biochemical simulation
+NoDisplay=false
+Categories=Science;Utility;
