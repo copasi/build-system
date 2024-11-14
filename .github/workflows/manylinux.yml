@@ -83,13 +83,84 @@ jobs:
           # build release
           release --branch release/Version-4.45 --comment stable --noscp
 
-      # - uses: actions/upload-artifact@v4
-      #   with:
-      #     name: windows
-      #     path: |
-      #       build-system/packages/setup.release/*.zip
-      #       build-system/packages/setup.release/*.exe
-      #       build-system/packages/setup.release/*.tar.gz
-      #     retention-days: 7
-      #     if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: manylinux
+          path: |
+            build-system/packages/setup.release/*.tar.gz
+            build-system/packages/setup.release/*.sh
+          retention-days: 7
+          if-no-files-found: error      
       
+      - name: create AppImage        
+        shell: bash
+        run: |
+          # install appimage tools
+          wget https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
+          chmod +x ./linuxdeployqt-continuous-x86_64.AppImage
+          ./linuxdeployqt-continuous-x86_64.AppImage --appimage-extract
+
+          # install copasi 
+          export PATH=$PWD/env-build/bin:$PATH
+          export HOME_BUILD_SYSTEM=$PWD
+          source ./env-build/bin/activate
+          export VARIABLES=$PWD/build-system/variables/manylinux
+          source build-system/profile/linux-64
+          export QTDIR=$PWD/6.8.0/gcc_64
+          export Qt6_DIR=$PWD/6.8.0/gcc_64/lib/cmake/Qt6/
+          export PATH=$PWD/6.8.0/gcc_64/bin/:$PATH
+          export SELECT_QT=Qt6   
+          
+          pushd build-system/build/COPASI.release
+          ninja install
+          popd
+
+          cp build-system/git/COPASI.release/copasi/resourcesUI/images/512x512/copasi.png build-system/packages/setup.release/COPASI.png
+          cp build-system/src/COPASI.desktop build-system/packages/setup.release/COPASI.desktop
+
+          # extract version
+          AWK=${COPASI_AWK:-gawk}
+          SOURCE=build-system/git/COPASI.release
+
+          major=`${AWK} -- '$2 ~ "COPASI_VERSION_MAJOR" {print $3}' "${SOURCE}/copasi/CopasiVersion.h"`
+          minor=`${AWK} -- '$2 ~ "COPASI_VERSION_MINOR" {print $3}' "${SOURCE}/copasi/CopasiVersion.h"`
+          build=`${AWK} -- '$2 ~ "COPASI_VERSION_BUILD" {print $3}' "${SOURCE}/copasi/CopasiVersion.h"`
+          modified=`${AWK} -- '$2 ~ "COPASI_VERSION_MODIFIED" {print $3}' "${SOURCE}/copasi/CopasiVersion.h"`
+          comment=`${AWK} -- '$2 ~ "COPASI_VERSION_COMMENT" {print $3}' "${SOURCE}/copasi/CopasiVersion.h"`
+          buildname=${build}
+
+          if [ $modified == true ]; then
+            buildname=${buildname}+
+          fi
+
+          MyAppVersion=${major}.${minor}.${build}
+
+          if [ x"${comment}" = x\"Snapshot\" ]; then
+            MyAppVersion=${major}.
+            [ ${#minor} = 1 ] && MyAppVersion=${MyAppVersion}0
+            MyAppVersion=${MyAppVersion}${minor}.
+            [ ${#build} = 1 ] && MyAppVersion=${MyAppVersion}0
+            MyAppVersion=${MyAppVersion}${build}
+          fi
+
+
+          export VERSION=$MyAppVersion
+          
+          # adjust LD_LIBRARY_PATH
+          tar zxf build-system/src/extra_libs.tar.gz
+          export PATH=$PWD/6.8.0/gcc_64/bin:$PATH
+          export LD_LIBRARY_PATH=$PWD/6.8.0/gcc_64/lib:$PWD/6.8.0/gcc_64/plugins/imageformats:$PWD/6.8.0/gcc_64/plugins/platforms:$PWD/6.8.0/gcc_64/plugins/iconengines:$PWD/6.8.0/gcc_64/plugins/printsupport:$PWD/6.8.0/gcc_64/plugins/tls:$PWD/extra_libs:$LD_LIBRARY_PATH
+
+          # create AppImage
+          ./squashfs-root/AppRun build-system/packages/setup.release/usr/bin/CopasiUI  -bundle-non-qt-libs -qmake=`which qmake`  -appimage
+
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AppImage
+          path: |
+            *.AppImage
+          retention-days: 7
+          if-no-files-found: error      
+  
+
