@@ -24,23 +24,19 @@ jobs:
       - name: install dependencies
         shell: bash
         run: |
-          yum install -y wget
-          yum install -y java-1.8.0-openjdk-devel
           rpmkeys --import "http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
+
           su -c 'curl https://download.mono-project.com/repo/centos8-stable.repo | tee /etc/yum.repos.d/mono-centos8-stable.repo'
-          dnf install -y mono-devel
-          dnf install -y cups-devel
-          dnf install -y uuid-devel
-          dnf install -y mesa-libGLU-devel
+
+          dnf install -y mono-devel cups-devel uuid-devel mesa-libGLU-devel wget java-1.8.0-openjdk-devel
 
 
-      - name: create virtual environment
+      - name: create virtual environment install qt
         shell: bash
         run: |
           python3 -m venv env-build
           source ./env-build/bin/activate
           pip install aqtinstall swig cmake ninja  mkl-static
-
           aqt install-qt linux desktop 6.8.0 linux_gcc_64 -m qt5compat qtcharts qtdatavis3d      
 
       - name: checkout build system
@@ -68,16 +64,12 @@ jobs:
           # emerge 
           emerge 
 
-          # build dependencies, ignore exit code
-          install-dependencies || true
-
           # fix uuid issue 
           pushd build-system/git/copasi-dependencies/src/libuuid-1.0.3/
-          autoupdate
-          automake --add-missing
           autoreconf --force --install
           popd
 
+          # build dependencies, ignore exit code
           install-dependencies || true
 
           # build release
