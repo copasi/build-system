@@ -28,7 +28,7 @@ jobs:
 
           su -c 'curl https://download.mono-project.com/repo/centos8-stable.repo | tee /etc/yum.repos.d/mono-centos8-stable.repo'
 
-          dnf install -y mono-devel cups-devel uuid-devel mesa-libGLU-devel wget java-1.8.0-openjdk-devel
+          dnf install -y mono-devel cups-devel uuid-devel mesa-libGLU-devel wget java-1.8.0-openjdk-devel fuse fuse-libs fuse-sshfs libxkbcommon-x11 xcb-util-devel libxcb-devel
 
 
       - name: create virtual environment install qt
