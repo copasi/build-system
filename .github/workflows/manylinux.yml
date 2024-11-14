@@ -1,0 +1,95 @@
+# This is a basic workflow to help you get started with Actions
+
+name: manylinux Installer build
+
+# Controls when the workflow will run
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+  # run this task every week at 2am
+  # schedule:
+  #   - cron: '0 2 * * 0'
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    container: quay.io/pypa/manylinux_2_28_x86_64
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      
+      - name: install dependencies
+        shell: bash
+        run: |
+          yum install -y wget
+          yum install -y java-1.8.0-openjdk-devel
+          rpmkeys --import "http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
+          su -c 'curl https://download.mono-project.com/repo/centos8-stable.repo | tee /etc/yum.repos.d/mono-centos8-stable.repo'
+          dnf install -y mono-devel
+          dnf install -y cups-devel
+          dnf install -y uuid-devel
+          dnf install -y mesa-libGLU-devel
+
+
+      - name: create virtual environment
+        shell: bash
+        run: |
+          python3 -m venv env-build
+          source ./env-build/bin/activate
+          pip install aqtinstall swig cmake ninja  mkl-static
+
+          aqt install-qt linux desktop 6.8.0 linux_gcc_64 -m qt5compat qtcharts qtdatavis3d      
+
+      - name: checkout build system
+        run: |
+          git clone https://github.com/copasi/build-system
+          
+      - name: initialize build system
+        shell: bash
+        run: |
+          # print bash version
+          bash --version
+          # print bash location
+          which bash
+          
+          export PATH=$PWD/env-build/bin:$PATH
+          export HOME_BUILD_SYSTEM=$PWD
+          source ./env-build/bin/activate
+          export VARIABLES=$PWD/build-system/variables/manylinux
+          source build-system/profile/linux-64
+          export QTDIR=$PWD/6.8.0/gcc_64
+          export Qt6_DIR=$PWD/6.8.0/gcc_64/lib/cmake/Qt6/
+          export PATH=$PWD/6.8.0/gcc_64/bin/:$PATH
+          export SELECT_QT=Qt6        
+
+          # emerge 
+          emerge 
+
+          # build dependencies, ignore exit code
+          install-dependencies || true
+
+          # fix uuid issue 
+          pushd build-system/git/copasi-dependencies/src/libuuid-1.0.3/
+          autoupdate
+          automake --add-missing
+          autoreconf --force --install
+          popd
+
+          install-dependencies || true
+
+          # build release
+          release --branch release/Version-4.45 --comment stable --noscp
+
+      # - uses: actions/upload-artifact@v4
+      #   with:
+      #     name: windows
+      #     path: |
+      #       build-system/packages/setup.release/*.zip
+      #       build-system/packages/setup.release/*.exe
+      #       build-system/packages/setup.release/*.tar.gz
+      #     retention-days: 7
+      #     if-no-files-found: error
+      
