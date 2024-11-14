@@ -69,6 +69,14 @@ jobs:
           autoreconf --force --install
           popd
 
+          # build dependencies, ignore exit code (this will fail on the first run)
+          install-dependencies || true
+
+          # manually build uuid
+          pushd build-system/build/copasi-dependencies
+          ninja Libuuid
+          popd
+
           # build dependencies, ignore exit code
           install-dependencies || true
 
