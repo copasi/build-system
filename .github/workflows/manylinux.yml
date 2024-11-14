@@ -111,6 +111,9 @@ jobs:
           export PATH=$PWD/6.8.0/gcc_64/bin/:$PATH
           export SELECT_QT=Qt6   
           
+          rm -rf build-system/packages/setup.release
+          mkdir -p build-system/packages/setup.release
+
           pushd build-system/build/COPASI.release
           ninja install
           popd
@@ -159,7 +162,7 @@ jobs:
         with:
           name: AppImage
           path: |
-            *.AppImage
+            COPASI*.AppImage
           retention-days: 7
           if-no-files-found: error      
   
