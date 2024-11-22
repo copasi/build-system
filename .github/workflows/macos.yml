@@ -9,7 +9,7 @@ on:
     inputs:
       debug_enabled:
         type: boolean
-        description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
+        description: 'Run the build with tmate debugging enabled'
         required: false
         default: false
   # run this task every week at 2am
@@ -65,7 +65,7 @@ jobs:
           export PATH=$PWD/env-build/bin:$PATH
           export HOME_BUILD_SYSTEM=$PWD
           source ./env-build/bin/activate
-          source build-system/profile/darwin-intel
+          source build-system/profile/darwin-universal
           export Qt6_DIR=$PWD/6.8.0/macos
           export PATH=$PWD/6.8.0/macos/bin/:$PATH
           export SELECT_QT=Qt6         

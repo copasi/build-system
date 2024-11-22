@@ -1,0 +1,10 @@
+export COPASI_BUILD_SYSTEM_EMERGE="$HOME_BUILD_SYSTEM/build-system/variables/darwin-universal"
+
+export COPASI_PACKAGE=Darwin-universal
+export HOME_BUILD_SYSTEM=${HOME_BUILD_SYSTEM:=$HOME}
+export VARIABLES="$HOME_BUILD_SYSTEM/build-system/variables/darwin-universal"
+export COPASI_READLINK=greadlink
+export PATH="$HOME_BUILD_SYSTEM/build-system/bin:/opt/homebrew/bin:$PATH"
+export BUILD_ROOT="$(dirname "$(dirname "$(${COPASI_READLINK:-readlink} -f "${(%):-%N}")")")"
+
+PS1="[\\u@${COPASI_PACKAGE} \\W]\\\$ "
