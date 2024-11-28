@@ -79,13 +79,17 @@ jobs:
           # build release
           release --branch release/Version-4.45 --comment stable --noscp
 
-      # - uses: actions/upload-artifact@v4
-      #   with:
-      #     name: windows
-      #     path: |
-      #       build-system/packages/setup.release/*.zip
-      #       build-system/packages/setup.release/*.exe
-      #       build-system/packages/setup.release/*.tar.gz
-      #     retention-days: 7
-      #     if-no-files-found: error
+          # remove binding folders
+          rm -rf build-system/packages/setup.release/*Bindings*Darwin
+          # zip the COPASI-*-Darwin folder
+          zip -r build-system/packages/setup.release/COPASI-Darwin.zip build-system/packages/setup.release/COPASI-*-Darwin
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macOS
+          path: |
+            build-system/packages/setup.release/*.zip
+            build-system/packages/setup.release/*.tar.gz
+          retention-days: 7
+          if-no-files-found: error
       
