@@ -14,7 +14,7 @@ if [ _${MACOSX_DEPLOYMENT_TARGET} != _12.0 ]; then
   export SELECT_QT=Qt6
   export QTDIR=$HOME_BUILD_SYSTEM/6.8.0/macos
 
-  export PATH="${QTDIR}/bin:/Library/Frameworks/Mono.framework/Versions/Current/bin:${PATH}"
+  export PATH="${QTDIR}/bin:${QTDIR}/libexec:/Library/Frameworks/Mono.framework/Versions/Current/bin:${PATH}"
 
   export JAVA_HOME=$(ls -d /opt/homebrew/opt/openjdk*/ | head -n 1)
   export java_include="${JAVA_HOME}/include"
@@ -46,7 +46,7 @@ if [ _${MACOSX_DEPLOYMENT_TARGET} != _12.0 ]; then
   COPASI_CMAKE_OPTIONS="${COPASI_CMAKE_OPTIONS};-DJAVA_JVM_LIBRARY=${java_lib}/server/libjvm.dylib"
   COPASI_CMAKE_OPTIONS="${COPASI_CMAKE_OPTIONS};-DJAVA_AWT_LIBRARY=${java_lib}/libawt.dylib"
   COPASI_CMAKE_OPTIONS="${COPASI_CMAKE_OPTIONS};-DCOPASI_USE_QCUSTOMPLOT=ON"
-  COPASI_CMAKE_OPTIONS="${COPASI_CMAKE_OPTIONS};-DQt6Widgets_UIC_EXECUTABLE=${QTDIR}/share/qt/libexec/uic"
+  COPASI_CMAKE_OPTIONS="${COPASI_CMAKE_OPTIONS};-DQt6Widgets_UIC_EXECUTABLE=${QTDIR}/libexec/uic"
   COPASI_CMAKE_OPTIONS="${COPASI_CMAKE_OPTIONS};-DWITH_DATAVISUALIZATION_NAMESPACES=OFF"
   export COPASI_CMAKE_OPTIONS
 
