@@ -13,8 +13,8 @@ on:
         required: false
         default: false
   # run this task every week at 2am
-  # schedule:
-  #   - cron: '0 2 * * 0'
+  schedule:
+    - cron: '0 2 * * 0'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
