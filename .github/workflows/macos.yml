@@ -43,7 +43,6 @@ jobs:
         run: |
           brew install wget astyle openjdk gawk coreutils bash
           brew install --cask mono-mdk
-          brew install kadwanev/brew/retry
 
       - name: create virtual environment
         shell: bash
@@ -163,7 +162,7 @@ jobs:
 
           # now create the DMG
           pushd build-system/packages/setup.release/
-          retry hdiutil create -volname COPASI-${COPASI_VERSION}-Darwin -fs HFS+ -srcfolder ./COPASI-${COPASI_VERSION_ONLY}-Darwin/  -ov -format UDZO COPASI-${COPASI_VERSION_ONLY}-Darwin
+          hdiutil create -volname COPASI-${COPASI_VERSION}-Darwin -fs HFS+ -srcfolder ./COPASI-${COPASI_VERSION_ONLY}-Darwin/  -ov -format UDZO COPASI-${COPASI_VERSION_ONLY}-Darwin
           /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" COPASI-${COPASI_VERSION_ONLY}-Darwin.dmg -v
           popd
 
