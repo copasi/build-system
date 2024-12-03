@@ -154,8 +154,6 @@ jobs:
           export HOME_BUILD_SYSTEM=$PWD
           pushd build-system/packages/setup.release/COPASI-${COPASI_VERSION_ONLY}-Darwin/COPASI/
           cp $HOME_BUILD_SYSTEM/build-system/src/entitlements.plist .
-          xattr -d com.apple.quarantine CopasiUI.app
-          xattr -d com.apple.quarantine CopasiSE
           /usr/bin/codesign --force --deep -s "$MACOS_CERTIFICATE_NAME" --options runtime --entitlements ./entitlements.plist CopasiUI.app -v
           /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" --options runtime --entitlements ./entitlements.plist CopasiSE -v
           /usr/bin/codesign -vvvv CopasiUI.app
