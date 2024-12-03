@@ -23,6 +23,13 @@ jobs:
     # The type of runner that the job will run on
     runs-on: macos-latest
 
+    # setup environment variables
+    env:
+      MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+      MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+      MACOS_CERTIFICATE_NAME: ${{ secrets.MACOS_CERTIFICATE_NAME }}
+      MACOS_KEYCHAIN_PWD: ${{ secrets.MACOS_KEYCHAIN_PWD }}
+
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - uses: seanmiddleditch/gha-setup-ninja@master
@@ -54,7 +61,7 @@ jobs:
         uses: mxschmitt/action-tmate@v3
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
 
-      - name: initialize build system
+      - name: initialize build system, compile dependencies
         shell: bash
         run: |
           # print bash version
@@ -76,14 +83,99 @@ jobs:
           # build dependencies, ignore exit code
           install-dependencies || true
 
+      - name: build release
+        shell: bash
+        run: |
+          # print bash version
+          bash --version
+          # print bash location
+          which bash
+          
+          export PATH=$PWD/env-build/bin:$PATH
+          export HOME_BUILD_SYSTEM=$PWD
+          source ./env-build/bin/activate
+          source build-system/profile/darwin-universal
+          export Qt6_DIR=$PWD/6.8.0/macos
+          export PATH=$PWD/6.8.0/macos/bin/:$PATH
+          export SELECT_QT=Qt6
+
           # build release
           release --branch release/Version-4.45 --comment stable --noscp
 
-          # remove binding folders
+          # remove binding folders as we have the tar.gz by now
           rm -rf build-system/packages/setup.release/*Bindings*Darwin
+
+
+      - name: extract COPASI Version and add it to environment
+        shell: bash
+        run: |
+          # extract version
+          AWK=${COPASI_AWK:-gawk}
+          SOURCE=build-system/git/COPASI.release
+
+          major=`${AWK} -- '$2 ~ "COPASI_VERSION_MAJOR" {print $3}' "${SOURCE}/copasi/CopasiVersion.h"`
+          minor=`${AWK} -- '$2 ~ "COPASI_VERSION_MINOR" {print $3}' "${SOURCE}/copasi/CopasiVersion.h"`
+          build=`${AWK} -- '$2 ~ "COPASI_VERSION_BUILD" {print $3}' "${SOURCE}/copasi/CopasiVersion.h"`
+          modified=`${AWK} -- '$2 ~ "COPASI_VERSION_MODIFIED" {print $3}' "${SOURCE}/copasi/CopasiVersion.h"`
+          comment=`${AWK} -- '$2 ~ "COPASI_VERSION_COMMENT" {print $3}' "${SOURCE}/copasi/CopasiVersion.h"`
+          buildname=${build}
+
+          if [ $modified == true ]; then
+            buildname=${buildname}+
+          fi
+
+          MyAppVersion=${major}.${minor}.${build}
+          echo "COPASI_VERSION_ONLY=$MyAppVersion" >> $GITHUB_ENV
+
+          if [ x"${comment}" = x\"Snapshot\" ]; then
+            MyAppVersion=${major}.
+            [ ${#minor} = 1 ] && MyAppVersion=${MyAppVersion}0
+            MyAppVersion=${MyAppVersion}${minor}.
+            [ ${#build} = 1 ] && MyAppVersion=${MyAppVersion}0
+            MyAppVersion=${MyAppVersion}${build}
+          fi
+
+          export COPASI_VERSION=$MyAppVersion
+          echo "COPASI_VERSION=$COPASI_VERSION" >> $GITHUB_ENV
+
+      - name: create keychain, sign executables create DMG
+        shell: bash
+        run: |
+          echo -n "$MACOS_CERTIFICATE" | base64 --decode -o certificate.p12
+          security create-keychain -p "$MACOS_KEYCHAIN_PWD" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "$MACOS_KEYCHAIN_PWD" build.keychain
+          security import certificate.p12 -k build.keychain -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_KEYCHAIN_PWD" build.keychain
+          security list-keychain -d user -s build.keychain
+          security find-identity -v -p codesigning
+
+          # now sign the executables
+          export HOME_BUILD_SYSTEM=$PWD
+          pushd build-system/packages/setup.release/COPASI-${COPASI_VERSION_ONLY}-Darwin/COPASI/
+          cp $HOME_BUILD_SYSTEM/build-system/src/entitlements.plist .
+          /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" --options runtime --entitlements ./entitlements.plist CopasiUI.app -v
+          /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" --options runtime --entitlements ./entitlements.plist CopasiSE -v
+          /usr/bin/codesign -vvvv CopasiUI.app
+          rm entitlements.plist
+          popd
+
+          # now create the DMG
+          pushd build-system/packages/setup.release/
+          retry hdiutil create -volname COPASI-${COPASI_VERSION}-Darwin -fs HFS+ -srcfolder ./COPASI-${COPASI_VERSION_ONLY}-Darwin/  -ov -format UDZO COPASI-${COPASI_VERSION_ONLY}-Darwin
+          /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" COPASI-${COPASI_VERSION_ONLY}-Darwin.dmg -v
+          popd
+
+          # remove the keychain
+          security delete-keychain build.keychain
+  
+
+      - name: create release archive
+        shell: bash
+        run: |
           # zip the COPASI-*-Darwin folder
           pushd build-system/packages/setup.release/
-          zip -r -q -y COPASI-Darwin.zip ./COPASI-*-Darwin/
+          zip -r -q -y COPASI-$COPASI_VERSION-Darwin.zip ./COPASI-${COPASI_VERSION_ONLY}-Darwin/
           popd
 
       - uses: actions/upload-artifact@v4
@@ -95,3 +187,11 @@ jobs:
           retention-days: 7
           if-no-files-found: error
       
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macOS DMG
+          path: |
+            build-system/packages/setup.release/*.dmg
+          retention-days: 7
+          if-no-files-found: error
+  
