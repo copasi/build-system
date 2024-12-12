@@ -12,6 +12,12 @@ on:
         description: 'Run the build with tmate debugging enabled'
         required: false
         default: false
+
+      do_notarization:
+        type: boolean
+        description: 'Do notarization'
+        required: false
+        default: false
   # run this task every week at 2am
   schedule:
     - cron: '0 2 * * 0'
@@ -161,6 +167,23 @@ jobs:
           /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" --options runtime --entitlements ./entitlements.plist CopasiSE -v
           /usr/bin/codesign -vvvv CopasiUI.app
 
+          rm entitlements.plist
+          popd
+
+          # now create the DMG
+          pushd build-system/packages/setup.release/
+          hdiutil create -volname COPASI-${COPASI_VERSION}-Darwin -fs HFS+ -srcfolder ./COPASI-${COPASI_VERSION_ONLY}-Darwin/  -ov -format UDZO COPASI-${COPASI_VERSION_ONLY}-Darwin
+          /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" COPASI-${COPASI_VERSION_ONLY}-Darwin.dmg -v
+
+          popd
+
+
+      - name: Notaraize the app
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.do_notarization }}
+        run: |
+          export HOME_BUILD_SYSTEM=$PWD
+          pushd build-system/packages/setup.release/COPASI-${COPASI_VERSION_ONLY}-Darwin/COPASI/
+
           # store credentials to avoid UI prompts for passwords
           xcrun notarytool store-credentials "notarytool-profile" --apple-id "$MACOS_NOTARIZATION_APPLE_ID" --team-id "$MACOS_NOTARIZATION_TEAM_ID" --password "$MACOS_NOTARIZATION_PWD"
 
@@ -174,15 +197,11 @@ jobs:
           ditto -c -k --keepParent "CopasiSE" "notarization_cli.zip"
           xcrun notarytool submit "notarization_cli.zip" --keychain-profile "notarytool-profile" --wait
 
-
-          rm entitlements.plist
           rm notarization_*.zip
           popd
 
-          # now create the DMG
           pushd build-system/packages/setup.release/
-          hdiutil create -volname COPASI-${COPASI_VERSION}-Darwin -fs HFS+ -srcfolder ./COPASI-${COPASI_VERSION_ONLY}-Darwin/  -ov -format UDZO COPASI-${COPASI_VERSION_ONLY}-Darwin
-          /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" COPASI-${COPASI_VERSION_ONLY}-Darwin.dmg -v
+
           # notarize & staple the dmg
           ditto -c -k --keepParent "COPASI-${COPASI_VERSION_ONLY}-Darwin.dmg" "notarization_gui_dmg.zip"
           xcrun notarytool submit "notarization_gui_dmg.zip" --keychain-profile "notarytool-profile" --wait
@@ -191,9 +210,10 @@ jobs:
 
           popd
 
-          # remove the keychain
+
+      - name: remove keychain
+        run: |
           security delete-keychain build.keychain
-  
 
       - name: create release archive
         shell: bash
