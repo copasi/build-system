@@ -66,7 +66,7 @@ jobs:
 
           # fix uuid issue 
           pushd build-system/git/copasi-dependencies/src/libuuid-1.0.3/
-          autoreconf --force --install
+          aclocal && libtoolize --force && automake --add-missing && autoreconf --force --install
           popd
 
           # build dependencies, ignore exit code (this will fail on the first run)
