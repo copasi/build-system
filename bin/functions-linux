@@ -41,6 +41,10 @@ function packageCOPASI() {
   ln -s "${QTDIR}/plugins/xcbglintegrations/libqxcb-egl-integration.so" share/copasi/lib/plugins/xcbglintegrations
   ln -s "${QTDIR}/plugins/xcbglintegrations/libqxcb-glx-integration.so" share/copasi/lib/plugins/xcbglintegrations
 
+  # copy icu libraries from ${QTDIR}/lib/ to share/copasi/lib/ as they are specific to the Qt version
+  # and unlikely to be found in the system
+  cp ${QTDIR}/lib/libic*so.* share/copasi/lib
+  
   # Only executed for 64 bit Linux
   if [ "${COPASI_PACKAGE}" == "Linux-64bit" ]; then
     (
