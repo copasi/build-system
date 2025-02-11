@@ -37,7 +37,7 @@ jobs:
           python3 -m venv env-build
           source ./env-build/bin/activate
           pip install aqtinstall swig cmake ninja  mkl-static
-          aqt install-qt linux desktop 6.8.0 linux_gcc_64 -m qt5compat qtcharts qtdatavis3d      
+          aqt install-qt linux desktop 6.8.2 linux_gcc_64 -m qt5compat qtcharts qtdatavis3d      
 
       - name: checkout build system
         run: |
@@ -56,9 +56,9 @@ jobs:
           source ./env-build/bin/activate
           export VARIABLES=$PWD/build-system/variables/manylinux
           source build-system/profile/linux-64
-          export QTDIR=$PWD/6.8.0/gcc_64
-          export Qt6_DIR=$PWD/6.8.0/gcc_64/lib/cmake/Qt6/
-          export PATH=$PWD/6.8.0/gcc_64/bin/:$PATH
+          export QTDIR=$PWD/6.8.2/gcc_64
+          export Qt6_DIR=$PWD/6.8.2/gcc_64/lib/cmake/Qt6/
+          export PATH=$PWD/6.8.2/gcc_64/bin/:$PATH
           export SELECT_QT=Qt6        
 
           # emerge 
@@ -106,9 +106,9 @@ jobs:
           source ./env-build/bin/activate
           export VARIABLES=$PWD/build-system/variables/manylinux
           source build-system/profile/linux-64
-          export QTDIR=$PWD/6.8.0/gcc_64
-          export Qt6_DIR=$PWD/6.8.0/gcc_64/lib/cmake/Qt6/
-          export PATH=$PWD/6.8.0/gcc_64/bin/:$PATH
+          export QTDIR=$PWD/6.8.2/gcc_64
+          export Qt6_DIR=$PWD/6.8.2/gcc_64/lib/cmake/Qt6/
+          export PATH=$PWD/6.8.2/gcc_64/bin/:$PATH
           export SELECT_QT=Qt6   
           
           rm -rf build-system/packages/setup.release
@@ -151,8 +151,8 @@ jobs:
           
           # adjust LD_LIBRARY_PATH
           tar zxf build-system/src/extra_libs.tar.gz
-          export PATH=$PWD/6.8.0/gcc_64/bin:$PATH
-          export LD_LIBRARY_PATH=$PWD/6.8.0/gcc_64/lib:$PWD/6.8.0/gcc_64/plugins/imageformats:$PWD/6.8.0/gcc_64/plugins/platforms:$PWD/6.8.0/gcc_64/plugins/iconengines:$PWD/6.8.0/gcc_64/plugins/printsupport:$PWD/6.8.0/gcc_64/plugins/tls:$PWD/extra_libs:$LD_LIBRARY_PATH
+          export PATH=$PWD/6.8.2/gcc_64/bin:$PATH
+          export LD_LIBRARY_PATH=$PWD/6.8.2/gcc_64/lib:$PWD/6.8.2/gcc_64/plugins/imageformats:$PWD/6.8.2/gcc_64/plugins/platforms:$PWD/6.8.2/gcc_64/plugins/iconengines:$PWD/6.8.2/gcc_64/plugins/printsupport:$PWD/6.8.2/gcc_64/plugins/tls:$PWD/extra_libs:$LD_LIBRARY_PATH
 
           # create AppImage
           ./squashfs-root/AppRun build-system/packages/setup.release/usr/bin/CopasiUI  -bundle-non-qt-libs -qmake=`which qmake`  -appimage

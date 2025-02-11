@@ -59,8 +59,8 @@ jobs:
           python3 -m venv env-build
           source ./env-build/bin/activate
           pip install aqtinstall swig cmake ninja 
-          aqt install-qt mac desktop 6.8.0 clang_64 -m qt5compat qtcharts qtdatavis3d          
-          ls $PWD/6.8.0/macos/bin
+          aqt install-qt mac desktop 6.8.2 clang_64 -m qt5compat qtcharts qtdatavis3d          
+          ls $PWD/6.8.2/macos/bin
 
       - name: checkout build system
         run: |
@@ -82,8 +82,8 @@ jobs:
           export HOME_BUILD_SYSTEM=$PWD
           source ./env-build/bin/activate
           source build-system/profile/darwin-universal
-          export Qt6_DIR=$PWD/6.8.0/macos
-          export PATH=$PWD/6.8.0/macos/bin/:$PATH
+          export Qt6_DIR=$PWD/6.8.2/macos
+          export PATH=$PWD/6.8.2/macos/bin/:$PATH
           export SELECT_QT=Qt6         
 
           # emerge 
@@ -104,8 +104,8 @@ jobs:
           export HOME_BUILD_SYSTEM=$PWD
           source ./env-build/bin/activate
           source build-system/profile/darwin-universal
-          export Qt6_DIR=$PWD/6.8.0/macos
-          export PATH=$PWD/6.8.0/macos/bin/:$PATH
+          export Qt6_DIR=$PWD/6.8.2/macos
+          export PATH=$PWD/6.8.2/macos/bin/:$PATH
           export SELECT_QT=Qt6
 
           # build release
