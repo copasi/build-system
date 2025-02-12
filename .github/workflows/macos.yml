@@ -173,7 +173,7 @@ jobs:
           # now create the DMG
           pushd build-system/packages/setup.release/
           sudo hdiutil create -verbose -volname COPASI-${COPASI_VERSION}-Darwin -fs HFS+ -srcfolder ./COPASI-${COPASI_VERSION_ONLY}-Darwin/  -ov -format UDZO COPASI-${COPASI_VERSION_ONLY}-Darwin
-          /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" COPASI-${COPASI_VERSION_ONLY}-Darwin.dmg -v
+          sudo /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" COPASI-${COPASI_VERSION_ONLY}-Darwin.dmg -v
 
           popd
 
