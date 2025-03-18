@@ -57,9 +57,19 @@ jobs:
           export VARIABLES=$PWD/build-system/variables/manylinux
           source build-system/profile/linux-64
           export QTDIR=$PWD/6.8.2/gcc_64
-          export Qt6_DIR=$PWD/6.8.2/gcc_64/lib/cmake/Qt6/
-          export PATH=$PWD/6.8.2/gcc_64/bin/:$PATH
+          export Qt6_DIR=$QTDIR/lib/cmake/Qt6/
+          export PATH=$QTDIR/bin/:$PATH
           export SELECT_QT=Qt6        
+
+          # install appimage tools
+          wget -nv https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
+          chmod +x ./linuxdeployqt-continuous-x86_64.AppImage
+          ./linuxdeployqt-continuous-x86_64.AppImage --appimage-extract
+
+          # extract additional libraries needed for linuxdeployqt
+          tar zxf $PWD/build-system/src/extra_libs.tar.gz
+          export LD_LIBRARY_PATH=$QTDIR/lib:$QTDIR/plugins/imageformats:$QTDIR/plugins/platforms:$QTDIR/plugins/iconengines:$QTDIR/plugins/printsupport:$QTDIR/plugins/tls:/io/extra_libs:$LD_LIBRARY_PATH
+          export COPASI_LINUXDEPLOYQT=$PWD/squashfs-root/AppRun
 
           # emerge 
           emerge 
@@ -95,11 +105,6 @@ jobs:
       - name: create AppImage        
         shell: bash
         run: |
-          # install appimage tools
-          wget -nv https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
-          chmod +x ./linuxdeployqt-continuous-x86_64.AppImage
-          ./linuxdeployqt-continuous-x86_64.AppImage --appimage-extract
-
           # install copasi 
           export PATH=$PWD/env-build/bin:$PATH
           export HOME_BUILD_SYSTEM=$PWD
@@ -107,8 +112,8 @@ jobs:
           export VARIABLES=$PWD/build-system/variables/manylinux
           source build-system/profile/linux-64
           export QTDIR=$PWD/6.8.2/gcc_64
-          export Qt6_DIR=$PWD/6.8.2/gcc_64/lib/cmake/Qt6/
-          export PATH=$PWD/6.8.2/gcc_64/bin/:$PATH
+          export Qt6_DIR=$QTDIR/lib/cmake/Qt6/
+          export PATH=$QTDIR/bin/:$PATH
           export SELECT_QT=Qt6   
           
           rm -rf build-system/packages/setup.release
@@ -151,8 +156,8 @@ jobs:
           
           # adjust LD_LIBRARY_PATH
           tar zxf build-system/src/extra_libs.tar.gz
-          export PATH=$PWD/6.8.2/gcc_64/bin:$PATH
-          export LD_LIBRARY_PATH=$PWD/6.8.2/gcc_64/lib:$PWD/6.8.2/gcc_64/plugins/imageformats:$PWD/6.8.2/gcc_64/plugins/platforms:$PWD/6.8.2/gcc_64/plugins/iconengines:$PWD/6.8.2/gcc_64/plugins/printsupport:$PWD/6.8.2/gcc_64/plugins/tls:$PWD/extra_libs:$LD_LIBRARY_PATH
+          export PATH=$QTDIR/bin:$PATH
+          export LD_LIBRARY_PATH=$QTDIR/lib:$QTDIR/plugins/imageformats:$QTDIR/plugins/platforms:$QTDIR/plugins/iconengines:$QTDIR/plugins/printsupport:$QTDIR/plugins/tls:$PWD/extra_libs:$LD_LIBRARY_PATH
 
           # create AppImage
           ./squashfs-root/AppRun build-system/packages/setup.release/usr/bin/CopasiUI  -bundle-non-qt-libs -qmake=`which qmake`  -appimage
