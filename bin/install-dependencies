@@ -50,6 +50,11 @@ function buildOne() {
          "$(convertPath ${BUILD_ROOT}/git/copasi-dependencies)"
   fi
 
+  if [ ${clean} = true ]; then
+    for d in */src/*-build; do (cd $d; ${BUILD_TOOL} clean); done
+    ${BUILD_TOOL} clean
+  fi
+
   echo ${BUILD_TOOL}
   ${BUILD_TOOL}
 

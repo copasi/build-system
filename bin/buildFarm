@@ -10,6 +10,8 @@ linux_32="linux-32 source build-system/profile/linux-32;$@"
 linux_64="linux-64 source build-system/profile/linux-64;$@"
 windows="windows source build-system/profile/windows;$@"
 
+[ -d "${BUILD_ROOT}/log" ] || mkdir "${BUILD_ROOT}/log"
+
 for t in ${Target}; do
   ssh ${!t} &> "${BUILD_ROOT}/log/${t}.$1" & 
 done
