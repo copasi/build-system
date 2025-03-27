@@ -13,7 +13,8 @@ if [ _"${TGT_ARCH}" != _x64} ]; then
   export LD_LIBRARY_PATH=$($CC -print-search-dirs |
     sed '/^lib/b 1;d;:1;s,/[^/.][^/]*/\.\./,/,;t 1;s,:[^=]*=,:;,;s,;,;  ,g' |
     awk -- '{print $2}')
-
+  export SWIG_EXECUTABLE="/usr/local/bin/swig"
+  
   export PATH=/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:${QTDIR}/bin:${BUILD_SYSTEM}/bin
 
   export BUILD_TOOL="gmake -j4"
@@ -32,7 +33,7 @@ if [ _"${TGT_ARCH}" != _x64} ]; then
   export COPASI_CMAKE_OPTIONS
 
   DEPENDENCIES_CMAKE_OPTIONS="-DCMAKE_INSTALL_PREFIX=$(convertPath ${INSTALL_DIR})"
-  DEPENDENCIES_CMAKE_OPTIONS="${DEPENDENCIES_CMAKE_OPTIONS};-DBUILD_zlib=OFF" \
+  DEPENDENCIES_CMAKE_OPTIONS="${DEPENDENCIES_CMAKE_OPTIONS};-DBUILD_zlib=OFF" 
   DEPENDENCIES_CMAKE_OPTIONS="${DEPENDENCIES_CMAKE_OPTIONS};-DBUILD_clapack=OFF"
   DEPENDENCIES_CMAKE_OPTIONS="${DEPENDENCIES_CMAKE_OPTIONS};-DBUILD_NativeJIT=ON"
   DEPENDENCIES_CMAKE_OPTIONS="${DEPENDENCIES_CMAKE_OPTIONS};-DBUILD_qwtplot3d=OFF"
