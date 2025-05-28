@@ -2,7 +2,7 @@
 Type=Application
 Name=COPASI
 Terminal=false
-X-AppImage-Version=4.45.496
+X-AppImage-Version=4.46.499
 Encoding=UTF-8
 Version=1.0
 Exec=/usr/bin/CopasiUI %u

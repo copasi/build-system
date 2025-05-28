@@ -91,7 +91,7 @@ jobs:
           install-dependencies || true
 
           # build release
-          release --branch release/Version-4.45 --comment stable --noscp
+          release --branch release/Version-4.46 --comment stable --noscp
 
       - uses: actions/upload-artifact@v4
         with:

@@ -109,7 +109,7 @@ jobs:
           export SELECT_QT=Qt6
 
           # build release
-          release --branch release/Version-4.45 --comment stable --noscp
+          release --branch release/Version-4.46 --comment stable --noscp
 
           # remove binding folders as we have the tar.gz by now
           rm -rf build-system/packages/setup.release/*Bindings*Darwin
