@@ -9,11 +9,11 @@ if [ _${MACOSX_DEPLOYMENT_TARGET} != _12.0 ]; then
   export SDK=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
   export ARCHITECTURES=arm64
 
-  export Qt6_DIR=$HOME_BUILD_SYSTEM/6.8.2/macos
-  export PATH=$HOME_BUILD_SYSTEM/6.8.2/macos/bin/:$PATH
+  export Qt6_DIR="${Qt6_DIR:-$HOME_BUILD_SYSTEM/6.9.1/macos}"
+  export QTDIR="${QTDIR:-$HOME_BUILD_SYSTEM/6.9.1/macos}"
+  export PATH=$QTDIR/bin/:$PATH
   export SELECT_QT=Qt6
-  export QTDIR=$HOME_BUILD_SYSTEM/6.8.2/macos
-
+  
   export PATH="${QTDIR}/bin:${QTDIR}/libexec:/Library/Frameworks/Mono.framework/Versions/Current/bin:${PATH}"
 
   export JAVA_HOME=$(ls -d /opt/homebrew/opt/openjdk*/ | head -n 1)

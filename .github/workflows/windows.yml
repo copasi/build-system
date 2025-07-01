@@ -42,7 +42,7 @@ jobs:
           python -m venv env-build
           call .\env-build\Scripts\activate.bat
           pip install aqtinstall mkl-static swig cmake ninja 
-          aqt install-qt windows desktop 6.8.2 win64_msvc2022_64 -m qt5compat qtcharts qtdatavis3d
+          aqt install-qt windows desktop 6.9.1 win64_msvc2022_64 -m qt5compat qtcharts qtdatavis3d
           echo %PATH% >> $GITHUB_ENV
 
       - name: checkout build system
@@ -60,8 +60,8 @@ jobs:
           export PATH=$PWD\env-build\Scripts:$PATH
           export HOME_BUILD_SYSTEM=$PWD
           source build-system/profile/windows-msys 
-          export Qt6_DIR=$PWD/6.8.2/msvc2022_64
-          export PATH=$PWD/6.8.2/msvc2022_64/bin/:$PATH
+          export Qt6_DIR=$PWD/6.9.1/msvc2022_64
+          export PATH=$PWD/6.9.1/msvc2022_64/bin/:$PATH
           export SELECT_QT=Qt6
           export JAVA_HOME=$PWD/openjdk
 

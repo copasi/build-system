@@ -37,7 +37,7 @@ jobs:
           python3 -m venv env-build
           source ./env-build/bin/activate
           pip install aqtinstall swig cmake==3.31.6 ninja  mkl-static
-          aqt install-qt linux desktop 6.8.2 linux_gcc_64 -m qt5compat qtcharts qtdatavis3d      
+          aqt install-qt linux desktop 6.9.1 linux_gcc_64 -m qt5compat qtcharts qtdatavis3d      
 
       - name: checkout build system
         run: |
@@ -56,7 +56,7 @@ jobs:
           source ./env-build/bin/activate
           export VARIABLES=$PWD/build-system/variables/manylinux
           source build-system/profile/linux-64
-          export QTDIR=$PWD/6.8.2/gcc_64
+          export QTDIR=$PWD/6.9.1/gcc_64
           export Qt6_DIR=$QTDIR/lib/cmake/Qt6/
           export PATH=$QTDIR/bin/:$PATH
           export SELECT_QT=Qt6        
@@ -111,7 +111,7 @@ jobs:
           source ./env-build/bin/activate
           export VARIABLES=$PWD/build-system/variables/manylinux
           source build-system/profile/linux-64
-          export QTDIR=$PWD/6.8.2/gcc_64
+          export QTDIR=$PWD/6.9.1/gcc_64
           export Qt6_DIR=$QTDIR/lib/cmake/Qt6/
           export PATH=$QTDIR/bin/:$PATH
           export SELECT_QT=Qt6   
