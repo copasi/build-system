@@ -7,7 +7,7 @@ export COPASI_READLINK=greadlink
 export PATH="$HOME_BUILD_SYSTEM/build-system-intel/bin:/usr/local/bin:$PATH"
 export BUILD_ROOT="$(dirname "$(dirname "$(${COPASI_READLINK:-readlink} -f "${(%):-%N}")")")"
 
-export QTDIR=$(ls -d /usr/local/Cellar/qt/* | head -n 1)
+export QTDIR=/Users/copasi/6.7.0/macos
 
 if [ -n "$ZSH_VERSION" ]; then
 PS1="[%n@${COPASI_PACKAGE} %~] $ "

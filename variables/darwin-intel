@@ -10,8 +10,8 @@ if [ _${MACOSX_DEPLOYMENT_TARGET} != _12.0 ]; then
   export ARCHITECTURES=x86_64
 
   export SELECT_QT=Qt6
-  export QTDIR=/usr/local/Cellar/qt/6.7.0_1/
-  
+  export QTDIR=/Users/copasi/6.7.0/macos
+
   export PATH="${QTDIR}/bin:/Library/Frameworks/Mono.framework/Versions/Current/bin:${PATH}"
 
   export JAVA_HOME=/usr/local/opt/openjdk@22/
