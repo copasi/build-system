@@ -62,7 +62,7 @@ function buildOne() {
 }
 
 if [ ${pull} = true ]; then
-  (cd "${BUILD_ROOT}/git/copasi-dependencies" && git pull --rebase)
+  (cd "${BUILD_ROOT}/git/copasi-dependencies" && git reset --hard && git pull --rebase)
   configure=true
 fi
 
