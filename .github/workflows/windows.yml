@@ -10,6 +10,8 @@ on:
   schedule:
     - cron: '0 2 * * 0'
 
+env:
+  QT_VERSION_NUMBER: 6.10.0
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
@@ -42,7 +44,7 @@ jobs:
           python -m venv env-build
           call .\env-build\Scripts\activate.bat
           pip install aqtinstall mkl-static swig cmake ninja 
-          aqt install-qt windows desktop 6.9.1 win64_msvc2022_64 -m qt5compat qtcharts qtdatavis3d
+          aqt install-qt windows desktop %QT_VERSION_NUMBER% win64_msvc2022_64 -m qt5compat qtcharts qtdatavis3d
           echo %PATH% >> $GITHUB_ENV
 
       - name: checkout build system
@@ -60,8 +62,8 @@ jobs:
           export PATH=$PWD\env-build\Scripts:$PATH
           export HOME_BUILD_SYSTEM=$PWD
           source build-system/profile/windows-msys 
-          export Qt6_DIR=$PWD/6.9.1/msvc2022_64
-          export PATH=$PWD/6.9.1/msvc2022_64/bin/:$PATH
+          export Qt6_DIR=$PWD/${QT_VERSION_NUMBER}/msvc2022_64
+          export PATH=$PWD/${QT_VERSION_NUMBER}/msvc2022_64/bin/:$PATH
           export SELECT_QT=Qt6
           export JAVA_HOME=$PWD/openjdk
 
@@ -83,4 +85,3 @@ jobs:
             build-system/packages/setup.release/*.tar.gz
           retention-days: 7
           if-no-files-found: error
-      
