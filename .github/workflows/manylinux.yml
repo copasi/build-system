@@ -9,6 +9,8 @@ on:
   # run this task every week at 2am
   schedule:
     - cron: '0 2 * * 0'
+env:
+  QT_VERSION_NUMBER: 6.9.3
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -38,7 +40,7 @@ jobs:
           python3 -m venv env-build
           source ./env-build/bin/activate
           pip install aqtinstall swig cmake==3.31.6 ninja  mkl-static
-          aqt install-qt linux desktop 6.9.1 linux_gcc_64 -m qt5compat qtcharts qtdatavis3d      
+          aqt install-qt linux desktop $QT_VERSION_NUMBER linux_gcc_64 -m qt5compat qtcharts qtdatavis3d      
 
       - name: checkout build system
         run: |
@@ -57,13 +59,14 @@ jobs:
           source ./env-build/bin/activate
           export VARIABLES=$PWD/build-system/variables/manylinux
           source build-system/profile/linux-64
-          export QTDIR=$PWD/6.9.1/gcc_64
+          export QTDIR=$PWD/$QT_VERSION_NUMBER/gcc_64
           export Qt6_DIR=$QTDIR/lib/cmake/Qt6/
           export PATH=$QTDIR/bin/:$PATH
           export SELECT_QT=Qt6        
 
           # install appimage tools
-          wget -nv https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
+          #wget -nv https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
+          wget -nv -O linuxdeployqt-continuous-x86_64.AppImage "https://heibox.uni-heidelberg.de/f/593c3dc43a1c4d2aa608/?dl=1"
           chmod +x ./linuxdeployqt-continuous-x86_64.AppImage
           ./linuxdeployqt-continuous-x86_64.AppImage --appimage-extract
 
@@ -112,7 +115,7 @@ jobs:
           source ./env-build/bin/activate
           export VARIABLES=$PWD/build-system/variables/manylinux
           source build-system/profile/linux-64
-          export QTDIR=$PWD/6.9.1/gcc_64
+          export QTDIR=$PWD/$QT_VERSION_NUMBER/gcc_64
           export Qt6_DIR=$QTDIR/lib/cmake/Qt6/
           export PATH=$QTDIR/bin/:$PATH
           export SELECT_QT=Qt6   
@@ -171,5 +174,3 @@ jobs:
             COPASI*.AppImage
           retention-days: 7
           if-no-files-found: error      
-  
-
