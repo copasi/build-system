@@ -22,6 +22,9 @@ on:
   schedule:
     - cron: '0 2 * * 0'
 
+env:
+  QT_VERSION_NUMBER: 6.9.3
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
@@ -59,8 +62,8 @@ jobs:
           python3 -m venv env-build
           source ./env-build/bin/activate
           pip install aqtinstall swig cmake ninja 
-          aqt install-qt mac desktop 6.9.1 clang_64 -m qt5compat qtcharts qtdatavis3d          
-          ls $PWD/6.9.1/macos/bin
+          aqt install-qt mac desktop $QT_VERSION_NUMBER clang_64 -m qt5compat qtcharts qtdatavis3d          
+          ls $PWD/${QT_VERSION_NUMBER}/macos/bin
 
       - name: checkout build system
         run: |
@@ -82,8 +85,8 @@ jobs:
           export HOME_BUILD_SYSTEM=$PWD
           source ./env-build/bin/activate
           source build-system/profile/darwin-universal
-          export Qt6_DIR=$PWD/6.9.1/macos
-          export PATH=$PWD/6.9.1/macos/bin/:$PATH
+          export Qt6_DIR=$PWD/${QT_VERSION_NUMBER}/macos
+          export PATH=$PWD/${QT_VERSION_NUMBER}/macos/bin/:$PATH
           export SELECT_QT=Qt6         
 
           # emerge 
@@ -104,8 +107,8 @@ jobs:
           export HOME_BUILD_SYSTEM=$PWD
           source ./env-build/bin/activate
           source build-system/profile/darwin-universal
-          export Qt6_DIR=$PWD/6.9.1/macos
-          export PATH=$PWD/6.9.1/macos/bin/:$PATH
+          export Qt6_DIR=$PWD/${QT_VERSION_NUMBER}/macos
+          export PATH=$PWD/${QT_VERSION_NUMBER}/macos/bin/:$PATH
           export SELECT_QT=Qt6
 
           # build release
@@ -239,4 +242,3 @@ jobs:
             build-system/packages/setup.release/*.dmg
           retention-days: 7
           if-no-files-found: error
-  
