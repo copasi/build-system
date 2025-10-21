@@ -65,8 +65,8 @@ jobs:
           export SELECT_QT=Qt6        
 
           # install appimage tools
-          #wget -nv https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
-          wget -nv -O linuxdeployqt-continuous-x86_64.AppImage "https://heibox.uni-heidelberg.de/f/593c3dc43a1c4d2aa608/?dl=1"
+          wget -nv https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
+          # wget -nv -O linuxdeployqt-continuous-x86_64.AppImage "https://heibox.uni-heidelberg.de/f/593c3dc43a1c4d2aa608/?dl=1"
           chmod +x ./linuxdeployqt-continuous-x86_64.AppImage
           ./linuxdeployqt-continuous-x86_64.AppImage --appimage-extract
 
