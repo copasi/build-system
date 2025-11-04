@@ -10,7 +10,7 @@ on:
   schedule:
     - cron: '0 2 * * 0'
 env:
-  QT_VERSION_NUMBER: 5.15.19
+  QT_VERSION_NUMBER: 5.15.2
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
