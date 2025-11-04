@@ -1,0 +1,176 @@
+# This is a basic workflow to help you get started with Actions
+
+name: manylinux Installer build (qt5)
+
+# Controls when the workflow will run
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+  # run this task every week at 2am
+  schedule:
+    - cron: '0 2 * * 0'
+env:
+  QT_VERSION_NUMBER: 5.15.19
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    container: quay.io/pypa/manylinux_2_28_x86_64
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      
+      - name: install dependencies
+        shell: bash
+        run: |
+          rpmkeys --import "http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
+
+          su -c 'curl https://download.mono-project.com/repo/centos8-stable.repo | tee /etc/yum.repos.d/mono-centos8-stable.repo'
+
+          dnf install -y mono-devel cups-devel uuid-devel mesa-libGLU-devel wget java-1.8.0-openjdk-devel fuse fuse-libs fuse-sshfs libxkbcommon-x11 xcb-util-devel libxcb-devel  squashfs-tools
+
+
+
+      - name: create virtual environment install qt
+        shell: bash
+        run: |
+          python3 -m venv env-build
+          source ./env-build/bin/activate
+          pip install aqtinstall swig cmake==3.31.6 ninja  mkl-static
+          aqt install-qt linux desktop $QT_VERSION_NUMBER linux_gcc_64 -m qt5compat qtcharts qtdatavis3d      
+
+      - name: checkout build system
+        run: |
+          git clone https://github.com/copasi/build-system
+          
+      - name: initialize build system
+        shell: bash
+        run: |
+          # print bash version
+          bash --version
+          # print bash location
+          which bash
+          
+          export PATH=$PWD/env-build/bin:$PATH
+          export HOME_BUILD_SYSTEM=$PWD
+          source ./env-build/bin/activate
+          export VARIABLES=$PWD/build-system/variables/manylinux
+          source build-system/profile/linux-64
+          export QTDIR=$PWD/$QT_VERSION_NUMBER/gcc_64
+          export Qt5_DIR=$QTDIR/lib/cmake/Qt5/
+          export PATH=$QTDIR/bin/:$PATH
+          export SELECT_QT=Qt5        
+
+          # install appimage tools
+          wget -nv https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
+          # wget -nv -O linuxdeployqt-continuous-x86_64.AppImage "https://heibox.uni-heidelberg.de/f/593c3dc43a1c4d2aa608/?dl=1"
+          chmod +x ./linuxdeployqt-continuous-x86_64.AppImage
+          ./linuxdeployqt-continuous-x86_64.AppImage --appimage-extract
+
+          # extract additional libraries needed for linuxdeployqt
+          tar zxf $PWD/build-system/src/extra_libs.tar.gz
+          export LD_LIBRARY_PATH=$QTDIR/lib:$QTDIR/plugins/imageformats:$QTDIR/plugins/platforms:$QTDIR/plugins/iconengines:$QTDIR/plugins/printsupport:$QTDIR/plugins/tls:$PWD/extra_libs:$LD_LIBRARY_PATH
+          export COPASI_LINUXDEPLOYQT=$PWD/squashfs-root/AppRun
+
+          # emerge 
+          emerge 
+
+          # fix uuid issue 
+          pushd build-system/git/copasi-dependencies/src/libuuid-1.0.3/
+          aclocal && libtoolize --force && automake --add-missing && autoreconf --force --install
+          popd
+
+          # build dependencies, ignore exit code (this will fail on the first run)
+          install-dependencies || true
+
+          # manually build uuid
+          pushd build-system/build/copasi-dependencies
+          ninja Libuuid
+          popd
+
+          # build dependencies, ignore exit code
+          install-dependencies || true
+
+          # build release
+          release --branch release/Version-4.46 --comment stable --noscp
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: manylinux-qt5
+          path: |
+            build-system/packages/setup.release/*.tar.gz
+            build-system/packages/setup.release/*.sh
+          retention-days: 7
+          if-no-files-found: error      
+      
+      - name: create AppImage        
+        shell: bash
+        run: |
+          # install copasi 
+          export PATH=$PWD/env-build/bin:$PATH
+          export HOME_BUILD_SYSTEM=$PWD
+          source ./env-build/bin/activate
+          export VARIABLES=$PWD/build-system/variables/manylinux
+          source build-system/profile/linux-64
+          export QTDIR=$PWD/$QT_VERSION_NUMBER/gcc_64
+          export Qt5_DIR=$QTDIR/lib/cmake/Qt5/
+          export PATH=$QTDIR/bin/:$PATH
+          export SELECT_QT=Qt5   
+          
+          rm -rf build-system/packages/setup.release
+          mkdir -p build-system/packages/setup.release
+
+          pushd build-system/build/COPASI.release
+          ninja install
+          popd
+
+          cp build-system/git/COPASI.release/copasi/resourcesUI/images/512x512/copasi.png build-system/packages/setup.release/COPASI.png
+          cp build-system/src/COPASI.desktop build-system/packages/setup.release/COPASI.desktop
+
+          # extract version
+          AWK=${COPASI_AWK:-gawk}
+          SOURCE=build-system/git/COPASI.release
+
+          major=`${AWK} -- '$2 ~ "COPASI_VERSION_MAJOR" {print $3}' "${SOURCE}/copasi/CopasiVersion.h"`
+          minor=`${AWK} -- '$2 ~ "COPASI_VERSION_MINOR" {print $3}' "${SOURCE}/copasi/CopasiVersion.h"`
+          build=`${AWK} -- '$2 ~ "COPASI_VERSION_BUILD" {print $3}' "${SOURCE}/copasi/CopasiVersion.h"`
+          modified=`${AWK} -- '$2 ~ "COPASI_VERSION_MODIFIED" {print $3}' "${SOURCE}/copasi/CopasiVersion.h"`
+          comment=`${AWK} -- '$2 ~ "COPASI_VERSION_COMMENT" {print $3}' "${SOURCE}/copasi/CopasiVersion.h"`
+          buildname=${build}
+
+          if [ $modified == true ]; then
+            buildname=${buildname}+
+          fi
+
+          MyAppVersion=${major}.${minor}.${build}
+
+          if [ x"${comment}" = x\"Snapshot\" ]; then
+            MyAppVersion=${major}.
+            [ ${#minor} = 1 ] && MyAppVersion=${MyAppVersion}0
+            MyAppVersion=${MyAppVersion}${minor}.
+            [ ${#build} = 1 ] && MyAppVersion=${MyAppVersion}0
+            MyAppVersion=${MyAppVersion}${build}
+          fi
+
+
+          export VERSION=$MyAppVersion
+          
+          # adjust LD_LIBRARY_PATH
+          tar zxf build-system/src/extra_libs.tar.gz
+          export PATH=$QTDIR/bin:$PATH
+          export LD_LIBRARY_PATH=$QTDIR/lib:$QTDIR/plugins/imageformats:$QTDIR/plugins/platforms:$QTDIR/plugins/iconengines:$QTDIR/plugins/printsupport:$QTDIR/plugins/tls:$PWD/extra_libs:$LD_LIBRARY_PATH
+
+          # create AppImage
+          ./squashfs-root/AppRun build-system/packages/setup.release/usr/bin/CopasiUI  -bundle-non-qt-libs -qmake=`which qmake`  -appimage
+
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AppImage-qt5
+          path: |
+            COPASI*.AppImage
+          retention-days: 7
+          if-no-files-found: error      
