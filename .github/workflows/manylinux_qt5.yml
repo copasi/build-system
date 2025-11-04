@@ -63,6 +63,7 @@ jobs:
           export Qt5_DIR=$QTDIR/lib/cmake/Qt5/
           export PATH=$QTDIR/bin/:$PATH
           export SELECT_QT=Qt5        
+          export WITH_DATAVISUALIZATION_NAMESPACES=ON
 
           # install appimage tools
           wget -nv https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
@@ -119,6 +120,7 @@ jobs:
           export Qt5_DIR=$QTDIR/lib/cmake/Qt5/
           export PATH=$QTDIR/bin/:$PATH
           export SELECT_QT=Qt5   
+          export WITH_DATAVISUALIZATION_NAMESPACES=ON
           
           rm -rf build-system/packages/setup.release
           mkdir -p build-system/packages/setup.release
