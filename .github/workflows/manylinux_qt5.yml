@@ -40,7 +40,7 @@ jobs:
           python3 -m venv env-build
           source ./env-build/bin/activate
           pip install aqtinstall swig cmake==3.31.6 ninja  mkl-static
-          aqt install-qt linux desktop $QT_VERSION_NUMBER linux_gcc_64 -m qt5compat qtcharts qtdatavis3d      
+          aqt install-qt linux desktop $QT_VERSION_NUMBER linux_gcc_64 -m qtcharts qtdatavis3d      
 
       - name: checkout build system
         run: |
