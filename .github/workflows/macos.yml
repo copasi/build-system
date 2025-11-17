@@ -215,7 +215,7 @@ jobs:
           ditto -c -k --keepParent "COPASI-${COPASI_VERSION_ONLY}-Darwin.dmg" "notarization_gui_dmg.zip"
           xcrun notarytool submit "notarization_gui_dmg.zip" --keychain-profile "notarytool-profile" --wait
           xcrun stapler staple "COPASI-${COPASI_VERSION_ONLY}-Darwin.dmg"
-          notarization_gui_dmg.zip
+          # rm notarization_gui_dmg.zip
 
           popd
 
