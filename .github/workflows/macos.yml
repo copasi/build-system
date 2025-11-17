@@ -7,17 +7,11 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
     inputs:
-      debug_enabled:
-        type: boolean
-        description: 'Run the build with tmate debugging enabled'
-        required: false
-        default: false
-
       do_notarization:
         type: boolean
         description: 'Do notarization'
         required: false
-        default: false
+        default: true
   # run this task every week at 2am
   schedule:
     - cron: '0 2 * * 0'
@@ -69,10 +63,6 @@ jobs:
         run: |
           git clone https://github.com/copasi/build-system
           
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
-
       - name: initialize build system, compile dependencies
         shell: bash
         run: |
@@ -167,7 +157,7 @@ jobs:
           pushd build-system/packages/setup.release/COPASI-${COPASI_VERSION_ONLY}-Darwin/COPASI/
           cp $HOME_BUILD_SYSTEM/build-system/src/entitlements.plist .
           /usr/bin/codesign --force --deep -s "$MACOS_CERTIFICATE_NAME" --options runtime --entitlements ./entitlements.plist CopasiUI.app -v
-          /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" --options runtime --entitlements ./entitlements.plist CopasiSE -v
+          /usr/bin/codesign --force --timestamp -s "$MACOS_CERTIFICATE_NAME" --options runtime --entitlements ./entitlements.plist CopasiSE -v
           /usr/bin/codesign -vvvv CopasiUI.app
 
           rm entitlements.plist
@@ -215,7 +205,7 @@ jobs:
           ditto -c -k --keepParent "COPASI-${COPASI_VERSION_ONLY}-Darwin.dmg" "notarization_gui_dmg.zip"
           xcrun notarytool submit "notarization_gui_dmg.zip" --keychain-profile "notarytool-profile" --wait
           xcrun stapler staple "COPASI-${COPASI_VERSION_ONLY}-Darwin.dmg"
-          # rm notarization_gui_dmg.zip
+          rm notarization_gui_dmg.zip
 
           popd
 
