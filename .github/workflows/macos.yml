@@ -190,13 +190,13 @@ jobs:
 
 
           # create the DMG
-          hdiutil create -verbose -volname COPASI-${COPASI_VERSION}-Darwin -fs HFS+ -srcfolder ./COPASI-${COPASI_VERSION_ONLY}-Darwin/  -ov -format UDZO COPASI-${COPASI_VERSION_ONLY}-${ARCHITECTURES}-Darwin.dmg
-          sudo /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" COPASI-${COPASI_VERSION_ONLY}-${ARCHITECTURES}-Darwin.dmg -v
+          hdiutil create -verbose -volname COPASI-${COPASI_VERSION}-Darwin -fs HFS+ -srcfolder ./COPASI-${COPASI_VERSION_ONLY}-Darwin/  -ov -format UDZO COPASI-${COPASI_VERSION_ONLY}-${{ matrix.architectures }}-Darwin.dmg
+          sudo /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" COPASI-${COPASI_VERSION_ONLY}-${{ matrix.architectures }}-Darwin.dmg -v
 
           # notarize & staple the dmg
-          ditto -c -k --keepParent "COPASI-${COPASI_VERSION_ONLY}-${ARCHITECTURES}-Darwin.dmg" "notarization_gui_dmg.zip"
+          ditto -c -k --keepParent "COPASI-${COPASI_VERSION_ONLY}-${{ matrix.architectures }}-Darwin.dmg" "notarization_gui_dmg.zip"
           xcrun notarytool submit "notarization_gui_dmg.zip" --keychain-profile "notarytool-profile" --wait
-          xcrun stapler staple "COPASI-${COPASI_VERSION_ONLY}-${ARCHITECTURES}-Darwin.dmg"
+          xcrun stapler staple "COPASI-${COPASI_VERSION_ONLY}-${{ matrix.architectures }}-Darwin.dmg"
           rm notarization_gui_dmg.zip
 
           popd
@@ -211,12 +211,12 @@ jobs:
         run: |
           # zip the COPASI-*-Darwin folder
           pushd build-system/packages/setup.release/
-          zip -r -q -y COPASI-$COPASI_VERSION-${ARCHITECTURES}-Darwin.zip ./COPASI-${COPASI_VERSION_ONLY}-Darwin/
+          zip -r -q -y COPASI-$COPASI_VERSION-${{ matrix.architectures }}-Darwin.zip ./COPASI-${COPASI_VERSION_ONLY}-Darwin/
           popd
 
       - uses: actions/upload-artifact@v4
         with:
-          name: macOS-${ARCHITECTURES}
+          name: macOS-${{ matrix.architectures }}
           path: |
             build-system/packages/setup.release/*.zip
             build-system/packages/setup.release/*.tar.gz
@@ -225,7 +225,7 @@ jobs:
       
       - uses: actions/upload-artifact@v4
         with:
-          name: macOS DMG ${ARCHITECTURES}
+          name: macOS DMG ${{ matrix.architectures }}
           path: |
             build-system/packages/setup.release/*.dmg
           retention-days: 7
