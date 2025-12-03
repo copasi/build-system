@@ -6,25 +6,29 @@ name: macOS Installer build
 on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-    inputs:
-      architectures:
-        description: "Architectures to build for"
-        required: true
-        default: "arm64"
+
   # run this task every week at 2am
   schedule:
     - cron: '0 2 * * 0'
 
 env:
   QT_VERSION_NUMBER: 6.10.0
-  ARCHITECTURES: ${{ inputs.architectures }}
 
+      
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+  
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
     runs-on: macos-latest
+
+    name: ${{ matrix.architectures }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        architectures: [arm64, x86_64]
 
     # setup environment variables
     env:
@@ -35,6 +39,7 @@ jobs:
       MACOS_NOTARIZATION_APPLE_ID: ${{ secrets.MACOS_NOTARIZATION_APPLE_ID }}
       MACOS_NOTARIZATION_TEAM_ID: ${{ secrets.MACOS_NOTARIZATION_TEAM_ID }}
       MACOS_NOTARIZATION_PWD: ${{ secrets.MACOS_NOTARIZATION_PWD }}
+      ARCHITECTURES: ${{ matrix.architectures }}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -185,13 +190,13 @@ jobs:
 
 
           # create the DMG
-          hdiutil create -verbose -volname COPASI-${COPASI_VERSION}-Darwin -fs HFS+ -srcfolder ./COPASI-${COPASI_VERSION_ONLY}-Darwin/  -ov -format UDZO COPASI-${COPASI_VERSION_ONLY}-Darwin.dmg
-          sudo /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" COPASI-${COPASI_VERSION_ONLY}-Darwin.dmg -v
+          hdiutil create -verbose -volname COPASI-${COPASI_VERSION}-Darwin -fs HFS+ -srcfolder ./COPASI-${COPASI_VERSION_ONLY}-Darwin/  -ov -format UDZO COPASI-${COPASI_VERSION_ONLY}-${ARCHITECTURES}-Darwin.dmg
+          sudo /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" COPASI-${COPASI_VERSION_ONLY}-${ARCHITECTURES}-Darwin.dmg -v
 
           # notarize & staple the dmg
-          ditto -c -k --keepParent "COPASI-${COPASI_VERSION_ONLY}-Darwin.dmg" "notarization_gui_dmg.zip"
+          ditto -c -k --keepParent "COPASI-${COPASI_VERSION_ONLY}-${ARCHITECTURES}-Darwin.dmg" "notarization_gui_dmg.zip"
           xcrun notarytool submit "notarization_gui_dmg.zip" --keychain-profile "notarytool-profile" --wait
-          xcrun stapler staple "COPASI-${COPASI_VERSION_ONLY}-Darwin.dmg"
+          xcrun stapler staple "COPASI-${COPASI_VERSION_ONLY}-${ARCHITECTURES}-Darwin.dmg"
           rm notarization_gui_dmg.zip
 
           popd
@@ -206,12 +211,12 @@ jobs:
         run: |
           # zip the COPASI-*-Darwin folder
           pushd build-system/packages/setup.release/
-          zip -r -q -y COPASI-$COPASI_VERSION-Darwin.zip ./COPASI-${COPASI_VERSION_ONLY}-Darwin/
+          zip -r -q -y COPASI-$COPASI_VERSION-${ARCHITECTURES}-Darwin.zip ./COPASI-${COPASI_VERSION_ONLY}-Darwin/
           popd
 
       - uses: actions/upload-artifact@v4
         with:
-          name: macOS
+          name: macOS-${ARCHITECTURES}
           path: |
             build-system/packages/setup.release/*.zip
             build-system/packages/setup.release/*.tar.gz
@@ -220,7 +225,7 @@ jobs:
       
       - uses: actions/upload-artifact@v4
         with:
-          name: macOS DMG
+          name: macOS DMG ${ARCHITECTURES}
           path: |
             build-system/packages/setup.release/*.dmg
           retention-days: 7
