@@ -32,16 +32,16 @@ Host darwin-big-sur
   Port 3022
 
 Host deploy
-  HostName jsh012.accslopeside.com
-  Port 22012
+  HostName jsh015.accslopeside.com
+  Port 22015
   User copasi
   IdentityFile ~/.ssh/deploy
 
 Host windows
-  Hostname jsh012.accslopeside.com
+  HostName localhost
   User copasi
   Port 33101
-  IdentityFile ~/.ssh/deploy
+  ProxyCommand ssh -W '%h:%p' deploy
 
 Host linux-32
   HostName localhost
