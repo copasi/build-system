@@ -72,6 +72,7 @@ jobs:
 
           # extract additional libraries needed for linuxdeployqt
           tar zxf $PWD/build-system/src/extra_libs.tar.gz
+          export EXTRA_LIBS=$PWD/extra_libs
           export LD_LIBRARY_PATH=$QTDIR/lib:$QTDIR/plugins/imageformats:$QTDIR/plugins/platforms:$QTDIR/plugins/iconengines:$QTDIR/plugins/printsupport:$QTDIR/plugins/tls:$PWD/extra_libs:$LD_LIBRARY_PATH
           export COPASI_LINUXDEPLOYQT=$PWD/squashfs-root/AppRun
 
