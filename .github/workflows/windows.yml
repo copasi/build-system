@@ -22,6 +22,16 @@ on:
         required: false
         default: ""
 
+      COPASI_BRANCH:
+        description: "COPASI branch"
+        required: false
+        default: release/Version-4.46
+
+      COPASI_COMMENT:
+        description: "COPASI comment"
+        required: false
+        default: stable
+
       ARTIFACT_COMMENT:
         description: "Artifact comment"
         required: false
@@ -42,6 +52,8 @@ env:
   COPASI_DEPENDENCIES_CLONE_OPTS: ${{ inputs.COPASI_DEPENDENCIES_CLONE_OPTS || '' }}
   ARTIFACT_COMMENT: ${{ inputs.ARTIFACT_COMMENT || '' }}
   QT_VERSION_NUMBER: ${{ inputs.QT_VERSION_NUMBER || '6.10.0' }}
+  COPASI_BRANCH: ${{ inputs.COPASI_BRANCH || 'release/Version-4.46' }}
+  COPASI_COMMENT: ${{ inputs.COPASI_COMMENT || 'stable' }}
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -106,11 +118,11 @@ jobs:
           install-dependencies || true
 
           # build release
-          release --branch release/Version-4.46 --comment stable --noscp
+          release --branch ${COPASI_BRANCH} --comment ${COPASI_COMMENT} --noscp
 
       - uses: actions/upload-artifact@v4
         with:
-          name: windows-${{ env.ARTIFACT_COMMENT }}
+          name: windows${{ env.ARTIFACT_COMMENT }}
           path: |
             build-system/packages/setup.release/*.zip
             build-system/packages/setup.release/*.exe
