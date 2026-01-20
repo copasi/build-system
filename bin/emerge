@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 # script for setting up environment from scratch
 
+export COPASI_REPOSITORY="${COPASI_REPOSITORY:-https://github.com/copasi/COPASI.git}"
+export COPASI_DEPENDENCIES_REPOSITORY="${COPASI_DEPENDENCIES_REPOSITORY:-https://github.com/copasi/copasi-dependencies.git}"
+export COPASI_DEPENDENCIES_CLONE_OPTS="${COPASI_DEPENDENCIES_CLONE_OPTS:-}"
+
+
 . "$(dirname "$(${COPASI_READLINK:-readlink} -f "$0")")"/functions
 
 pushd "${BUILD_ROOT}"
@@ -16,7 +21,7 @@ else
 fi
 
 [ -e "git" ] || mkdir -p "git"
-[ -e "git/COPASI.release" ] || git clone https://github.com/copasi/COPASI.git "git/COPASI.release"
-[ -e "git/copasi-dependencies" ] || git clone https://github.com/copasi/copasi-dependencies.git "git/copasi-dependencies"
+[ -e "git/COPASI.release" ] || git clone ${COPASI_REPOSITORY} "git/COPASI.release"
+[ -e "git/copasi-dependencies" ] || git clone  ${COPASI_DEPENDENCIES_CLONE_OPTS} ${COPASI_DEPENDENCIES_REPOSITORY} "git/copasi-dependencies"
 
 popd
