@@ -6,13 +6,51 @@ name: macOS Installer build
 on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+    inputs:
+      COPASI_REPOSITORY:
+        description: "COPASI repository"
+        required: true
+        default: https://github.com/copasi/COPASI.git
 
+      COPASI_DEPENDENCIES_REPOSITORY:
+        description: "COPASI dependencies repository"
+        required: true
+        default: https://github.com/copasi/copasi-dependencies.git
+
+      COPASI_DEPENDENCIES_CLONE_OPTS:
+        description: "COPASI dependencies clone options"
+        required: false
+        default: ""
+      COPASI_BRANCH:
+        description: "COPASI branch"
+        required: false
+        default: release/Version-4.46
+
+      COPASI_COMMENT:
+        description: "COPASI comment"
+        required: false
+        default: stable
+      ARTIFACT_COMMENT:
+        description: "Artifact comment"
+        required: false
+        default: ""
+
+      QT_VERSION_NUMBER:
+        description: "QT version number"
+        required: true
+        default: 6.10.0
   # run this task every week at 2am
   schedule:
     - cron: '0 2 * * 0'
 
 env:
-  QT_VERSION_NUMBER: 6.10.0
+  COPASI_REPOSITORY: ${{ inputs.COPASI_REPOSITORY || 'https://github.com/copasi/COPASI.git' }}
+  COPASI_DEPENDENCIES_REPOSITORY: ${{ inputs.COPASI_DEPENDENCIES_REPOSITORY || 'https://github.com/copasi/copasi-dependencies.git' }}
+  COPASI_DEPENDENCIES_CLONE_OPTS: ${{ inputs.COPASI_DEPENDENCIES_CLONE_OPTS || '' }}
+  ARTIFACT_COMMENT: ${{ inputs.ARTIFACT_COMMENT || '' }}
+  QT_VERSION_NUMBER: ${{ inputs.QT_VERSION_NUMBER || '6.10.0' }}
+  COPASI_BRANCH: ${{ inputs.COPASI_BRANCH || 'release/Version-4.46' }}
+  COPASI_COMMENT: ${{ inputs.COPASI_COMMENT || 'stable' }}
 
       
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -107,7 +145,7 @@ jobs:
           export SELECT_QT=Qt6
 
           # build release
-          release --branch release/Version-4.46 --comment stable --noscp
+          release --branch ${COPASI_BRANCH} --comment ${COPASI_COMMENT} --noscp
 
           # remove binding folders as we have the tar.gz by now
           rm -rf build-system/packages/setup.release/*Bindings*Darwin
@@ -216,7 +254,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: macOS-${{ matrix.architectures }}
+          name: macOS-${{ matrix.architectures }}${{ env.ARTIFACT_COMMENT }}
           path: |
             build-system/packages/setup.release/*.zip
             build-system/packages/setup.release/*.tar.gz
@@ -225,7 +263,7 @@ jobs:
       
       - uses: actions/upload-artifact@v4
         with:
-          name: macOS DMG ${{ matrix.architectures }}
+          name: macOS DMG ${{ matrix.architectures }}${{ env.ARTIFACT_COMMENT }}
           path: |
             build-system/packages/setup.release/*.dmg
           retention-days: 7
