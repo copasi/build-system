@@ -147,6 +147,14 @@ jobs:
           # build release
           release --branch ${COPASI_BRANCH} --comment ${COPASI_COMMENT} --noscp
 
+          # fail workflow if binary is not found
+          app_path=(build-system/packages/setup.release/COPASI-*-Darwin/COPASI/CopasiUI.app)
+
+          if [ ! -d "${app_path[0]}" ]; then
+            echo "COPASI UI binary not found"
+            exit 1
+          fi
+
           # remove binding folders as we have the tar.gz by now
           rm -rf build-system/packages/setup.release/*Bindings*Darwin
 
