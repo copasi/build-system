@@ -24,7 +24,7 @@ on:
       COPASI_BRANCH:
         description: "COPASI branch"
         required: false
-        default: release/Version-4.46
+        default: release/Version-4.47
 
       COPASI_COMMENT:
         description: "COPASI comment"
@@ -48,7 +48,7 @@ env:
   COPASI_DEPENDENCIES_REPOSITORY: ${{ inputs.COPASI_DEPENDENCIES_REPOSITORY || 'https://github.com/copasi/copasi-dependencies.git' }}
   COPASI_DEPENDENCIES_CLONE_OPTS: ${{ inputs.COPASI_DEPENDENCIES_CLONE_OPTS || '' }}
   ARTIFACT_COMMENT: ${{ inputs.ARTIFACT_COMMENT || '' }}
-  COPASI_BRANCH: ${{ inputs.COPASI_BRANCH || 'release/Version-4.46' }}
+  COPASI_BRANCH: ${{ inputs.COPASI_BRANCH || 'release/Version-4.47' }}
   COPASI_COMMENT: ${{ inputs.COPASI_COMMENT || 'stable' }}
   QT_VERSION_NUMBER: ${{ inputs.QT_VERSION_NUMBER || '5.15.2' }}
 
