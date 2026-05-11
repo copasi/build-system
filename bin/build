@@ -27,11 +27,13 @@ function buildOne () {
   if [ ${rebuild} = true ] || [ ! -e "CMakeCache.txt" ]; then
     rm -rf * .cmake
       
-    [ -z "${COMMON_CMAKE_OPTIONS}" ] || common_cmake_options="$(echo ${COMMON_CMAKE_OPTIONS} | sed -e 's/;/ /g')"
-    [ -z "${COPASI_CMAKE_OPTIONS}" ] || copasi_cmake_options="$(echo ${COPASI_CMAKE_OPTIONS} | sed -e 's/;/ /g')"
+    declare -a common_cmake_options=()
+    declare -a copasi_cmake_options=()
+    [ -z "${COMMON_CMAKE_OPTIONS}" ] || IFS=';' read -ra common_cmake_options <<< "${COMMON_CMAKE_OPTIONS}"
+    [ -z "${COPASI_CMAKE_OPTIONS}" ] || IFS=';' read -ra copasi_cmake_options <<< "${COPASI_CMAKE_OPTIONS}"
 
-    echo cmake ${common_cmake_options} ${copasi_cmake_options} "$(convertPath "${COPASI_SOURCES}")"
-    cmake ${common_cmake_options} ${copasi_cmake_options} "$(convertPath "${COPASI_SOURCES}")"
+    echo cmake "${common_cmake_options[@]}" "${copasi_cmake_options[@]}" "$(convertPath "${COPASI_SOURCES}")"
+    cmake "${common_cmake_options[@]}" "${copasi_cmake_options[@]}" "$(convertPath "${COPASI_SOURCES}")"
     if [ $? -ne 0 ]; then
       echo "CMake configuration failed"
       exit 1

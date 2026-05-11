@@ -37,15 +37,17 @@ function buildOne() {
   if [ ${configure} = true -o ! -e CMakeCache.txt ]; then
     rm -rf * .cmake
 
-    [ -z "${COMMON_CMAKE_OPTIONS}" ] || common_cmake_options="$(echo ${COMMON_CMAKE_OPTIONS} | sed -e 's/;/ /g')"
-    [ -z "${DEPENDENCIES_CMAKE_OPTIONS}" ] || dependencies_cmake_options="$(echo ${DEPENDENCIES_CMAKE_OPTIONS} | sed -e 's/;/ /g')"
+    declare -a common_cmake_options=()
+    declare -a dependencies_cmake_options=()
+    [ -z "${COMMON_CMAKE_OPTIONS}" ] || IFS=';' read -ra common_cmake_options <<< "${COMMON_CMAKE_OPTIONS}"
+    [ -z "${DEPENDENCIES_CMAKE_OPTIONS}" ] || IFS=';' read -ra dependencies_cmake_options <<< "${DEPENDENCIES_CMAKE_OPTIONS}"
 
-    echo cmake ${common_cmake_options} \
-         ${dependencies_cmake_options} \
+    echo cmake "${common_cmake_options[@]}" \
+         "${dependencies_cmake_options[@]}" \
          -DCOMMON_CMAKE_OPTIONS="${COMMON_CMAKE_OPTIONS}" \
          "$(convertPath ${BUILD_ROOT}/git/copasi-dependencies)"
-    cmake ${common_cmake_options} \
-         ${dependencies_cmake_options} \
+    cmake "${common_cmake_options[@]}" \
+         "${dependencies_cmake_options[@]}" \
          -DCOMMON_CMAKE_OPTIONS="${COMMON_CMAKE_OPTIONS}" \
          "$(convertPath ${BUILD_ROOT}/git/copasi-dependencies)"
   fi
