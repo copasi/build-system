@@ -97,8 +97,24 @@ jobs:
       - name: install dependencies
         shell: bash
         run: |
-          brew install wget astyle openjdk gawk coreutils bash libomp 
+          brew install wget astyle openjdk gawk coreutils bash 
           brew install --cask mono-mdk
+
+          if [ "${{ matrix.architectures }}" = "arm64" ]; then
+            brew install libomp
+            # set libomp prefix environment variable and add to GITHUB_ENV
+            export LIBOMP_PREFIX=$(brew --prefix libomp)
+            echo "LIBOMP_PREFIX=$LIBOMP_PREFIX" >> $GITHUB_ENV
+          else
+            if [ ! -x /usr/local/bin/brew ]; then
+              NONINTERACTIVE=1 arch -x86_64 /bin/bash -c \
+                "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+            fi
+            arch -x86_64 /usr/local/bin/brew install libomp
+            # set libomp prefix environment variable and add to GITHUB_ENV
+            export LIBOMP_PREFIX=$(arch -x86_64 /usr/local/bin/brew  --prefix libomp)
+            echo "LIBOMP_PREFIX=$LIBOMP_PREFIX" >> $GITHUB_ENV
+          fi
 
       - name: create virtual environment
         shell: bash
