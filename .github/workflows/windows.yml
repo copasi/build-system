@@ -94,7 +94,7 @@ jobs:
         run: |
           python -m venv env-build
           call .\env-build\Scripts\activate.bat
-          pip install aqtinstall mkl-static==2025.3.1 swig cmake ninja 
+          pip install aqtinstall mkl-static==2025.3.1 swig cmake ninja  mkl-include==2025.3.1
           aqt install-qt windows desktop %QT_VERSION_NUMBER% win64_msvc2022_64 -m qt5compat qtcharts qtdatavis3d
           echo %PATH% >> $GITHUB_ENV
 
