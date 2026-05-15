@@ -60,3 +60,17 @@ function copyCOPASI () {
 
   popd
 }
+
+function stageCOPASI () {
+  pushd ${COPASI_SETUP_DIR}
+
+  __copy "package/COPASI-${sourceVersion}-${COPASI_PACKAGE}.exe" "${BUILD_ROOT}/upload/COPASI-${targetVersion}-${COPASI_PACKAGE}.exe"
+  __copy "package/bin/32/CopasiSE.exe" "${BUILD_ROOT}/upload/AllSE/WIN32/CopasiSE-${targetVersion}.exe"
+  __copy "package/bin/64/CopasiSE.exe" "${BUILD_ROOT}/upload/AllSE/WIN64/CopasiSE-${targetVersion}.exe"
+  __copy "COPASI-${sourceVersion}-C#-Bindings-${COPASI_PACKAGE}-32-bit.tar.gz" "${BUILD_ROOT}/upload/COPASI-${targetVersion}-C#-Bindings-${COPASI_PACKAGE}-32-bit.tar.gz"
+  __copy "COPASI-${sourceVersion}-C#-Bindings-${COPASI_PACKAGE}-64-bit.tar.gz" "${BUILD_ROOT}/upload/COPASI-${targetVersion}-C#-Bindings-${COPASI_PACKAGE}-64-bit.tar.gz"
+  __copy "COPASI-${sourceVersion}-Java-Bindings-${COPASI_PACKAGE}-32-bit.tar.gz" "${BUILD_ROOT}/upload/COPASI-${targetVersion}-Java-Bindings-${COPASI_PACKAGE}-32-bit.tar.gz"
+  __copy "COPASI-${sourceVersion}-Java-Bindings-${COPASI_PACKAGE}-64-bit.tar.gz" "${COPASI_UPLOAD}/COPASI-${targetVersion}-Java-Bindings-${COPASI_PACKAGE}-64-bit.tar.gz"
+
+  popd
+}

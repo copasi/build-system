@@ -65,6 +65,16 @@ function version() {
   export targetVersion
 }
 
+function __copy() {
+  if [ -e "$1" ]; then
+    [ -e $(dirname $2) ] || mkdir --parent $(dirname $2)
+      echo cp "$1" "$2"
+    cp "$1" "$2"
+  else
+    echo Missing "$1"
+  fi
+}
+
 if [ ! -z "${COPASI_BUILD_SYSTEM_FUNCTIONS}" ]; then
   . "${COPASI_BUILD_SYSTEM_FUNCTIONS}"
 elif isCygwin; then

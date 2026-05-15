@@ -119,5 +119,8 @@ packageCOPASI
 if [ "_${COPASI_SCP}" != "_" ]; then
   version
   copyCOPASI
+else
+  version
+  stageCOPASI
 fi
 } 2>&1 | tee -a ${BUILD_ROOT}/log/${PROGNAME}
