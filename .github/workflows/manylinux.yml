@@ -21,6 +21,7 @@ on:
         description: "COPASI dependencies clone options"
         required: false
         default: ""
+        
       COPASI_BRANCH:
         description: "COPASI branch"
         required: false

@@ -4,8 +4,8 @@ export COPASI_PACKAGE=Darwin-intel
 export HOME_BUILD_SYSTEM=${HOME_BUILD_SYSTEM:=$HOME}
 export VARIABLES="$HOME_BUILD_SYSTEM/build-system-intel/variables/darwin-intel"
 export COPASI_READLINK=greadlink
-export PATH="$HOME_BUILD_SYSTEM/build-system-intel/bin:/usr/local/bin:$PATH"
 export BUILD_ROOT="$(dirname "$(dirname "$(${COPASI_READLINK:-readlink} -f "${(%):-%N}")")")"
+export PATH="${BUILD_ROOT}/bin:/usr/local/bin:$PATH"
 
 export QTDIR=/Users/copasi/6.7.0/macos
 
