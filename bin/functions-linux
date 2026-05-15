@@ -49,7 +49,7 @@ function packageCOPASI() {
   if [ "${COPASI_PACKAGE}" == "Linux-64bit" ]; then
     (
       cd ${BINARY_DIR}
-      make package_source
+      ${BUILD_TOOL} package_source
     )
     ln -s "/usr/lib64/libssl.so.10" share/copasi/lib
     ln -s "/usr/lib64/libpng15.so.15" share/copasi/lib
