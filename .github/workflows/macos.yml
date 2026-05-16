@@ -44,7 +44,7 @@ on:
         description: "Enable OpenMP (sets ENABLE_OMP env to ON or OFF for CMake)"
         required: false
         type: boolean
-        default: false
+        default: true
 
   # run this task every week at 2am
   schedule:
@@ -58,7 +58,7 @@ env:
   QT_VERSION_NUMBER: ${{ inputs.QT_VERSION_NUMBER || '6.10.0' }}
   COPASI_BRANCH: ${{ inputs.COPASI_BRANCH || 'release/Version-4.47' }}
   COPASI_COMMENT: ${{ inputs.COPASI_COMMENT || 'stable' }}
-  ENABLE_OMP: ${{ inputs.ENABLE_OMP == true && 'ON' || 'OFF' }}
+
       
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -67,6 +67,7 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: macos-latest
+    environment: deploy
 
     name: ${{ matrix.architectures }}
 
@@ -85,6 +86,7 @@ jobs:
       MACOS_NOTARIZATION_TEAM_ID: ${{ secrets.MACOS_NOTARIZATION_TEAM_ID }}
       MACOS_NOTARIZATION_PWD: ${{ secrets.MACOS_NOTARIZATION_PWD }}
       ARCHITECTURES: ${{ matrix.architectures }}
+
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -178,41 +180,16 @@ jobs:
             exit 1
           fi
 
+          export COPASI_SOURCES=${BUILD_ROOT}/git/COPASI.release
+          source ${BUILD_ROOT}/bin/functions
+          version
+
+          echo "COPASI_VERSION_SOURCE=$sourceVersion" >> $GITHUB_ENV
+          echo "COPASI_VERSION_TARGET=$targetVersion" >> $GITHUB_ENV
+
           # remove binding folders as we have the tar.gz by now
           rm -rf build-system/packages/setup.release/*Bindings*Darwin
 
-
-      - name: extract COPASI Version and add it to environment
-        shell: bash
-        run: |
-          # extract version
-          AWK=${COPASI_AWK:-gawk}
-          SOURCE=build-system/git/COPASI.release
-
-          major=`${AWK} -- '$2 ~ "COPASI_VERSION_MAJOR" {print $3}' "${SOURCE}/copasi/CopasiVersion.h"`
-          minor=`${AWK} -- '$2 ~ "COPASI_VERSION_MINOR" {print $3}' "${SOURCE}/copasi/CopasiVersion.h"`
-          build=`${AWK} -- '$2 ~ "COPASI_VERSION_BUILD" {print $3}' "${SOURCE}/copasi/CopasiVersion.h"`
-          modified=`${AWK} -- '$2 ~ "COPASI_VERSION_MODIFIED" {print $3}' "${SOURCE}/copasi/CopasiVersion.h"`
-          comment=`${AWK} -- '$2 ~ "COPASI_VERSION_COMMENT" {print $3}' "${SOURCE}/copasi/CopasiVersion.h"`
-          buildname=${build}
-
-          if [ $modified == true ]; then
-            buildname=${buildname}+
-          fi
-
-          MyAppVersion=${major}.${minor}.${build}
-          echo "COPASI_VERSION_ONLY=$MyAppVersion" >> $GITHUB_ENV
-
-          if [ x"${comment}" = x\"Snapshot\" ]; then
-            MyAppVersion=${major}.
-            [ ${#minor} = 1 ] && MyAppVersion=${MyAppVersion}0
-            MyAppVersion=${MyAppVersion}${minor}.
-            [ ${#build} = 1 ] && MyAppVersion=${MyAppVersion}0
-            MyAppVersion=${MyAppVersion}${build}
-          fi
-
-          export COPASI_VERSION=$MyAppVersion
-          echo "COPASI_VERSION=$COPASI_VERSION" >> $GITHUB_ENV
 
       - name: create keychain, sign executables create DMG
         shell: bash
@@ -228,7 +205,7 @@ jobs:
 
           # now sign the executables
           export HOME_BUILD_SYSTEM=$PWD
-          pushd build-system/packages/setup.release/COPASI-${COPASI_VERSION_ONLY}-Darwin/COPASI/
+          pushd build-system/packages/setup.release/COPASI-${COPASI_VERSION_SOURCE}-Darwin/COPASI/
           cp $HOME_BUILD_SYSTEM/build-system/src/entitlements.plist .
           /usr/bin/codesign --force --deep -s "$MACOS_CERTIFICATE_NAME" --options runtime --entitlements ./entitlements.plist CopasiUI.app -v
           /usr/bin/codesign --force --timestamp -s "$MACOS_CERTIFICATE_NAME" --options runtime --entitlements ./entitlements.plist CopasiSE -v
@@ -237,7 +214,7 @@ jobs:
           rm entitlements.plist
           popd
           
-          pushd build-system/packages/setup.release/COPASI-${COPASI_VERSION_ONLY}-Darwin/COPASI/
+          pushd build-system/packages/setup.release/COPASI-${COPASI_VERSION_SOURCE}-Darwin/COPASI/
 
           # store credentials to avoid UI prompts for passwords
           xcrun notarytool store-credentials "notarytool-profile" --apple-id "$MACOS_NOTARIZATION_APPLE_ID" --team-id "$MACOS_NOTARIZATION_TEAM_ID" --password "$MACOS_NOTARIZATION_PWD"
@@ -259,13 +236,17 @@ jobs:
 
 
           # create the DMG
-          hdiutil create -verbose -volname COPASI-${COPASI_VERSION}-Darwin -fs HFS+ -srcfolder ./COPASI-${COPASI_VERSION_ONLY}-Darwin/  -ov -format UDZO COPASI-${COPASI_VERSION_ONLY}-${{ matrix.architectures }}-Darwin.dmg
-          sudo /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" COPASI-${COPASI_VERSION_ONLY}-${{ matrix.architectures }}-Darwin.dmg -v
+          hdiutil create -verbose -volname COPASI-${COPASI_VERSION_TARGET}-Darwin -fs HFS+ -srcfolder ./COPASI-${COPASI_VERSION_SOURCE}-Darwin/  -ov -format UDZO COPASI-${COPASI_VERSION_SOURCE}-${{ matrix.architectures }}-Darwin.dmg
+          sudo /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" COPASI-${COPASI_VERSION_SOURCE}-${{ matrix.architectures }}-Darwin.dmg -v
 
           # notarize & staple the dmg
-          ditto -c -k --keepParent "COPASI-${COPASI_VERSION_ONLY}-${{ matrix.architectures }}-Darwin.dmg" "notarization_gui_dmg.zip"
+          ditto -c -k --keepParent "COPASI-${COPASI_VERSION_SOURCE}-${{ matrix.architectures }}-Darwin.dmg" "notarization_gui_dmg.zip"
           xcrun notarytool submit "notarization_gui_dmg.zip" --keychain-profile "notarytool-profile" --wait
-          xcrun stapler staple "COPASI-${COPASI_VERSION_ONLY}-${{ matrix.architectures }}-Darwin.dmg"
+          xcrun stapler staple "COPASI-${COPASI_VERSION_SOURCE}-${{ matrix.architectures }}-Darwin.dmg"
+
+          # prepare scp deployment
+          cp "COPASI-${COPASI_VERSION_SOURCE}-${{ matrix.architectures }}-Darwin.dmg" $HOME_BUILD_SYSTEM/build-system/upload/"COPASI-${COPASI_VERSION_TARGET}-${{ matrix.architectures }}-Darwin.dmg"
+
           rm notarization_gui_dmg.zip
 
           popd
@@ -280,7 +261,7 @@ jobs:
         run: |
           # zip the COPASI-*-Darwin folder
           pushd build-system/packages/setup.release/
-          zip -r -q -y COPASI-$COPASI_VERSION-${{ matrix.architectures }}-Darwin.zip ./COPASI-${COPASI_VERSION_ONLY}-Darwin/
+          zip -r -q -y COPASI-$COPASI_VERSION_TARGET-${{ matrix.architectures }}-Darwin.zip ./COPASI-${COPASI_VERSION_SOURCE}-Darwin/
           popd
 
       - uses: actions/upload-artifact@v4
@@ -299,3 +280,14 @@ jobs:
             build-system/packages/setup.release/*.dmg
           retention-days: 7
           if-no-files-found: error
+
+
+      - name: deploy files
+        uses: nogsantos/scp-deploy@master
+        with:
+          src: build-system/upload/*
+          host: ${{ vars.HOST }}
+          remote: build-system/upload/stage
+          port: 22
+          user: ${{ vars.USER }}
+          key: ${{ secrets.PRIVATE_KEY }}      

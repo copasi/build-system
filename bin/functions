@@ -67,7 +67,7 @@ function version() {
 
 function __copy() {
   if [ -e "$1" ]; then
-    [ -e $(dirname $2) ] || mkdir --parent $(dirname $2)
+    [ -e $(dirname $2) ] || mkdir -p $(dirname $2)
       echo cp "$1" "$2"
     cp "$1" "$2"
   else

@@ -58,7 +58,7 @@ env:
   QT_VERSION_NUMBER: ${{ inputs.QT_VERSION_NUMBER || '6.9.3' }}
   COPASI_BRANCH: ${{ inputs.COPASI_BRANCH || 'release/Version-4.47' }}
   COPASI_COMMENT: ${{ inputs.COPASI_COMMENT || 'stable' }}
-  ENABLE_OMP: ${{ inputs.ENABLE_OMP == true && 'ON' || 'OFF' }}
+
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -112,8 +112,12 @@ jobs:
           export Qt6_DIR=$QTDIR/lib/cmake/Qt6/
           export PATH=$QTDIR/bin/:$PATH
           export SELECT_QT=Qt6        
-          export COPASI_PACKAGE="Linux-64bit"
           
+          if [ ${{ inputs.ENABLE_OMP }} = 'true' ]; then
+            echo Enable OpenMP support
+            export ENABLE_OMP=ON
+          fi
+  
           # install appimage tools
           wget -nv https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
           # wget -nv -O linuxdeployqt-continuous-x86_64.AppImage "https://heibox.uni-heidelberg.de/f/593c3dc43a1c4d2aa608/?dl=1"
@@ -227,17 +231,12 @@ jobs:
           if-no-files-found: error   
 
 
-      - name: determine files to deploy
-        run: |
-          echo FILES_TO_DEPLOY=$(find build-system/upload/ -type f | paste -sd ,) >> $GITHUB_ENV
-
-
       - name: deploy files
-        uses: appleboy/scp-action@v1
+        uses: nogsantos/scp-deploy@master
         with:
+          src: build-system/upload/*
           host: ${{ vars.HOST }}
-          username: ${{ vars.USER }}
-          key: ${{ secrets.PRIVATE_KEY }}
-          strip_components: 2
-          source: ${{ env.FILES_TO_DEPLOY }}
-          target: build-system/upload
+          remote: build-system/upload/stage
+          port: 22
+          user: ${{ vars.USER }}
+          key: ${{ secrets.PRIVATE_KEY }}      

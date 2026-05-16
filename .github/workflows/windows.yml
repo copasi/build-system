@@ -46,7 +46,7 @@ on:
         description: "Enable OpenMP (sets ENABLE_OMP env to ON or OFF for CMake)"
         required: false
         type: boolean
-        default: false
+        default: true
 
   # run this task every week at 2am
   schedule:
@@ -60,7 +60,7 @@ env:
   QT_VERSION_NUMBER: ${{ inputs.QT_VERSION_NUMBER || '6.10.0' }}
   COPASI_BRANCH: ${{ inputs.COPASI_BRANCH || 'release/Version-4.47' }}
   COPASI_COMMENT: ${{ inputs.COPASI_COMMENT || 'stable' }}
-  ENABLE_OMP: ${{ inputs.ENABLE_OMP == true && 'ON' || 'OFF' }}
+  SCP_CLIENT_OS: 'windows'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -69,6 +69,7 @@ jobs:
 
     # The type of runner that the job will run on
     runs-on: windows-latest
+    environment: deploy
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -118,6 +119,11 @@ jobs:
           export SELECT_QT=Qt6
           export JAVA_HOME=$PWD/openjdk
 
+          if [ ${{ inputs.ENABLE_OMP }} = 'true' ]; then
+            echo Enable OpenMP support
+            export ENABLE_OMP=ON
+          fi
+  
           # emerge 
           emerge 
 
@@ -136,3 +142,14 @@ jobs:
             build-system/packages/setup.release/*.tar.gz
           retention-days: 7
           if-no-files-found: error
+
+          
+      - name: deploy files
+        uses: nogsantos/scp-deploy@master
+        with:
+          src: build-system/upload/*
+          host: ${{ vars.HOST }}
+          remote: build-system/upload/stage
+          port: 22
+          user: ${{ vars.USER }}
+          key: ${{ secrets.PRIVATE_KEY }}      
