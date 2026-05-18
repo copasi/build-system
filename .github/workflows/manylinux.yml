@@ -113,7 +113,7 @@ jobs:
           export PATH=$QTDIR/bin/:$PATH
           export SELECT_QT=Qt6        
           
-          if [ ${{ inputs.ENABLE_OMP }} = 'true' ]; then
+          if [ ${{ inputs.ENABLE_OMP }} ]; then
             echo Enable OpenMP support
             export ENABLE_OMP=ON
           fi
@@ -232,11 +232,12 @@ jobs:
 
 
       - name: deploy files
-        uses: nogsantos/scp-deploy@master
+        uses: shoops/scp-action@v-1.0.1
         with:
-          src: build-system/upload/*
+          source: build-system/upload/*
+          target: build-system/upload/stage
           host: ${{ vars.HOST }}
-          remote: build-system/upload/stage
-          port: 22
-          user: ${{ vars.USER }}
+          username: ${{ vars.USER }}
           key: ${{ secrets.PRIVATE_KEY }}      
+          port: 22
+          strip_components: 2

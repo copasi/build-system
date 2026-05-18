@@ -113,7 +113,7 @@ jobs:
           export SELECT_QT=Qt5        
           export WITH_DATAVISUALIZATION_NAMESPACES=ON
 
-          if [ ${{ inputs.ENABLE_OMP }} = 'true' ]; then
+          if [ ${{ inputs.ENABLE_OMP }} ]; then
             echo Enable OpenMP support
             export ENABLE_OMP=ON
           fi
