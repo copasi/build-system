@@ -185,33 +185,12 @@ jobs:
           cp build-system/git/COPASI.release/copasi/resourcesUI/images/512x512/copasi.png build-system/packages/setup.release/COPASI.png
           cp build-system/src/COPASI.desktop build-system/packages/setup.release/COPASI.desktop
 
-          # extract version
-          AWK=${COPASI_AWK:-gawk}
-          SOURCE=build-system/git/COPASI.release
+          export COPASI_SOURCES=${BUILD_ROOT}/git/COPASI.release
+          source ${BUILD_ROOT}/bin/functions
+          version
 
-          major=`${AWK} -- '$2 ~ "COPASI_VERSION_MAJOR" {print $3}' "${SOURCE}/copasi/CopasiVersion.h"`
-          minor=`${AWK} -- '$2 ~ "COPASI_VERSION_MINOR" {print $3}' "${SOURCE}/copasi/CopasiVersion.h"`
-          build=`${AWK} -- '$2 ~ "COPASI_VERSION_BUILD" {print $3}' "${SOURCE}/copasi/CopasiVersion.h"`
-          modified=`${AWK} -- '$2 ~ "COPASI_VERSION_MODIFIED" {print $3}' "${SOURCE}/copasi/CopasiVersion.h"`
-          comment=`${AWK} -- '$2 ~ "COPASI_VERSION_COMMENT" {print $3}' "${SOURCE}/copasi/CopasiVersion.h"`
-          buildname=${build}
-
-          if [ $modified == true ]; then
-            buildname=${buildname}+
-          fi
-
-          MyAppVersion=${major}.${minor}.${build}
-
-          if [ x"${comment}" = x\"Snapshot\" ]; then
-            MyAppVersion=${major}.
-            [ ${#minor} = 1 ] && MyAppVersion=${MyAppVersion}0
-            MyAppVersion=${MyAppVersion}${minor}.
-            [ ${#build} = 1 ] && MyAppVersion=${MyAppVersion}0
-            MyAppVersion=${MyAppVersion}${build}
-          fi
-
-
-          export VERSION=$MyAppVersion
+          export COPASI_VERSION_SOURCE=$sourceVersion
+          export COPASI_VERSION_TARGET=$targetVersion
           
           # adjust LD_LIBRARY_PATH
           tar zxf build-system/src/extra_libs.tar.gz
@@ -220,7 +199,7 @@ jobs:
 
           # create AppImage
           ./squashfs-root/AppRun build-system/packages/setup.release/usr/bin/CopasiUI  -bundle-non-qt-libs -qmake=`which qmake`  -appimage
-
+          cp COPASI*.AppImage build-system/upload/COPASI-${COPASI_VERSION_TARGET}-${COPASI_PACKAGE}.AppImage
 
       - uses: actions/upload-artifact@v4
         with:

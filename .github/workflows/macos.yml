@@ -175,6 +175,8 @@ jobs:
             export COPASI_PACKAGE=Darwin-intel
           fi
 
+          echo "COPASI_PACKAGE=${COPASI_PACKAGE}" >> $GITHUB_ENV
+
           if [ ${{ inputs.ENABLE_OMP }} ]; then
             echo Enable OpenMP support
             export ENABLE_OMP=ON
@@ -247,16 +249,16 @@ jobs:
 
 
           # create the DMG
-          hdiutil create -verbose -volname COPASI-${COPASI_VERSION_TARGET}-Darwin -fs HFS+ -srcfolder ./COPASI-${COPASI_VERSION_SOURCE}-Darwin/  -ov -format UDZO COPASI-${COPASI_VERSION_SOURCE}-${{ matrix.architectures }}-Darwin.dmg
-          sudo /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" COPASI-${COPASI_VERSION_SOURCE}-${{ matrix.architectures }}-Darwin.dmg -v
+          hdiutil create -verbose -volname COPASI-${COPASI_VERSION_TARGET}-Darwin -fs HFS+ -srcfolder ./COPASI-${COPASI_VERSION_SOURCE}-Darwin/  -ov -format UDZO COPASI-${COPASI_VERSION_SOURCE}-${COPASI_PACKAGE}.dmg
+          sudo /usr/bin/codesign --force -s "$MACOS_CERTIFICATE_NAME" COPASI-${COPASI_VERSION_SOURCE}-${COPASI_PACKAGE}.dmg -v
 
           # notarize & staple the dmg
-          ditto -c -k --keepParent "COPASI-${COPASI_VERSION_SOURCE}-${{ matrix.architectures }}-Darwin.dmg" "notarization_gui_dmg.zip"
+          ditto -c -k --keepParent "COPASI-${COPASI_VERSION_SOURCE}-${COPASI_PACKAGE}.dmg" "notarization_gui_dmg.zip"
           xcrun notarytool submit "notarization_gui_dmg.zip" --keychain-profile "notarytool-profile" --wait
-          xcrun stapler staple "COPASI-${COPASI_VERSION_SOURCE}-${{ matrix.architectures }}-Darwin.dmg"
+          xcrun stapler staple "COPASI-${COPASI_VERSION_SOURCE}-${COPASI_PACKAGE}.dmg"
 
           # prepare scp deployment
-          cp "COPASI-${COPASI_VERSION_SOURCE}-${{ matrix.architectures }}-Darwin.dmg" $HOME_BUILD_SYSTEM/build-system/upload/"COPASI-${COPASI_VERSION_TARGET}-${{ matrix.architectures }}-Darwin.dmg"
+          cp "COPASI-${COPASI_VERSION_SOURCE}-${COPASI_PACKAGE}.dmg" $HOME_BUILD_SYSTEM/build-system/upload/"COPASI-${COPASI_VERSION_TARGET}-${COPASI_PACKAGE}.dmg"
 
           rm notarization_gui_dmg.zip
 
@@ -272,7 +274,7 @@ jobs:
         run: |
           # zip the COPASI-*-Darwin folder
           pushd build-system/packages/setup.release/
-          zip -r -q -y COPASI-$COPASI_VERSION_TARGET-${{ matrix.architectures }}-Darwin.zip ./COPASI-${COPASI_VERSION_SOURCE}-Darwin/
+          zip -r -q -y COPASI-$COPASI_VERSION_TARGET-${COPASI_PACKAGE}.zip ./COPASI-${COPASI_VERSION_SOURCE}-Darwin/
           popd
 
       - uses: actions/upload-artifact@v4
