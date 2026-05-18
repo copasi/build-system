@@ -231,10 +231,18 @@ jobs:
           if-no-files-found: error   
 
 
+      - name: determine files to deploy
+        shell: bash
+        run: |
+          find build-system/upload/ -type f > FILES_TO_DEPLOY
+          echo "FILES_TO_DEPLOY=$(paste -sd ',' FILES_TO_DEPLOY)"  >> $GITHUB_ENV
+          rm FILES_TO_DEPLOY 
+
+          
       - name: deploy files
         uses: shoops/scp-action@v-1.0.1
         with:
-          source: build-system/upload/*
+          source: ${{ env.FILES_TO_DEPLOY }}
           target: build-system/upload/stage
           host: ${{ vars.HOST }}
           username: ${{ vars.USER }}
