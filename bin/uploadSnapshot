@@ -6,7 +6,7 @@ pushd "${BUILD_ROOT}"
 set -o xtrace
 
 AGE=12
-FILES=19
+FILES=15
 
 if [ x"$1" = x"--age" ]; then
   shift
