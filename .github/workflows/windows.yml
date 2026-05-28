@@ -78,6 +78,13 @@ jobs:
         with: 
           arch: x86_64
 
+      - name: List redistributables
+        shell: bash
+        run: |
+          __VCToolsRedistDir="$(echo "${VCToolsRedistDir}" | sed -e 's/\\/\//g' -e 's/^\([A-Za-z]\):/\/\L\1/')"
+          ls -R "${__VCToolsRedistDir}"
+          ls -R /c/windows/system32
+
       - uses: actions/setup-python@v6
         with:
           python-version: '3.11' 
