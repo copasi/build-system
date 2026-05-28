@@ -151,7 +151,7 @@ jobs:
           # build release
           release --branch ${COPASI_BRANCH} --comment ${COPASI_COMMENT} --noscp
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: manylinux-qt5${{ env.ARTIFACT_COMMENT }}
           path: |
@@ -222,7 +222,7 @@ jobs:
           ./squashfs-root/AppRun build-system/packages/setup.release/usr/bin/CopasiUI  -bundle-non-qt-libs -qmake=`which qmake`  -appimage
 
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: AppImage-qt5${{ env.ARTIFACT_COMMENT }}
           path: |

@@ -73,14 +73,12 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - uses: seanmiddleditch/gha-setup-ninja@master
-
       - name: Add msbuild to PATH (Windows)
-        uses: ilammy/msvc-dev-cmd@v1
+        uses: TheMrMilchmann/setup-msvc-dev@v4
         with: 
           arch: x86_64
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.11' 
       
@@ -133,7 +131,7 @@ jobs:
           # build release
           release --branch ${COPASI_BRANCH} --comment ${COPASI_COMMENT} --noscp
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: windows${{ env.ARTIFACT_COMMENT }}
           path: |

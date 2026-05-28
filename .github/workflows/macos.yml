@@ -90,9 +90,7 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - uses: seanmiddleditch/gha-setup-ninja@master
-
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.11' 
       
@@ -277,7 +275,7 @@ jobs:
           zip -r -q -y COPASI-$COPASI_VERSION_TARGET-${COPASI_PACKAGE}.zip ./COPASI-${COPASI_VERSION_SOURCE}-Darwin/
           popd
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: macOS-${{ matrix.architectures }}${{ env.ARTIFACT_COMMENT }}
           path: |
@@ -286,7 +284,7 @@ jobs:
           retention-days: 7
           if-no-files-found: error
       
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: macOS DMG ${{ matrix.architectures }}${{ env.ARTIFACT_COMMENT }}
           path: |
