@@ -34,6 +34,10 @@ function packageCOPASI() {
   popd
 
   pushd ${COPASI_SETUP_DIR}/package/bin
+  __VCToolsInstallDir="$(echo "${VCToolsInstallDir}" | sed -e 's/\\/\//g' -e 's/^\([A-Za-z]\):/\/\L\1/')"
+  ls "${__VCToolsInstallDir}"/lib/x64/
+  echo cp "${__VCToolsInstallDir}"/lib/x64/vcomp140.dll .
+  cp "${__VCToolsInstallDir}"/lib/x64/vcomp140.dll .
   windeployqt CopasiUI.exe  --release
   popd
 
