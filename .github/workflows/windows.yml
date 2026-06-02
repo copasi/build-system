@@ -78,14 +78,6 @@ jobs:
         with: 
           arch: x86_64
 
-      - name: List VCToolsRedistDir
-        shell: bash
-        run: |
-          pushd "/c/program files/microsoft visual studio/2022/enterprise/vc"
-          ls -R .
-          popd
-          exit 1
-
       - uses: actions/setup-python@v6
         with:
           python-version: '3.11' 
