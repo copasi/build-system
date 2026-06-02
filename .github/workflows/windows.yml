@@ -81,7 +81,7 @@ jobs:
       - name: List VCToolsRedistDir
         shell: bash
         run: |
-          pushd "/c/program files/microsoft visual studio/2022/enterprise/vc/redist/msvc/14.44.35112/"
+          pushd "/c/program files/microsoft visual studio/2022/enterprise/vc"
           ls -R .
           popd
           exit 1
