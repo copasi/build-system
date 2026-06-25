@@ -101,6 +101,13 @@ jobs:
         run: |
           git clone https://github.com/copasi/build-system
           
+      - name: Locate OMP libraries
+        shell: bash
+        run: |
+          BASH_VCToolsRedistDir="$(echo "${VCToolsRedistDir}" | sed -e 's/\\/\//g' -e 's/^\([A-Za-z]\):/\/\L\1/')"
+          find "${BASH_VCToolsRedistDir}" -iname libomp140.x86_64.dll 
+          find "${BASH_VCToolsRedistDir}" -iname vcomp140.dll
+          
       - name: initialize build system
         shell: bash
         run: |

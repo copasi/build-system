@@ -35,11 +35,11 @@ function packageCOPASI() {
   pushd ${COPASI_SETUP_DIR}/package/bin
   BASH_VCToolsRedistDir="$(echo "${VCToolsRedistDir}" | sed -e 's/\\/\//g' -e 's/^\([A-Za-z]\):/\/\L\1/')"
 
-  echo cp "${BASH_VCToolsRedistDir}"x64/Microsoft.VC143.OpenMP/vcomp140.dll .
-  cp "${BASH_VCToolsRedistDir}"x64/Microsoft.VC143.OpenMP/vcomp140.dll .
-
-  echo cp "${BASH_VCToolsRedistDir}"debug_nonredist/x64/Microsoft.VC143.OpenMP.LLVM/libomp140.x86_64.dll .
-  cp "${BASH_VCToolsRedistDir}"debug_nonredist/x64/Microsoft.VC143.OpenMP.LLVM/libomp140.x86_64.dll .
+  echo cp "${BASH_VCToolsRedistDir}"x64/Microsoft.VC*.OpenMP/vcomp140.dll .
+  cp "${BASH_VCToolsRedistDir}"x64/Microsoft.VC*.OpenMP/vcomp140.dll .
+  
+  echo cp "${BASH_VCToolsRedistDir}"debug_nonredist/x64/Microsoft.VC*.OpenMP.LLVM/libomp140.x86_64.dll .
+  cp "${BASH_VCToolsRedistDir}"debug_nonredist/x64/Microsoft.VC*.OpenMP.LLVM/libomp140.x86_64.dll .
 
   windeployqt CopasiUI.exe  --release
   popd
