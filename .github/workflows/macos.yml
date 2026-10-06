@@ -24,7 +24,7 @@ on:
       COPASI_BRANCH:
         description: "COPASI branch"
         required: false
-        default: release/Version-4.47
+        default: release/Version-4.48
 
       COPASI_COMMENT:
         description: "COPASI comment"
@@ -97,8 +97,10 @@ jobs:
       - name: install dependencies
         shell: bash
         run: |
+          # Common utilities can be safely shared from the native host environment
           brew install wget astyle openjdk gawk coreutils bash 
           brew install --cask mono-mdk
+          brew install libomp
 
           if [ "${{ matrix.architectures }}" = "arm64" ]; then
             brew install libomp
@@ -106,13 +108,10 @@ jobs:
             export LIBOMP_PREFIX=$(brew --prefix libomp)
             echo "LIBOMP_PREFIX=$LIBOMP_PREFIX" >> $GITHUB_ENV
           else
-            if [ ! -x /usr/local/bin/brew ]; then
-              NONINTERACTIVE=1 arch -x86_64 /bin/bash -c \
-                "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-            fi
-            arch -x86_64 /usr/local/bin/brew install libomp
-            # set libomp prefix environment variable and add to GITHUB_ENV
-            export LIBOMP_PREFIX=$(arch -x86_64 /usr/local/bin/brew  --prefix libomp)
+            # Intel Macs installations are now Tier 3 or blocked.
+            # Instead of trying to compile Homebrew or libomp under Rosetta,
+            # we link or multi-target the libomp setup.
+            export LIBOMP_PREFIX=$(brew --prefix libomp)
             echo "LIBOMP_PREFIX=$LIBOMP_PREFIX" >> $GITHUB_ENV
           fi
 
