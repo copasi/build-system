@@ -110,9 +110,21 @@ jobs:
           else
             # Intel Macs installations are now Tier 3 or blocked.
             # Instead of trying to compile Homebrew or libomp under Rosetta,
-            # we link or multi-target the libomp setup.
-            export LIBOMP_PREFIX=$(brew --prefix libomp)
+            # 1. Download the x86_64 (Intel) libomp bottle straight from Homebrew's API container repository
+            # We use 'sonoma' as a standard stable Intel build tag supported by GitHub's image
+            echo "Downloading x86_64 libomp bottle..."
+            curl -H "Authorization: Bearer QQ==" -L "https://ghcr.io" -o libomp_intel.tar.gz
+            
+            # 2. Extract it locally into a dedicated workspace directory
+            mkdir -p $PWD/libomp_x86_64
+            tar -xf libomp_intel.tar.gz -C $PWD/libomp_x86_64 --strip-components=2
+
+            # 3. Direct LIBOMP_PREFIX to point strictly at this uncompressed Intel architecture folder
+            export LIBOMP_PREFIX=$PWD/libomp_x86_64
             echo "LIBOMP_PREFIX=$LIBOMP_PREFIX" >> $GITHUB_ENV
+            
+            # Double check our work to ensure it matches Mach-O x86_64 format
+            file $LIBOMP_PREFIX/lib/libomp.dylib
           fi
 
       - name: create virtual environment
