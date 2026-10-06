@@ -110,17 +110,15 @@ jobs:
           else
             # Intel Macs installations are now Tier 3 or blocked.
             # Instead of trying to compile Homebrew or libomp under Rosetta,
-            # 1. Query the Homebrew API to find the download URL for the x86_64 (Intel) macOS bottle
-            BOTTLE_URL=$(curl -s https://brew.sh | jq -r '.bottle.stable.files.sequoia.url // .bottle.stable.files.sonoma.url')
+            # 1. Fetch the cached x86_64 (Intel) bottle package using Homebrew's built-in download engine
+            brew fetch --bottle-tag=x86_64_tahoe libomp
         
-            # 2. Download the tarball
-            curl -L "$BOTTLE_URL" -o libomp.tar.gz
-        
-            # 3. Extract it into a custom local directory
+            # 2. Extract the downloaded tarball directly to your workspace workspace
             mkdir -p $GITHUB_WORKSPACE/libomp_x86
-            tar -xf libomp.tar.gz -C $GITHUB_WORKSPACE/libomp_x86 --strip-components=2
+            BOTTLE_PATH=$(brew --cache --bottle-tag=x86_64_tahoe libomp)
+            tar -xf "$BOTTLE_PATH" -C $GITHUB_WORKSPACE/libomp_x86 --strip-components=2
 
-            # 4. Set environment variables for your subsequent build steps
+            # 3. Set environment variables for your subsequent build steps
             echo "LDFLAGS=-L$GITHUB_WORKSPACE/libomp_x86/lib" >> $GITHUB_ENV
             echo "CPPFLAGS=-I$GITHUB_WORKSPACE/libomp_x86/include" >> $GITHUB_ENV
             export LIBOMP_PREFIX=$GITHUB_WORKSPACE/libomp_x86
