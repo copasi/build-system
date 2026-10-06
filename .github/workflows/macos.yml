@@ -56,7 +56,7 @@ env:
   COPASI_DEPENDENCIES_CLONE_OPTS: ${{ inputs.COPASI_DEPENDENCIES_CLONE_OPTS || '' }}
   ARTIFACT_COMMENT: ${{ inputs.ARTIFACT_COMMENT || '' }}
   QT_VERSION_NUMBER: ${{ inputs.QT_VERSION_NUMBER || '6.10.0' }}
-  COPASI_BRANCH: ${{ inputs.COPASI_BRANCH || 'release/Version-4.47' }}
+  COPASI_BRANCH: ${{ inputs.COPASI_BRANCH || 'release/Version-4.48' }}
   COPASI_COMMENT: ${{ inputs.COPASI_COMMENT || 'stable' }}
 
       
