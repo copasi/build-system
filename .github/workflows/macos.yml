@@ -100,7 +100,6 @@ jobs:
           # Common utilities can be safely shared from the native host environment
           brew install wget astyle openjdk gawk coreutils bash 
           brew install --cask mono-mdk
-          brew install libomp
 
           if [ "${{ matrix.architectures }}" = "arm64" ]; then
             brew install libomp
@@ -111,7 +110,7 @@ jobs:
             # Intel Macs installations are now Tier 3 or blocked.
             # Instead of trying to compile Homebrew or libomp under Rosetta,
             # 1. Fetch the cached x86_64 (Intel) bottle package using Homebrew's built-in download engine
-            brew fetch --bottle-tag=x86_64_tahoe libomp
+            brew fetch --bottle-tag=x86_64_sequoia libomp
         
             # 2. Extract the downloaded tarball directly to your workspace workspace
             mkdir -p $GITHUB_WORKSPACE/libomp_x86
