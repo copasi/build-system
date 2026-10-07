@@ -109,23 +109,29 @@ jobs:
           else
             # Intel Macs installations are now Tier 3 or blocked.
             # Instead of trying to compile Homebrew or libomp under Rosetta,
+            # 1. Install Rosetta 2 on the ARM runner (Mandatory for macOS 15+)
+            sudo softwareupdate --install-rosetta --agree-to-license
+            
             # 1. Fetch the cached x86_64 (Intel) bottle package using Homebrew's built-in download engine
             brew fetch --bottle-tag=x86_64_sonoma libomp
         
-            # 2. Extract the downloaded tarball directly to your workspace workspace
-            mkdir -p $GITHUB_WORKSPACE/libomp_x86
-            BOTTLE_PATH=$(brew --cache --bottle-tag=x86_64_tahoe libomp)
-            tar -xf "$BOTTLE_PATH" -C $GITHUB_WORKSPACE/libomp_x86 --strip-components=2
+            # 2. Run the official installer under the x86_64 architecture envelope
+            arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"            
 
-            # 3. Set environment variables for your subsequent build steps
-            echo "LDFLAGS=-L$GITHUB_WORKSPACE/libomp_x86/lib" >> $GITHUB_ENV
-            echo "CPPFLAGS=-I$GITHUB_WORKSPACE/libomp_x86/include" >> $GITHUB_ENV
-            export LIBOMP_PREFIX=$GITHUB_WORKSPACE/libomp_x86
+            # 3. Use the Intel-isolated package manager to fetch your library
+            /usr/local/bin/brew install libomp
+
+            # 4. Bind compilation paths to subsequent steps
+            echo "LDFLAGS=-L/usr/local/opt/libomp/lib" >> $GITHUB_ENV
+            echo "CPPFLAGS=-I/usr/local/opt/libomp/include" >> $GITHUB_ENV            
+            export LIBOMP_PREFIX=$(brew --prefix libomp)
             echo "LIBOMP_PREFIX=$LIBOMP_PREFIX" >> $GITHUB_ENV
-            
+
             # Double check our work to ensure it matches Mach-O x86_64 format
             file $LIBOMP_PREFIX/lib/libomp.dylib
           fi
+
+          exit 1
 
       - name: create virtual environment
         shell: bash
