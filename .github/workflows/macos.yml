@@ -108,23 +108,18 @@ jobs:
             echo "LIBOMP_PREFIX=$LIBOMP_PREFIX" >> $GITHUB_ENV
           else
             # Intel Macs installations are now Tier 3 or blocked.
-            # Instead of trying to compile Homebrew or libomp under Rosetta,
-            # 1. Install Rosetta 2 on the ARM runner (Mandatory for macOS 15+)
-            sudo softwareupdate --install-rosetta --agree-to-license
+            mkdir -p ./intel_omp
+    
+            # Download official x86_64 LLVM OpenMP archive from CRAN
+            curl -L -O https://r-project.org
             
-            # 1. Fetch the cached x86_64 (Intel) bottle package using Homebrew's built-in download engine
-            brew fetch --bottle-tag=x86_64_sonoma libomp
-        
-            # 2. Run the official installer under the x86_64 architecture envelope
-            arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"            
-
-            # 3. Use the Intel-isolated package manager to fetch your library
-            /usr/local/bin/brew install libomp
-
-            # 4. Bind compilation paths to subsequent steps
-            echo "LDFLAGS=-L/usr/local/opt/libomp/lib" >> $GITHUB_ENV
-            echo "CPPFLAGS=-I/usr/local/opt/libomp/include" >> $GITHUB_ENV            
-            export LIBOMP_PREFIX=$(brew --prefix libomp)
+            # Extract package safely inside workspace
+            tar -xf openmp-17.0.6-darwin20-Release-x86_64.tar.gz -C ./intel_omp
+            
+            # Inject variables for your compiler to find the library files
+            echo "LDFLAGS=-L$PWD/intel_omp/usr/local/lib" >> $GITHUB_ENV
+            echo "CPPFLAGS=-I$PWD/intel_omp/usr/local/include" >> $GITHUB_ENV
+            export LIBOMP_PREFIX=$PWD/intel_omp/usr/local
             echo "LIBOMP_PREFIX=$LIBOMP_PREFIX" >> $GITHUB_ENV
 
             # Double check our work to ensure it matches Mach-O x86_64 format
