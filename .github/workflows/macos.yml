@@ -108,18 +108,20 @@ jobs:
             echo "LIBOMP_PREFIX=$LIBOMP_PREFIX" >> $GITHUB_ENV
           else
             # Intel Macs installations are now Tier 3 or blocked.
-            mkdir -p ./intel_omp
-    
-            # Download official x86_64 LLVM OpenMP archive from CRAN
-            curl -L -O https://r-project.org
+            # 1 Install MacPorts
+            curl -L -O https://github.com/macports/macports-base/releases/download/v2.12.6/MacPorts-2.12.6-26-Tahoe.pkg
+            sudo installer -pkg MacPorts-2.12.6-26-Tahoe.pkg -target /
+            export PATH="/opt/local/bin:/opt/local/sbin:$PATH"
+
+            # 2. Install libomp with the +universal variant (contains both arm64 and x86_64 slices)
+            # Alternatively, specify the x86_64 arch variant depending on MacPorts' active flags
+            sudo port selfupdate
+            sudo port install libomp +universal
             
-            # Extract package safely inside workspace
-            tar -xf openmp-17.0.6-darwin20-Release-x86_64.tar.gz -C ./intel_omp
-            
-            # Inject variables for your compiler to find the library files
-            echo "LDFLAGS=-L$PWD/intel_omp/usr/local/lib" >> $GITHUB_ENV
-            echo "CPPFLAGS=-I$PWD/intel_omp/usr/local/include" >> $GITHUB_ENV
-            export LIBOMP_PREFIX=$PWD/intel_omp/usr/local
+            # 3. Export the universal/x86_64 paths for your compiler
+            echo "LDFLAGS=-L/opt/local/lib" >> $GITHUB_ENV
+            echo "CPPFLAGS=-I/opt/local/include" >> $GITHUB_ENV
+            export LIBOMP_PREFIX=/opt/local
             echo "LIBOMP_PREFIX=$LIBOMP_PREFIX" >> $GITHUB_ENV
 
             # Double check our work to ensure it matches Mach-O x86_64 format
