@@ -119,8 +119,8 @@ jobs:
             sudo port install libomp +universal
             
             # 3. Export the universal/x86_64 paths for your compiler
-            echo "OpenMP_C_FLAGS=-Xpreprocessor -I/opt/local/include/libomp -L/opt/local/lib/libomp -fopenmp" >> $GITHUB_ENV
-            echo "OpenMP_CXX_FLAGS=-Xpreprocessor -I/opt/local/include/libomp -L/opt/local/lib/libomp -fopenmp" >> $GITHUB_ENV
+            echo "OpenMP_C_FLAGS=-Xpreprocessor;-fopenmp;-I/opt/local/include/libomp;" >> $GITHUB_ENV
+            echo "OpenMP_CXX_FLAGS=-Xpreprocessor;-fopenmp;-I/opt/local/include/libomp;" >> $GITHUB_ENV
             echo "OpenMP_omp_LIBRARY=/opt/local/lib/libomp/libomp.dylib" >> $GITHUB_ENV
           fi
 
