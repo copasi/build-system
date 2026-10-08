@@ -120,9 +120,11 @@ jobs:
             
             # 3. Export the universal/x86_64 paths for your compiler
             echo "LDFLAGS=-L/opt/local/lib/libomp" >> $GITHUB_ENV
-            echo "CPPFLAGS="-I/opt/local/include/libomp" >> $GITHUB_ENV
+            echo "CPPFLAGS=-I/opt/local/include/libomp" >> $GITHUB_ENV
             export LIBOMP_PREFIX=/opt/local
             echo "LIBOMP_PREFIX=$LIBOMP_PREFIX" >> $GITHUB_ENV
+
+            ls -l /opt/local/lib/libomp
           fi
 
       - name: create virtual environment
