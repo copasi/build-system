@@ -121,7 +121,7 @@ jobs:
             # 3. Export the universal/x86_64 paths for your compiler
             echo "OpenMP_C_FLAGS=-I/opt/local/include/libomp -L/opt/local/lib/libomp -fopenmp" >> $GITHUB_ENV
             echo "OpenMP_CXX_FLAGS=-I/opt/local/include/libomp -L/opt/local/lib/libomp -fopenmp" >> $GITHUB_ENV
-            echo "OpenMP_omp_LIBRARY= /opt/local/lib/libomp/libomp.dylib)"
+            echo "OpenMP_omp_LIBRARY= /opt/local/lib/libomp/libomp.dylib" >> $GITHUB_ENV
           fi
 
       - name: create virtual environment
